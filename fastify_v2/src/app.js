@@ -77,7 +77,6 @@ fastify.register(require('@fastify/swagger'), {
     },
     exposeRoute: true
 });
-
 // Đăng ký Swagger UI
 fastify.register(import('@fastify/swagger-ui'), {
     routePrefix: '/docs',
@@ -356,3 +355,48 @@ fastify.post("/payment", async (req, res) => {
 
     }
 })
+////////////////////gọi webhook//////////////////
+const { getStock } = require("./services/product.service")
+require('intl');
+require('intl/locale-data/jsonp/vi');
+fastify.post('/webhook', async (request, reply) => {
+    let { product } = request.body.queryResult.parameters;
+    const intentName = request.body.queryResult.intent.displayName;
+
+    if (product.includes('|')) {
+        product = product.split('|')[0].trim();
+    }
+
+    try {
+        const productData = await getStock(fastify.mysql, product);
+
+        if (!productData) {
+            return reply.send({ fulfillmentText: `Rất tiếc, chúng tôi không tìm thấy sản phẩm ${product}.` });
+        }
+
+        let responseText = '';
+
+        if (intentName === 'CheckStock') {
+            if (productData.stock_quantity > 0) {
+                responseText = `Hiện tại còn ${productData.stock_quantity} chiếc ${productData.name}.`;
+            } else {
+                responseText = `Rất tiếc, ${productData.name} hiện đang hết hàng.`;
+            }
+        } else if (intentName === 'CheckPrice') {
+            // Chuyển giá sang number trước
+            const priceNumber = Number(productData.price);
+            const formattedPrice = priceNumber.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+
+            responseText = `Giá của ${productData.name} hiện tại là ${formattedPrice}.`;
+        } else {
+            responseText = 'Mình chưa hiểu câu hỏi của bạn, bạn có thể hỏi lại không?';
+        }
+
+        return reply.send({ fulfillmentText: responseText });
+    } catch (error) {
+        fastify.log.error(error);
+        return reply.send({ fulfillmentText: 'Lỗi truy vấn dữ liệu, vui lòng thử lại sau.' });
+    }
+});
+
+

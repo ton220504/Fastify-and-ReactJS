@@ -428,6 +428,20 @@ const getProductImages = async (db, productId) => {
     );
   });
 };
+const getStock = async (db, productName) => {
+  return new Promise((resolve, reject) => {
+    const query = "SELECT * FROM product WHERE name LIKE ? LIMIT 1"; // Dùng LIKE và giới hạn 1 kết quả
+    const likeParam = `%${productName}%`; // Tạo pattern cho LIKE
+    
+    db.query(query, [likeParam], (err, results) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve(results[0] || null);
+    });
+  });
+};
 
 
 
@@ -450,5 +464,6 @@ module.exports = {
   getAllProductsIsDelete,
   softDeleteProduct,
   restore,
-  getNameProducts
+  getNameProducts,
+  getStock
 };
