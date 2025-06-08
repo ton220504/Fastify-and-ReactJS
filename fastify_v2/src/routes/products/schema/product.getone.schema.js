@@ -33,7 +33,8 @@ const getOneProductSchema = {
                         type: 'object',
                         properties: {
                             url: { type: 'string' },
-                            color: { type: ['string', 'null'] }
+                            color: { type: ['string', 'null'] },
+                            price:{type:'number'}
                         },
                         required: ['url']
                     }

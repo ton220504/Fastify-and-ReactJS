@@ -8,6 +8,7 @@ const CartItemSchema = {
     total_price: { type: 'number' },
     cart_id: { type: 'number' },
     image: { type: 'string' },
+    color:{type:'string'}
   }
 };
 

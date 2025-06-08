@@ -404,7 +404,7 @@ const getProductImages = async (db, productId) => {
   return new Promise((resolve, reject) => {
     db.query(
       `
-      SELECT i.image_url, i.color_name
+      SELECT i.image_url, i.color_name, i.price
       FROM product_images pi
       JOIN images i ON pi.image_id = i.id
       WHERE pi.product_id = ?
@@ -420,7 +420,8 @@ const getProductImages = async (db, productId) => {
         // Format kết quả trước khi trả về
         const formattedImages = results.map(row => ({
           url: row.image_url,
-          color: row.color_name
+          color: row.color_name,
+          price: row.price
         }));
 
         resolve(formattedImages);

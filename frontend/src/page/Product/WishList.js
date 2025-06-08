@@ -225,12 +225,10 @@ const WishList = () => {
                                         <div
                                             className="favorite-icon"
                                             onClick={() => {
-                                               
-                                                    handleRemove(item.id); // Xóa sản phẩm yêu thích
-                                               
+                                                handleRemove(item.id); // Xóa sản phẩm yêu thích
                                             }}
                                         >
-                                            <i className={favoriteProducts.includes(item.product.id) ? "fas fa-heart text-red-500" : "far fa-heart"}></i>
+                                            <i className={favoriteProducts.includes(item.product.id) ? "fas fa-heart text-red-500" : "fas fa-heart"}></i>
                                         </div>
 
                                         <Link to={`/chi-tiet-san-pham/${item.product.id}`}>

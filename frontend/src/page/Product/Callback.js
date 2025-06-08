@@ -47,16 +47,25 @@ const Callback = () => {
                 ));
 
                 // 3. Xóa khỏi giỏ hàng nếu có
-                const cartItemIds = orderData.items
-                    .filter(item => item.fromCart)
-                    .map(item => item.cartItemId);
+                const cartItemIds = orderData.items.reduce((acc, item) => {
+                    if (item.fromCart && item.cartItemId) {
+                        acc.push(item.cartItemId);
+                    } else if (item.fromCart && !item.cartItemId) {
+                        console.warn("⚠️ item.fromCart nhưng thiếu cartItemId:", item);
+                    }
+                    return acc;
+                }, []);
 
                 if (cartItemIds.length > 0) {
                     await Promise.all(
                         cartItemIds.map(id =>
                             axios.delete(`http://127.0.0.1:3000/api/cartsItem/${id}`)
+                                .catch(err => {
+                                    console.error(`❌ Lỗi xóa cartItem ${id}`, err);
+                                })
                         )
                     );
+                    console.log("🗑️ Đã xóa các item khỏi giỏ hàng");
                 }
 
                 // 4. Xóa localStorage tạm thời

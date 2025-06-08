@@ -105,8 +105,6 @@ const getAllOrders = async (db) => {
         );
     });
 };
-
-
 const getOrdersByUserId = async (db, userId) => {
     return new Promise((resolve, reject) => {
         db.query(
@@ -243,7 +241,7 @@ const deleteOrder = async (db, id) => {
 const getOrderById = async (db, orderId) => {
     return new Promise((resolve, reject) => {
         db.query(
-            `SELECT o.*, a.district, a.province, a.street, a.ward, u.username as user_name, u.email as user_email
+            `SELECT o.*, a.district, a.province, a.street, a.ward, u.username as user_name, u.email as user_email, u.phone as phone
              FROM orders o
              JOIN addresses a ON o.address_id = a.id
              JOIN users u ON o.user_id = u.id
@@ -263,7 +261,8 @@ const getOrderById = async (db, orderId) => {
                 order.user = {
                     id: order.user_id,
                     name: order.user_name,
-                    email: order.user_email
+                    email: order.user_email,
+                    phone: order.phone
                 };
 
                 delete order.district;

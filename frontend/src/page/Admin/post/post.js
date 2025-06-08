@@ -4,8 +4,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 
 import Swal from "sweetalert2";
-import { ip } from "../../../api/Api";
-
+import { Editor } from '@tinymce/tinymce-react';
 const Post = () => {
     const { id } = useParams();
     const [posts, setPosts] = useState([]);
@@ -245,7 +244,7 @@ const Post = () => {
                 description: editPostDescription,
                 detail: editPostDetail,
                 image: imageFilename, // <-- gửi tên file, không phải URL
-                topic_id: 1,
+                topic_id: editPostTopicId,
                 created_by: 1,
                 status: 1
             };
@@ -365,17 +364,31 @@ const Post = () => {
                                 required
                             />
                         </div>
-                        <div className="mb-3 ">
-                            <textarea
-                                type="text"
-                                className="form-control"
-                                id="detail"
-                                name="detail"
-                                placeholder="Nhập detail"
+                        {/* <div className="mb-3">
+                        <label htmlFor="editDetail" className="form-label">Detail</label>
+                        <textarea
+                            type="text"
+                            className="form-control"
+                            id="detail"
+                            name="detail"
+                            value={detail}
+                            onChange={(e) => setDetail(e.target.value)}
+                            rows="6"
+                        />
+                    </div> */}
+                        <div className="mb-3">
+                            <label className="form-label">Nội dung chi tiết</label>
+                            <Editor
+                                apiKey="icfc4al2f4xvw4dnxdxbhpfkai3vcrw42tztz26wm2x6zgcn" // hoặc API key của bạn
                                 value={detail}
-                                onChange={changeHandler}
-                                rows="7"
-                                required
+                                onEditorChange={(newValue) => setDetail(newValue)}
+                                init={{
+                                    height: 300,
+                                    menubar: false,
+                                    plugins: 'lists link image preview code',
+                                    toolbar:
+                                        'undo redo | formatselect | bold italic underline | alignleft aligncenter alignright | bullist numlist | link image | code',
+                                }}
                             />
                         </div>
                         <input
@@ -396,8 +409,8 @@ const Post = () => {
                         <div className="card-header py-3 d-flex justify-content-between align-items-center">
                             <h6 className="m-0 font-weight-bold text-primary">Tất cả bài viết</h6>
                             <Link to={'/admin/posttrashcan'} className="btn btn-danger my-2 me-2 "><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-trash3" viewBox="0 0 16 16">
-                            <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5" />
-                        </svg>Thùng rác</Link>
+                                <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5" />
+                            </svg>Thùng rác</Link>
                         </div>
                         <div className="card-body">
                             <div className="table-responsive">
@@ -499,7 +512,7 @@ const Post = () => {
                             onChange={(e) => setEditPostDescription(e.target.value)}
                         />
                     </div>
-                    <div className="mb-3">
+                    {/* <div className="mb-3">
                         <label htmlFor="editDetail" className="form-label">Detail</label>
                         <textarea
                             type="text"
@@ -509,6 +522,21 @@ const Post = () => {
                             value={editPostDetail}
                             onChange={(e) => setEditPostDetail(e.target.value)}
                             rows="6"
+                        />
+                    </div> */}
+                    <div className="mb-3">
+                        <label className="form-label">Nội dung chi tiết</label>
+                        <Editor
+                            apiKey="icfc4al2f4xvw4dnxdxbhpfkai3vcrw42tztz26wm2x6zgcn" // hoặc API key của bạn
+                            value={editPostDetail}
+                            onEditorChange={(newValue) => setEditPostDetail(newValue)}
+                            init={{
+                                height: 300,
+                                menubar: false,
+                                plugins: 'lists link image preview code',
+                                toolbar:
+                                    'undo redo | formatselect | bold italic underline | alignleft aligncenter alignright | bullist numlist | link image | code',
+                            }}
                         />
                     </div>
                     <div className="mb-3">
@@ -522,7 +550,7 @@ const Post = () => {
                                         width: "350px",
                                         height: "150px",
                                         objectFit: "cover",
-                                        
+
                                     }}
                                 />
                             )}

@@ -35,7 +35,8 @@ const UserSchema = {
     properties: {
         id: { type: 'number' },
         name: { type: 'string' },
-        email: { type: 'string' }
+        email: { type: 'string' },
+        phone: {type: 'string'}
         // Thêm các field khác nếu cần như phone, avatar...
     }
 };

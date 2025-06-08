@@ -19,6 +19,9 @@ const fastifyStatic = require('@fastify/static');
 fastify.register(fastifyStatic, {
     root: path.join(global.appRoot, 'uploads'), // 📂 Trỏ tới thư mục chứa ảnh
     prefix: '/uploads/', // 🏷️ Định nghĩa URL prefix
+    setHeaders: (res, path, stat) => {
+        res.setHeader('Access-Control-Allow-Origin', '*');
+    }
 });
 
 /////////////////AUthorization//////////////////

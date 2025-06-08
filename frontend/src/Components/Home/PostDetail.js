@@ -171,7 +171,9 @@ const PostDetail = () => {
                     <div className='col-8'>
                         <h2 className='my-2'>{currentPost.name}</h2>
                         <img src={currentPost.imageUrl} style={{ height: "500px", width: "800px" }} className="rounded-4 border my-2" alt={currentPost.name} />
-                        <p>{currentPost.detail}</p>
+                        {/* <p>{currentPost.detail}</p> */}
+                        <div dangerouslySetInnerHTML={{ __html: currentPost.detail }} />
+
                         <Link to="/" className="btn btn-secondary mt-3">Quay lại</Link> {/* Nút quay lại trang danh sách */}
                         <div className="my-4">
                             <h5>Viết bình luận của bạn:</h5>

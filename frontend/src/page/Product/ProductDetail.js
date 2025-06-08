@@ -88,7 +88,6 @@ const ProductDetail = () => {
             .trim(); // Xóa khoảng trắng dư thừa
     };
 
-
     // Hàm fetch ảnh cho 1 sản phẩm
     const fetchImageAndUpdateProduct = async (data) => {
         if (!data || data.length === 0) return;
@@ -110,11 +109,11 @@ const ProductDetail = () => {
 
     useEffect(() => {
         if (!product) return;
-
         if (product.images && product.images.length > 0 && !imageInitialized.current) {
             const mappedVariations = product.images.map((img, index) => ({
                 imageUrl: `http://127.0.0.1:3000/uploads/${img.url}`,
                 color: img.color,
+                price: img.price,
                 index
             }));
 
@@ -213,11 +212,60 @@ const ProductDetail = () => {
         getUserData();
 
     }, []);
-    const handleCheckout = () => {
-        if (!product) {
-            console.error("Không có sản phẩm để thanh toán.");
-            return;
-        }
+    // const handleCheckout = () => {
+    //     if (!product) {
+    //         console.error("Không có sản phẩm để thanh toán.");
+    //         return;
+    //     }
+    //     const token = localStorage.getItem("token");
+    //     const user = JSON.parse(localStorage.getItem("user"));
+
+    //     if (!user || !user.id || !token) {
+    //         Swal.fire({
+    //             icon: 'error',
+    //             title: 'Bạn cần đăng nhập để mua sản phẩm này!',
+    //             confirmButtonText: 'Đăng nhập ngay'
+    //         }).then(() => {
+    //             navigate('/login');
+    //         });
+    //         return;
+    //     }
+
+    //     // Kiểm tra số lượng mua có vượt quá stockQuantity không
+    //     if (quantity > product.stockQuantity) {
+    //         Swal.fire({
+    //             icon: 'error',
+    //             toast: true,
+    //             position: "top-end",
+    //             title: 'Số lượng không đủ',
+    //             text: `Chỉ còn ${product.stockQuantity} sản phẩm trong kho. Vui lòng chọn lại số lượng.`,
+    //         });
+    //         return; // Dừng lại và không điều hướng
+    //     }
+
+    //     // Tạo thông tin sản phẩm cần mua
+    //     const selectedItems = [
+    //         {
+    //             id: product.id,              // ID sản phẩm
+    //             name: product.name,          // Tên sản phẩm
+    //             imageUrl: product.imageUrl,  // Ảnh sản phẩm
+    //             price: product.price,        // Giá sản phẩm
+    //             quantity: quantity,          // Số lượng mua
+    //             fromCart: false
+    //         }
+    //     ];
+    //     const userItems = {
+    //         username: user.username,
+    //         email: user.email,
+    //         phone: user.phone
+    //     }
+    //     // Tính tổng tiền dựa trên số lượng và giá
+    //     const totalAmount = product.price * quantity;
+
+    //     // Điều hướng đến trang thanh toán và truyền state
+    //     navigate('/thanh-toan', { state: { selectedItems, totalAmount, userItems } });
+    // };
+    const handleCheckout = async () => {
         const token = localStorage.getItem("token");
         const user = JSON.parse(localStorage.getItem("user"));
 
@@ -232,40 +280,90 @@ const ProductDetail = () => {
             return;
         }
 
-        // Kiểm tra số lượng mua có vượt quá stockQuantity không
-        if (quantity > product.stockQuantity) {
+        if (!product || quantity > product.stockQuantity) {
             Swal.fire({
                 icon: 'error',
                 toast: true,
                 position: "top-end",
                 title: 'Số lượng không đủ',
-                text: `Chỉ còn ${product.stockQuantity} sản phẩm trong kho. Vui lòng chọn lại số lượng.`,
+                text: `Chỉ còn ${product?.stockQuantity ?? 0} sản phẩm trong kho.`,
             });
-            return; // Dừng lại và không điều hướng
+            return;
         }
 
-        // Tạo thông tin sản phẩm cần mua
-        const selectedItems = [
-            {
-                id: product.id,              // ID sản phẩm
-                name: product.name,          // Tên sản phẩm
-                imageUrl: product.imageUrl,  // Ảnh sản phẩm
-                price: product.price,        // Giá sản phẩm
-                quantity: quantity,          // Số lượng mua
-                fromCart: false
+        const selectedVariation = variations[selectedIndex];
+
+        const payload = {
+            user_id: user.id,
+            items: [
+                {
+                    product_id: product.id,
+                    quantity,
+                    price: selectedVariation?.price ?? product.price,
+                    image: selectedVariation?.imageUrl ?? product.imageUrl,
+                    color: selectedVariation?.color ?? "Không rõ"
+                }
+            ]
+        };
+
+        try {
+            // ✅ Thêm sản phẩm hiện tại vào giỏ hàng
+            await axios.post("http://127.0.0.1:3000/api/carts", payload);
+
+            // ✅ Lấy toàn bộ sản phẩm trong giỏ hàng
+            const cartRes = await axios.get(`http://127.0.0.1:3000/api/carts/user/${user.id}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            const cartItems = cartRes.data?.items || [];
+
+            if (cartItems.length === 0) {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Giỏ hàng trống',
+                    text: 'Không có sản phẩm để thanh toán.'
+                });
+                return;
             }
-        ];
-        const userItems = {
-            username: user.username,
-            email: user.email,
-            phone: user.phone
-        }
-        // Tính tổng tiền dựa trên số lượng và giá
-        const totalAmount = product.price * quantity;
 
-        // Điều hướng đến trang thanh toán và truyền state
-        navigate('/thanh-toan', { state: { selectedItems, totalAmount, userItems } });
+            // ✅ Lấy thông tin user
+            const userItems = {
+                username: user.username,
+                email: user.email,
+                phone: user.phone
+            };
+
+            // ✅ Tính tổng tiền
+            const totalAmount = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+            // ✅ Điều hướng tới trang thanh toán với toàn bộ giỏ hàng
+            navigate('/thanh-toan', {
+                state: {
+                    selectedItems: cartItems.map(item => ({
+                        id: item.product_id,
+                        name: product?.name || 'Không rõ',
+                        imageUrl: `http://127.0.0.1:3000/uploads/${item.image}`,
+                        price: item.price,
+                        quantity: item.quantity,
+                        color: item.color,
+                        fromCart: true,
+                        cartItemId: item.id,
+                    })),
+                    totalAmount,
+                    userItems
+                }
+            });
+
+        } catch (err) {
+            console.error("Lỗi khi xử lý thanh toán:", err);
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi khi xử lý thanh toán',
+                text: 'Vui lòng thử lại sau.'
+            });
+        }
     };
+
 
     if (loading) {
         return (
@@ -318,15 +416,18 @@ const ProductDetail = () => {
                 });
                 return;
             }
-
+            const selectedVariation = variations[selectedIndex];
             const payload = {
                 user_id: user.id,
                 items: [
                     {
                         product_id: product.id,
                         quantity: quantity,
-                        price: product.price,
-                        image: product.imageUrl
+                        // price: product.price,
+                        // image: product.imageUrl
+                        price: selectedVariation?.price ?? product.price,
+                        image: selectedVariation?.imageUrl ?? product.imageUrl,
+                        color: selectedVariation?.color ?? "Không rõ"
                     }
                 ]
             };
@@ -367,7 +468,8 @@ const ProductDetail = () => {
 
             setProduct(prev => ({
                 ...prev,
-                imageUrl: variations[newIndex].imageUrl
+                imageUrl: variations[newIndex].imageUrl,
+                price: variations[newIndex].price
             }));
 
             // Scroll to thumbnail
@@ -387,7 +489,6 @@ const ProductDetail = () => {
         setStartX(e.pageX - scrollRef.current.offsetLeft);
         setScrollLeft(scrollRef.current.scrollLeft);
     };
-
     const handleMouseLeave = () => setIsDragging(false);
     const handleMouseUp = () => setIsDragging(false);
 
@@ -398,8 +499,6 @@ const ProductDetail = () => {
         const walk = (x - startX) * 1.5; // Tăng tốc nếu muốn
         scrollRef.current.scrollLeft = scrollLeft - walk;
     };
-
-
     return (
         <>
             <ComeBack />
@@ -449,7 +548,6 @@ const ProductDetail = () => {
                                 </svg>
                             </button>
                             <div className="related-images-wrapper mt-2">
-
                                 <div className="related-images-scroll" ref={scrollRef}
                                     onMouseDown={handleMouseDown}
                                     onMouseLeave={handleMouseLeave}
@@ -465,7 +563,8 @@ const ProductDetail = () => {
                                                 setSelectedIndex(index);
                                                 setProduct(prev => ({
                                                     ...prev,
-                                                    imageUrl: variation.imageUrl
+                                                    imageUrl: variation.imageUrl,
+                                                    price: variation.price
                                                 }));
                                             }}
                                             onError={(e) => (e.target.src = "/images/default-placeholder.jpg")}
@@ -517,7 +616,9 @@ const ProductDetail = () => {
                                         setSelectedIndex(index);
                                         setProduct(prev => ({
                                             ...prev,
-                                            imageUrl: variation.imageUrl
+                                            imageUrl: variation.imageUrl,
+                                            price: variation.price,
+                                            color: variation.color
                                         }));
                                     }}
                                     style={{
@@ -536,7 +637,11 @@ const ProductDetail = () => {
                                         alt={`color-${index}`}
                                         style={{ height: "35px", width: "35px", marginRight: "10px", borderRadius: "4px" }}
                                     />
-                                    <div style={{ color: "#555" }}>{variation.color ?? 'Không màu'}</div>
+                                    <div style={{ display: "flex", flexDirection: "column" }}>
+                                        <div style={{ color: "#555" }}>{variation.color ?? "Không màu"}</div>
+                                        <span style={{ color: "red", fontSize: "12px", fontWeight: "bold" }}>{formatCurrency(variation.price)}</span>
+                                    </div>
+
                                 </div>
                             ))}
                         </div>
@@ -552,7 +657,7 @@ const ProductDetail = () => {
                                 >
                                     {outOfStock ? "Hết hàng" : cartLoading ? "Đang thêm..." : "Thêm vào giỏ hàng"}
                                 </button>
-                                <button className="mua-tra-gop" style={{ backgroundColor: "#503eb6", color: "white" }} disabled={outOfStock} onClick={handleCheckout}> Mua ngay</button>
+                                <button className="mua-tra-gop" style={{ backgroundColor: "#503eb6", color: "white" }} disabled={outOfStock} onClick={handleCheckout} > Mua ngay</button>
                             </div>
                         </div>
                         <img style={{ height: "auto", maxWidth: "565px", borderRadius: "7px", marginTop: "7px" }} src="https://clickbuy.com.vn/uploads/media/657-LHKNd.jpg" />

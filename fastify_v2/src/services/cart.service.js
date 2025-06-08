@@ -3,30 +3,24 @@ const createCart = async (db, { user_id, items }) => {
   return new Promise((resolve, reject) => {
     db.query('SELECT * FROM cart WHERE user_id = ?', [user_id], async (err, cartRows) => {
       if (err) return reject(err);
-
       let cart_id;
       let total_price = 0;
-
       if (cartRows.length === 0) {
         // Chưa có cart, tạo mới
         total_price = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
         db.query('INSERT INTO cart (user_id, total_price) VALUES (?, ?)', [user_id, total_price], (err, cartResult) => {
           if (err) return reject(err);
-
           cart_id = cartResult.insertId;
-
           insertItems(cart_id);
         });
       } else {
         // Đã có cart
         cart_id = cartRows[0].id;
-
         const insertOrUpdatePromises = items.map(item => {
           return new Promise((resolveItem, rejectItem) => {
-            const { product_id, quantity, price } = item;
-            db.query('SELECT * FROM cart_item WHERE cart_id = ? AND product_id = ?', [cart_id, product_id], (err, itemRows) => {
+            const { product_id, quantity, price, image, color } = item;
+            db.query('SELECT * FROM cart_item WHERE cart_id = ? AND product_id = ? AND color = ? AND price = ?', [cart_id, product_id, color, price], (err, itemRows) => {
               if (err) return rejectItem(err);
-
               if (itemRows.length > 0) {
                 const existingItem = itemRows[0];
                 const newQuantity = existingItem.quantity + quantity;
@@ -37,7 +31,7 @@ const createCart = async (db, { user_id, items }) => {
                 });
               } else {
                 const totalPrice = price * quantity;
-                db.query('INSERT INTO cart_item (product_id, price, quantity, total_price, cart_id) VALUES (?, ?, ?, ?, ?)', [product_id, price, quantity, totalPrice, cart_id], (err) => {
+                db.query('INSERT INTO cart_item (product_id, price, quantity, total_price, cart_id, image, color) VALUES (?, ?, ?, ?, ?,?,?)', [product_id, price, quantity, totalPrice, cart_id, image?.split('/').pop(), color], (err) => {
                   if (err) return rejectItem(err);
                   resolveItem();
                 });
@@ -45,7 +39,6 @@ const createCart = async (db, { user_id, items }) => {
             });
           });
         });
-
         try {
           await Promise.all(insertOrUpdatePromises);
           updateCartTotalPrice(cart_id); // Chỉ gọi 1 lần
@@ -53,7 +46,6 @@ const createCart = async (db, { user_id, items }) => {
           return reject(err);
         }
       }
-
       function insertItems(cart_id) {
         const values = items.map(item => [
           item.product_id,
@@ -61,15 +53,14 @@ const createCart = async (db, { user_id, items }) => {
           item.quantity,
           item.price * item.quantity,
           cart_id,
-          item.image.split('/').pop()
+          item.image?.split('/').pop(),
+          item.color
         ]);
-
-        db.query('INSERT INTO cart_item (product_id, price, quantity, total_price, cart_id,image) VALUES ?', [values], (err) => {
+        db.query('INSERT INTO cart_item (product_id, price, quantity, total_price, cart_id,image, color) VALUES ?', [values], (err) => {
           if (err) return reject(err);
           updateCartTotalPrice(cart_id);
         });
       }
-
       function updateCartTotalPrice(cart_id) {
         db.query('SELECT SUM(total_price) AS total FROM cart_item WHERE cart_id = ?', [cart_id], (err, [result]) => {
           if (err) return reject(err);
@@ -80,7 +71,7 @@ const createCart = async (db, { user_id, items }) => {
             if (err) return reject(err);
 
             // 🔁 Truy vấn lại các item trong giỏ hàng
-            db.query('SELECT product_id, quantity, price, total_price FROM cart_item WHERE cart_id = ?', [cart_id], (err, items) => {
+            db.query('SELECT product_id, quantity, price, total_price, image, color FROM cart_item WHERE cart_id = ?', [cart_id], (err, items) => {
               if (err) return reject(err);
 
               resolve({

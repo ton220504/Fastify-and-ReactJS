@@ -8,7 +8,6 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import confetti from 'canvas-confetti';
 import { Spinner } from 'react-bootstrap';
-import { ip } from "../../api/Api";
 
 
 const Pay = () => {
@@ -34,12 +33,6 @@ const Pay = () => {
     const [totalMoney, setTotalMoney] = useState(totalAmount);
     const [selectedPay, setSelectedPay] = useState(""); //xử lý chọn phương thức thanh toán.
 
-
-
-    //abate
-    // const [name, setName] = useState("");
-    // const [phone, setPhone] = useState("");
-    // const [email, setEmail] = useState("");
     const [email, setEmail] = useState(userItems.email || "");
     const [name, setName] = useState(userItems.username || "");
     const [phone, setPhone] = useState(userItems.phone || "");
@@ -47,10 +40,12 @@ const Pay = () => {
     const [province, setProvince] = useState([]);
     const [district, setDistrict] = useState([]);
     const [ward, setWard] = useState([]);
-    //const [commune, setCommune] = useState([]);
     const [address, setAddress] = useState("");
-    //const [totalAmount, setTotalAmount] = useState(0);
     const fee = 40000; // Đặt phí cố định
+    const [selectedItemsChecked, setSelectedItemsChecked] = useState(
+        selectedItems.map(() => true) // tất cả mặc định được chọn
+    );
+
 
     const paymentMethods = [
         { label: "Thanh toán khi nhận hàng", value: "COD", img: "https://cdn-icons-png.flaticon.com/512/10694/10694769.png" },
@@ -119,12 +114,14 @@ const Pay = () => {
         const token = localStorage.getItem('token');
         const user = JSON.parse(localStorage.getItem("user"));
         // Tạo danh sách items theo định dạng mới
-        const items = selectedItems.map(item => ({
-            product_id: item.id,
-            quantity: item.quantity,
-            price: item.price,
-            image: item.imageUrl
-        }));
+        const items = selectedItems
+            .filter((item, index) => selectedItemsChecked[index])
+            .map(item => ({
+                product_id: item.id,
+                quantity: item.quantity,
+                price: item.price,
+                image: item.imageUrl
+            }));
         const orderData = {
             user_id: user.id,
             total_price: totalMoney,
@@ -151,9 +148,13 @@ const Pay = () => {
                     })
             ));
             // 2. Xóa cart items (nếu có chọn từ giỏ hàng)
-            const cartItemIds = selectedItems
-                .filter(item => item.fromCart)
-                .map(item => item.cartItemId);
+            const cartItemIds = selectedItems.reduce((acc, item, index) => {
+                if (item.fromCart && selectedItemsChecked[index]) {
+                    if (item.cartItemId) acc.push(item.cartItemId);
+                    else console.warn('⚠️ Thiếu cartItemId ở item:', item);
+                }
+                return acc;
+            }, []);
             if (cartItemIds.length > 0) {
                 await Promise.all(
                     cartItemIds.map(id =>
@@ -183,6 +184,11 @@ const Pay = () => {
             setErrorMessage("Lỗi khi đặt hàng. Vui lòng thử lại.");
         }
     }
+    const handleCheckboxChange = (index) => {
+        const updatedChecked = [...selectedItemsChecked];
+        updatedChecked[index] = !updatedChecked[index];
+        setSelectedItemsChecked(updatedChecked);
+    };
 
     // 🟢 Hàm tính tổng tiền của từng sản phẩm
     const calculateItemTotal = (item) => {
@@ -192,13 +198,20 @@ const Pay = () => {
     };
     // 🟢 Hàm tính tổng tiền toàn bộ đơn hàng
     const calculateTotalAmount = () => {
-        return selectedItems.reduce((acc, item) => acc + calculateItemTotal(item), 0);
+        return selectedItems.reduce((acc, item, index) => {
+            if (selectedItemsChecked[index]) {
+                return acc + calculateItemTotal(item);
+            }
+            return acc;
+        }, 0);
     };
+
     // 🟢 useEffect để cập nhật tổng tiền khi selectedItems thay đổi
     useEffect(() => {
         const newTotal = calculateTotalAmount();
-        setTotalMoney(newTotal + fee); // Cộng phí vận chuyển nếu có
-    }, [selectedItems, fee]);
+        setTotalMoney(newTotal + fee); // fee là phí vận chuyển (nếu có)
+    }, [selectedItems, selectedItemsChecked, fee]);
+
     const formatCurrency = (value) => {
         if (!value || isNaN(value)) return "0 VND"; // Nếu không có giá trị hợp lệ, trả về "0 VND"
 
@@ -248,29 +261,6 @@ const Pay = () => {
             fetchWards();
         }
     }, [selectedDistrict]);
-    // const handleSubmitMomo = async () => {
-    //     try {
-    //         const response = await axios.post(
-    //             'http://127.0.0.1:3000/payment',
-    //             { total: totalMoney }, // Dữ liệu gửi đi
-    //             {
-    //                 headers: {
-    //                     'Content-Type': 'application/json'
-    //                 }
-    //             }
-    //         );
-    //         const data = response.data;
-
-    //         if (data.payUrl) {
-    //             window.location.href = data.payUrl; // Điều hướng người dùng tới trang thanh toán MoMo
-    //         } else {
-    //             alert("Có lỗi xảy ra khi tạo thanh toán.");
-    //         }
-    //     } catch (err) {
-    //         console.error(err);
-    //         alert("Lỗi mạng hoặc máy chủ.");
-    //     }
-    // };
     const handleSubmitMomo = async () => {
         try {
             if (!email || !name || !phone || !selectedProvince || !selectedDistrict || !selectedWard || !address) {
@@ -290,14 +280,16 @@ const Pay = () => {
                 });
                 return;
             }
-            const items = selectedItems.map(item => ({
-                product_id: item.id,
-                quantity: item.quantity,
-                price: item.price,
-                image: item.imageUrl,
-                fromCart: item.fromCart,
-                cartItemId: item.cartItemId
-            }));
+            const items = selectedItems
+                .filter((item, index) => selectedItemsChecked[index])
+                .map(item => ({
+                    product_id: item.id,
+                    quantity: item.quantity,
+                    price: item.price,
+                    image: item.imageUrl,
+                    fromCart: item.fromCart,
+                    cartItemId: item.cartItemId
+                }));
 
             const orderInfo = {
                 user_id: user.id,
@@ -469,8 +461,7 @@ const Pay = () => {
                                             </div>
                                         ))}
                                     </div>
-
-
+                                    <p onClick={() => navigate(-1)} className="form-control" style={{ color: "#503eb6", fontWeight: "bold", marginTop: "10px", width: "74px", backgroundColor: "#c9bef4", cursor: "pointer" }}>Trở về</p>
                                 </div>
                             </div>
                         </div>
@@ -484,78 +475,59 @@ const Pay = () => {
                                         {selectedItems.length === 0 ? (
                                             <p>Không có sản phẩm nào được chọn.</p>
                                         ) : (
-
                                             <ul>
                                                 {selectedItems.map((item, index) => (
                                                     <React.Fragment key={`${item.id}-${index}`}>
-
                                                         <li className="d-flex justify-content-between align-items-center">
                                                             <div className="d-flex align-items-center">
-                                                                {/* Hiển thị hình ảnh sản phẩm */}
                                                                 <img
                                                                     src={item.imageUrl}
                                                                     alt={item.name}
                                                                     style={{ width: '70px', height: '70px', marginRight: '10px' }}
                                                                 />
                                                                 <div>
-                                                                    <span style={{ fontWeight: "bold", width: "200px" }}>{item.name}</span><br />
+                                                                    <span style={{ fontWeight: "bold", fontSize: "12px" }}>{item.name}</span><br />
                                                                     <span style={{ fontWeight: "lighter", fontStyle: "italic" }}>
                                                                         Số lượng: {item.quantity}
                                                                     </span><br />
+                                                                    <span style={{ fontWeight: "lighter", fontStyle: "italic" }}>
+                                                                        {formatCurrency(item.price)}
+                                                                    </span>
                                                                 </div>
+                                                                <input checked={selectedItemsChecked[index]}
+                                                                    onChange={() => handleCheckboxChange(index)}
+                                                                    style={{ marginLeft: "12px" }} type="checkbox"
+                                                                />
                                                             </div>
-                                                            <span style={{ fontWeight: "lighter", fontStyle: "italic" }}>
-                                                                {formatCurrency(item.price)}
-                                                            </span>
                                                         </li>
                                                     </React.Fragment>
                                                 ))}
                                             </ul>
                                         )}
                                         <hr />
-
                                         <div className="d-flex justify-content-between">
                                             <p>Tạm tính:</p>
                                             <strong style={{ fontWeight: "bold", fontStyle: "italic", fontSize: "16px" }}>
-                                                {formatCurrency(selectedItems.reduce((acc, item) => acc + calculateItemTotal(item), 0))}
+                                                {formatCurrency(
+                                                    selectedItems.reduce((acc, item, index) => {
+                                                        return selectedItemsChecked[index] ? acc + calculateItemTotal(item) : acc;
+                                                    }, 0)
+                                                )}
                                             </strong>
                                         </div>
                                         <div className="d-flex justify-content-between">
                                             <p>Phí vận chuyển: </p>
                                             <strong style={{ fontWeight: "bold", fontStyle: "italic", fontSize: "16px" }}>
-                                                {/* {isShowComplete() ?
-                                                    ( */}
                                                 <strong style={{ fontWeight: "bold", fontStyle: "italic", fontSize: "16px" }}>{formatCurrency(fee)}</strong>
-                                                {/* )
-                                                    :
-                                                    (
-                                                        <span>---</span>
-                                                    )
-                                                } */}
                                             </strong>
                                         </div>
                                         <hr />
-
                                         <div className="d-flex justify-content-between">
                                             <p>Tổng tiền:</p>
                                             <strong style={{ fontWeight: "bold", fontStyle: "italic", fontSize: "16px", color: "red" }}>
                                                 {formatCurrency(totalMoney)} {/* Hiển thị tổng tiền */}
                                             </strong>
                                         </div>
-                                        {/* <button onClick={handleSubmit} className="form-control" style={{ marginTop: "10px", backgroundColor: "SlateBlue", color: "white" }}>Thanh toán bằng tiền mặt</button>
-
-                                        <button
-                                            onClick={handleSubmitMomo}
-                                            className="form-control"
-                                            style={{
-                                                marginTop: "10px",
-                                                backgroundColor: "white",
-                                                color: "SlateBlue",
-                                                borderColor: "SlateBlue"
-                                            }}
-                                        >
-                                            Thanh toán bằng MoMo
-                                        </button> */}
                                         <button
                                             onClick={(event) => {
                                                 event.preventDefault(); // ✅ Sửa lỗi ở đây
@@ -611,16 +583,13 @@ const Pay = () => {
                                         >
                                             Thanh toán
                                         </button>
-
                                     </div>
                                 </div>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </Form>
-
         </>
     );
 }

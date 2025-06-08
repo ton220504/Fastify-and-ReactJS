@@ -16,17 +16,12 @@ const Cart = () => {
     const [loadingCart, setLoadingCart] = useState(true);
     const [loadingUser, setLoadingUser] = useState(true);
     const [user, setUser] = useState(null);
-
     const [selectedProducts, setSelectedProducts] = useState([]);
     const [selectAll, setSelectAll] = useState(false);
-
     const navigate = useNavigate();
-
-
     const formatCurrency = (value) => {
         return numeral(value).format('0,0') + ' ₫';
     };
-
     const fetchCartItems = async (token, user) => {
         try {
 
@@ -62,7 +57,7 @@ const Cart = () => {
                                 description: product.description,
                                 brand: product.brand,
                                 category: product.category,
-                                price: product.price,
+                                price: item.price,
                                 stockQuantity: product.stockQuantity,
                                 releaseDate: product.releaseDate,
                                 productAvailable: product.productAvailable,
@@ -93,8 +88,6 @@ const Cart = () => {
             setLoadingCart(false);
         }
     };
-
-
     const checkUserLogin = async () => {
         const token = localStorage.getItem("token");
         if (token) {
@@ -111,8 +104,6 @@ const Cart = () => {
             setLoadingUser(false);
         }
     };
-
-
     // // Hàm lấy thông tin người dùng từ API
     const getUserData = async () => {
         const token = localStorage.getItem("token");
@@ -148,20 +139,12 @@ const Cart = () => {
             window.location.reload();
         }
     };
-
-
     // Gọi hàm khi component được render
     useEffect(() => {
         //getUserData();
         fetchCartItems();
     }, []);
-
-
-
-
-
     const thanhtien = (price, quantity) => price * quantity;
-
     const tinhTongTien = () => {
         return cartitems
             .filter(item => selectedProducts.includes(item.id))
@@ -185,7 +168,8 @@ const Cart = () => {
                 price: item?.product?.price ? parseFloat(item.product.price) : 0,
                 quantity: item?.quantity ?? 1,
                 stock: item?.product.stockQuantity,
-                fromCart: true
+                fromCart: true,
+                cartItemId: item.id,
             }));
         console.log(selectedItems);
         const userItems = {
