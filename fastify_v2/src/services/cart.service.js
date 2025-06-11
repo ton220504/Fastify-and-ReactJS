@@ -134,13 +134,33 @@ const getAllCarts = (db) => {
   });
 };
 
+// const getCartByUserId = (db, user_id) => {
+//   return new Promise((resolve, reject) => {
+//     db.query('SELECT * FROM cart WHERE user_id = ?', [user_id], (err, [cart]) => {
+//       if (err) return reject(err);
+//       if (!cart) return resolve(null);
+
+//       db.query('SELECT * FROM cart_item WHERE cart_id = ?', [cart.id], (err, items) => {
+//         if (err) return reject(err);
+//         resolve({ ...cart, items });
+//       });
+//     });
+//   });
+// };
 const getCartByUserId = (db, user_id) => {
   return new Promise((resolve, reject) => {
     db.query('SELECT * FROM cart WHERE user_id = ?', [user_id], (err, [cart]) => {
       if (err) return reject(err);
       if (!cart) return resolve(null);
 
-      db.query('SELECT * FROM cart_item WHERE cart_id = ?', [cart.id], (err, items) => {
+      // Join cart_item với product để lấy product.name
+      const sql = `
+        SELECT ci.*, p.name AS product_name 
+        FROM cart_item ci
+        JOIN product p ON ci.product_id = p.id
+        WHERE ci.cart_id = ?
+      `;
+      db.query(sql, [cart.id], (err, items) => {
         if (err) return reject(err);
         resolve({ ...cart, items });
       });

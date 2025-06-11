@@ -475,7 +475,7 @@ const Pay = () => {
                                         {selectedItems.length === 0 ? (
                                             <p>Không có sản phẩm nào được chọn.</p>
                                         ) : (
-                                            <ul>
+                                            <ul id="ul-product">
                                                 {selectedItems.map((item, index) => (
                                                     <React.Fragment key={`${item.id}-${index}`}>
                                                         <li className="d-flex justify-content-between align-items-center">

@@ -316,7 +316,7 @@ const ProductDetail = () => {
             });
 
             const cartItems = cartRes.data?.items || [];
-
+            console.log(cartItems);
             if (cartItems.length === 0) {
                 Swal.fire({
                     icon: 'info',
@@ -341,7 +341,7 @@ const ProductDetail = () => {
                 state: {
                     selectedItems: cartItems.map(item => ({
                         id: item.product_id,
-                        name: product?.name || 'Không rõ',
+                        name: item?.product_name || 'Không rõ',
                         imageUrl: `http://127.0.0.1:3000/uploads/${item.image}`,
                         price: item.price,
                         quantity: item.quantity,
