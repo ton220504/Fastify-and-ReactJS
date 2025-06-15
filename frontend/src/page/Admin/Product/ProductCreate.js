@@ -28,6 +28,7 @@ const AddProduct = () => {
     const handleImageChange = (e) => {
         setImage(e.target.files[0]);
     };
+    
     //gọi brand
     useEffect(() => {
         const fetchbrand = async () => {
@@ -98,7 +99,7 @@ const AddProduct = () => {
                 stock_quantity: Number(product.stockQuantity),
                 image: imageName,
                 release_date: formattedDate,
-                product_available: product.productAvailable,
+                product_available: 0,
                 isDelete: product.isDelete
             };
 
@@ -139,7 +140,7 @@ const AddProduct = () => {
             Swal.fire({
                 icon: "error",
                 text: "Thêm sản phẩm thất bại!",
-                
+
             });
         }
     };
@@ -252,14 +253,14 @@ const AddProduct = () => {
                     <div className="col-md-4">
                         <label className="form-label"><strong>Hình ảnh</strong></label>
                         <input
-
+                            accept="image/*"
                             className="form-control"
                             type="file"
                             onChange={handleImageChange}
                             required
                         />
                     </div>
-                    <div className="col-12">
+                    {/* <div className="col-12">
                         <div className="form-check">
                             <input
                                 className="form-check-input"
@@ -273,7 +274,8 @@ const AddProduct = () => {
                             />
                             <label className="form-check-label">Product Available</label>
                         </div>
-                    </div>
+                    </div> */}
+                    
                     <div className="col-12">
                         <button type="submit" className="btn btn-success w-100">
                             Thêm Sản Phẩm

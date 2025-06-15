@@ -10,12 +10,17 @@ const cors = require('@fastify/cors');
 require('dotenv').config();
 var path = require('path');
 global.appRoot = path.resolve(__dirname);
-///////multipart///////
 fastify.register(require('@fastify/multipart'));
-///////upload///////////
 const fastifyStatic = require('@fastify/static');
-
+const fs = require('fs');
+const mysqlConnection = require('./configs/connection');
+mysqlConnection(fastify);
 // ✅ Đăng ký middleware phục vụ file tĩnh
+// Cấu hình phục vụ file tĩnh
+const uploadsDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir);
+}
 fastify.register(fastifyStatic, {
     root: path.join(global.appRoot, 'uploads'), // 📂 Trỏ tới thư mục chứa ảnh
     prefix: '/uploads/', // 🏷️ Định nghĩa URL prefix
@@ -23,6 +28,63 @@ fastify.register(fastifyStatic, {
         res.setHeader('Access-Control-Allow-Origin', '*');
     }
 });
+
+// Route để upload ảnh
+// fastify.post('/upload-images', async (req, res) => {
+//     try {
+//         const parts = req.parts();  // This gives us the form data, including files
+
+//         let files = [];
+//         let colorName, price, productId, sortOrder;
+
+//         // Xử lý từng phần dữ liệu (file và các trường khác)
+//         for await (const part of parts) {
+//             if (part.file) {
+//                 const filePath = path.join(uploadsDir, part.filename);
+//                 const writeStream = fs.createWriteStream(filePath);
+//                 part.file.pipe(writeStream); // Pipe the file to disk
+
+//                 files.push({ file: part.filename, path: filePath });
+//             } else {
+//                 if (part.fieldname === 'colorName') colorName = part.value;
+//                 if (part.fieldname === 'price') price = part.value;
+//                 if (part.fieldname === 'productId') productId = part.value;
+//                 if (part.fieldname === 'sortOrder') sortOrder = part.value;
+//             }
+//         }
+
+//         // Validate data
+//         if (!colorName || !price || !productId || !sortOrder || files.length === 0) {
+//             return res.status(400).send({ error: 'Missing required fields' });
+//         }
+
+//         // Thực hiện truy vấn để thêm ảnh vào bảng `images`
+//         const insertImageQuery = 'INSERT INTO images (image_url, color_name, price) VALUES (?, ?, ?)';
+//         const imageUrl = `http://localhost:3000/uploads/${files[0].file}`;
+
+//         // Sử dụng async/await với `fastify.mysql.query()`
+//         const [imageResult] = await fastify.mysql.query(insertImageQuery, [imageUrl, colorName, price]);
+
+//         // Kiểm tra kết quả trả về từ truy vấn `INSERT INTO images`
+//         if (!imageResult || !imageResult.insertId) {
+//             throw new Error('Failed to insert image record into database.');
+//         }
+
+//         // Lấy `image_id` từ kết quả
+//         const imageId = imageResult.insertId;
+
+//         // Insert vào bảng `product_images`
+//         const insertProductImageQuery = 'INSERT INTO product_images (product_id, image_id, sort_order) VALUES (?, ?, ?)';
+//         await fastify.mysql.query(insertProductImageQuery, [productId, imageId, sortOrder]);
+
+//         return res.status(201).send({ message: 'Image uploaded and linked successfully' });
+//     } catch (err) {
+//         console.error('Error:', err);
+//         return res.status(500).send({ error: 'Internal Server Error', details: err.message });
+//     }
+// });
+
+
 
 /////////////////AUthorization//////////////////
 const jwt = require('jsonwebtoken');
@@ -49,11 +111,6 @@ fastify.decorate("authenticate", async function (request, reply) {
 });
 
 
-
-
-
-const mysqlConnection = require('./configs/connection');
-mysqlConnection(fastify);
 fastify.register(require('@fastify/cors'), {
     origin: "*", // Cho phép tất cả origin (có thể giới hạn lại nếu cần)
     methods: ["GET", "POST", "PUT", "DELETE"], // Chỉ định các method được phép

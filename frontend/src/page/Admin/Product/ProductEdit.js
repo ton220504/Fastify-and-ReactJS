@@ -16,18 +16,19 @@ const UpdateProduct = () => {
         price: "",
         category: "",
         releaseDate: "",
-        productAvailable: false,
+        productAvailable: 0,
         stockQuantity: "",
-        isDelete:0,
+        isDelete: 0,
     });
     const [brands, setBrands] = useState([]);
     const [category, setCategory] = useState([]);
+
     //gọi brand
     useEffect(() => {
         const fetchcbrand = async () => {
             try {
                 const response = await axios.get("http://localhost:3000/api/brand");
-                console.log(response.data); // Kiểm tra dữ liệu trả về
+                //console.log(response.data); // Kiểm tra dữ liệu trả về
                 if (Array.isArray(response.data)) {
                     setBrands(response.data);
                 } else {
@@ -44,7 +45,7 @@ const UpdateProduct = () => {
         const fetchcategory = async () => {
             try {
                 const response = await axios.get("http://localhost:3000/api/category");
-                console.log(response.data); // Kiểm tra dữ liệu trả về
+                //console.log(response.data); // Kiểm tra dữ liệu trả về
                 if (Array.isArray(response.data)) {
                     setCategory(response.data);
                 } else {
@@ -70,7 +71,10 @@ const UpdateProduct = () => {
                     ...productData,
                     imageUrl: productData.image
                         ? `http://127.0.0.1:3000/uploads/${productData.image}`
-                        : "/images/default-placeholder.jpg"
+                        : "/images/default-placeholder.jpg",
+                    imagesurl: productData.images.map((img) => ({
+                        imageUrl: `http://127.0.0.1:3000/uploads/${img.url}`
+                    }))
                 };
                 setProduct(updatedProduct);
                 setUpdateProduct(updatedProduct);
@@ -108,7 +112,7 @@ const UpdateProduct = () => {
                 stock_quantity: Number(updateProduct.stockQuantity),
                 image: imageFilename,
                 release_date: new Date(updateProduct.releaseDate).toISOString(),
-                product_available: updateProduct.productAvailable,
+                product_available: 0,
                 isDelete: updateProduct.isDelete
             };
 
@@ -246,8 +250,8 @@ const UpdateProduct = () => {
                                 src={product.imageUrl}
                                 alt={product.imageUrl}
                                 style={{
-                                    width: "200px",
-                                    height: "200px",
+                                    width: "100px",
+                                    height: "100px",
                                     objectFit: "cover",
                                     borderRadius: "4px",
                                 }}
@@ -260,17 +264,32 @@ const UpdateProduct = () => {
                             name="imageUrl"
                         />
                     </div>
-                    <div className="col-12">
-                        <div className="form-check">
-                            <input
-                                className="form-check-input"
-                                type="checkbox"
-                                name="productAvailable"
-                                checked={updateProduct.productAvailable}
-                                onChange={(e) => setUpdateProduct({ ...updateProduct, productAvailable: e.target.checked })}
-                            />
-                            <label className="form-check-label"><strong>Product Available</strong></label>
+                    <div className="col-md-8">
+                        <label className="form-label"><strong>Hình ảnh liên quan</strong></label>
+                        <div className="image-preview mb-2">
+                            {product?.imagesurl?.length > 0 ? (
+                                product.imagesurl.map((images, index) => (
+                                    <img
+                                        key={index}
+                                        height="60px"
+                                        width="60px"
+                                        src={images.imageUrl}
+                                        alt={`Ảnh liên quan ${images.name}`}  // Cập nhật alt để rõ ràng hơn
+                                        onError={(e) => (e.target.src = "/images/default-placeholder.jpg")}
+                                    />
+                                ))
+                            ) : (
+                                <div>Không có ảnh liên quan</div>
+                            )}
                         </div>
+                        <input
+                            className="form-control"
+                            type="file"
+                            onChange={handleImageChange}
+                            name="imageUrl"
+                            multiple
+                            accept="image/*"
+                        />
                     </div>
                     <div className="col-12">
                         <button type="submit" className="btn btn-primary w-100">Lưu thay đổi</button>

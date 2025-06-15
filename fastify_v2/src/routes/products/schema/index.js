@@ -11,7 +11,7 @@ const getNewest = require("./product.newest.schema");
 const updateStockSchema = require("./product.updateStock.schema");
 const restoreProductSchema = require("./product.restore.schema");
 const getNameProductSchema = require("./product.getnameproduct.schema");
-
+const imagesuploadProductSchema = require("./product.imagesupload.schema");
 
 module.exports = {
     getAllProductSchema,
@@ -26,6 +26,7 @@ module.exports = {
     updateStockSchema,
     getAllProductIsDeleteSchema,
     restoreProductSchema,
-    getNameProductSchema
+    getNameProductSchema,
+    imagesuploadProductSchema
     
 }

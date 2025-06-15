@@ -212,59 +212,7 @@ const ProductDetail = () => {
         getUserData();
 
     }, []);
-    // const handleCheckout = () => {
-    //     if (!product) {
-    //         console.error("Không có sản phẩm để thanh toán.");
-    //         return;
-    //     }
-    //     const token = localStorage.getItem("token");
-    //     const user = JSON.parse(localStorage.getItem("user"));
-
-    //     if (!user || !user.id || !token) {
-    //         Swal.fire({
-    //             icon: 'error',
-    //             title: 'Bạn cần đăng nhập để mua sản phẩm này!',
-    //             confirmButtonText: 'Đăng nhập ngay'
-    //         }).then(() => {
-    //             navigate('/login');
-    //         });
-    //         return;
-    //     }
-
-    //     // Kiểm tra số lượng mua có vượt quá stockQuantity không
-    //     if (quantity > product.stockQuantity) {
-    //         Swal.fire({
-    //             icon: 'error',
-    //             toast: true,
-    //             position: "top-end",
-    //             title: 'Số lượng không đủ',
-    //             text: `Chỉ còn ${product.stockQuantity} sản phẩm trong kho. Vui lòng chọn lại số lượng.`,
-    //         });
-    //         return; // Dừng lại và không điều hướng
-    //     }
-
-    //     // Tạo thông tin sản phẩm cần mua
-    //     const selectedItems = [
-    //         {
-    //             id: product.id,              // ID sản phẩm
-    //             name: product.name,          // Tên sản phẩm
-    //             imageUrl: product.imageUrl,  // Ảnh sản phẩm
-    //             price: product.price,        // Giá sản phẩm
-    //             quantity: quantity,          // Số lượng mua
-    //             fromCart: false
-    //         }
-    //     ];
-    //     const userItems = {
-    //         username: user.username,
-    //         email: user.email,
-    //         phone: user.phone
-    //     }
-    //     // Tính tổng tiền dựa trên số lượng và giá
-    //     const totalAmount = product.price * quantity;
-
-    //     // Điều hướng đến trang thanh toán và truyền state
-    //     navigate('/thanh-toan', { state: { selectedItems, totalAmount, userItems } });
-    // };
+    
     const handleCheckout = async () => {
         const token = localStorage.getItem("token");
         const user = JSON.parse(localStorage.getItem("user"));

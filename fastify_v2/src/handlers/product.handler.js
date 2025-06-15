@@ -153,14 +153,40 @@ async function create(req, res) {
     res.status(500).send({ error: "Internal Server Error", details: err.message });
   }
 }
-async function getNameProduct(req, res) {
-    try {
-        const products = await productService.getNameProducts(req.server.mysql);
-        res.send(products);
-    } catch (err) {
-        console.error("Error fetching products:", err);
-        res.status(500).send({ error: "Internal Server Error" });
+const handleUploadImage = async (req, res) => {
+  try {
+    const { image_url, color_name, price, product_id} = req.body;
+
+    // Kiểm tra dữ liệu đầu vào
+    if (!image_url || !color_name || !price || !product_id ) {
+      return res.status(400).send({ error: "Missing required fields" });
     }
+
+    // Gọi hàm uploadImage để thêm ảnh vào bảng `images` và `product_images`
+    const result = await productService.uploadImage(req.server.mysql, { 
+      image_url, 
+      color_name, 
+      price, 
+      product_id, 
+      
+    });
+
+    return res.status(201).send(result);  // Trả về kết quả thành công
+
+  } catch (err) {
+    console.error("Error uploading image:", err);
+    return res.status(500).send({ error: "Internal Server Error", details: err.message });
+  }
+};
+
+async function getNameProduct(req, res) {
+  try {
+    const products = await productService.getNameProducts(req.server.mysql);
+    res.send(products);
+  } catch (err) {
+    console.error("Error fetching products:", err);
+    res.status(500).send({ error: "Internal Server Error" });
+  }
 }
 
 async function update(req, res) {
@@ -401,5 +427,6 @@ module.exports = {
   getAllIsDelete,
   IsDelete,
   restore,
-  getNameProduct
+  getNameProduct,
+  handleUploadImage
 };
