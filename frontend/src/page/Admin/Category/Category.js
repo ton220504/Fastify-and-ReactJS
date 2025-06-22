@@ -94,7 +94,10 @@ const Category = () => {
         } catch (error) {
             console.error("Lỗi khi xóa", error);
             Swal.fire({
-                text: "Lỗi khi xóa",
+                toast: true,
+                icon: 'success',
+                position: "top-end",
+                text: "Không thể xóa danh mục này vì đang có sản phẩm sử dụng nó!",
                 icon: "error",
                 timer: 2000,
                 timerProgressBar: true

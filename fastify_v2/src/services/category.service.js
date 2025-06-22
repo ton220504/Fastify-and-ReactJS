@@ -108,18 +108,79 @@ const deleteCategory = async (db, id) => {
     });
   });
 };
+// const softDelete = async (db, id) => {
+//   return new Promise((resolve, reject) => {
+//     db.query(
+//       "UPDATE category SET isDelete = 1 WHERE id = ?",
+//       [id],
+//       (err, result) => {
+//         if (err) {
+//           console.error("❌ MySQL Soft Delete Error:", err);
+//           reject(err);
+//           return;
+//         }
+//         resolve(result);
+//       }
+//     );
+//   });
+// };
 const softDelete = async (db, id) => {
   return new Promise((resolve, reject) => {
+    // Kiểm tra xem thương hiệu có đang được sử dụng trong sản phẩm hay không
     db.query(
-      "UPDATE category SET isDelete = 1 WHERE id = ?",
+      "SELECT name FROM category WHERE id = ?", // Lấy tên thương hiệu theo id
       [id],
-      (err, result) => {
+      (err, cateResult) => {
         if (err) {
-          console.error("❌ MySQL Soft Delete Error:", err);
+          console.error("❌ MySQL Error (cate check):", err);
           reject(err);
           return;
         }
-        resolve(result);
+
+        if (cateResult.length === 0) {
+          reject(new Error('danh mục không tồn tại!'));
+          return;
+        }
+
+        const cateName = cateResult[0].name; // Lấy tên thương hiệu
+
+        db.query(
+          "SELECT * FROM product WHERE category = ?", 
+          [cateName],
+          (err2, productResult) => {
+            if (err2) {
+              console.error("❌ MySQL Error (product check):", err2);
+              reject(err2);
+              return;
+            }
+
+            if (productResult.length > 0) {
+              // Nếu có sản phẩm sử dụng thương hiệu này, không cho phép xóa
+              reject(new Error('Không thể xóa danh mục này vì đang có sản phẩm sử dụng nó!'));
+              return;
+            }
+
+            // Nếu không có sản phẩm nào sử dụng thương hiệu, thực hiện xóa thương hiệu
+            db.query(
+              "UPDATE category SET isDelete = 1 WHERE id = ?",
+              [id],
+              (err3, result) => {
+                if (err3) {
+                  console.error("❌ MySQL Soft Delete Error:", err3);
+                  reject(err3);
+                  return;
+                }
+
+                if (result.affectedRows === 0) {
+                  resolve(null); // Không tìm thấy thương hiệu để xóa
+                  return;
+                }
+
+                resolve(result); // Trả về kết quả sau khi xóa thành công
+              }
+            );
+          }
+        );
       }
     );
   });

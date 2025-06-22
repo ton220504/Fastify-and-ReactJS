@@ -248,6 +248,8 @@ async function IsDelete(req, res) {
     res.status(500).send({ error: 'Internal Server Error' });
   }
 }
+
+
 async function restore(req, res) {
   try {
     const id = parseInt(req.params.id, 10);
@@ -408,6 +410,27 @@ async function updateStock(req, res) {
     res.status(500).send({ error: 'Internal Server Error' });
   }
 }
+const handleDeleteImage = async (req, res) => {
+  try {
+    const { image_id } = req.body;
+
+    // Kiểm tra dữ liệu đầu vào
+    if (!image_id) {
+      return res.status(400).send({ error: "Missing required field: image_id" });
+    }
+
+    // Gọi hàm deleteImage để xóa ảnh từ bảng `images` và `product_images`
+    const result = await productService.deleteImage(req.server.mysql, { 
+      image_id,
+    });
+
+    return res.status(200).send(result);  // Trả về kết quả thành công
+
+  } catch (err) {
+    console.error("Error deleting image:", err);
+    return res.status(500).send({ error: "Internal Server Error", details: err.message });
+  }
+};
 
 
 
@@ -428,5 +451,6 @@ module.exports = {
   IsDelete,
   restore,
   getNameProduct,
-  handleUploadImage
+  handleUploadImage,
+  handleDeleteImage
 };

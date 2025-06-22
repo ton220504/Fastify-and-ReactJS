@@ -111,22 +111,89 @@ const deleteBrand = async (db, id) => {
     });
   });
 };
+
+// const softDelete = async (db, id) => {
+//   return new Promise((resolve, reject) => {
+//     db.query(
+//       "UPDATE brand SET isDelete = 1 WHERE id = ?",
+//       [id],
+//       (err, result) => {
+//         if (err) {
+//           console.error("❌ MySQL Soft Delete Error:", err);
+//           reject(err);
+//           return;
+//         }
+//         resolve(result);
+//       }
+//     );
+//   });
+// };
 const softDelete = async (db, id) => {
   return new Promise((resolve, reject) => {
+    // Kiểm tra xem thương hiệu có đang được sử dụng trong sản phẩm hay không
     db.query(
-      "UPDATE brand SET isDelete = 1 WHERE id = ?",
+      "SELECT name FROM brand WHERE id = ?", // Lấy tên thương hiệu theo id
       [id],
-      (err, result) => {
+      (err, brandResult) => {
         if (err) {
-          console.error("❌ MySQL Soft Delete Error:", err);
+          console.error("❌ MySQL Error (brand check):", err);
           reject(err);
           return;
         }
-        resolve(result);
+
+        if (brandResult.length === 0) {
+          // Không tìm thấy thương hiệu, báo lỗi
+          reject(new Error('Thương hiệu không tồn tại!'));
+          return;
+        }
+
+        const brandName = brandResult[0].name; // Lấy tên thương hiệu
+
+        // Kiểm tra xem có sản phẩm nào đang sử dụng thương hiệu này trong bảng product hay không
+        db.query(
+          "SELECT * FROM product WHERE brand = ?", // Kiểm tra sản phẩm với brandName
+          [brandName],
+          (err2, productResult) => {
+            if (err2) {
+              console.error("❌ MySQL Error (product check):", err2);
+              reject(err2);
+              return;
+            }
+
+            if (productResult.length > 0) {
+              // Nếu có sản phẩm sử dụng thương hiệu này, không cho phép xóa
+              reject(new Error('Không thể xóa thương hiệu này vì đang có sản phẩm sử dụng nó!'));
+              return;
+            }
+
+            // Nếu không có sản phẩm nào sử dụng thương hiệu, thực hiện xóa thương hiệu
+            db.query(
+              "UPDATE brand SET isDelete = 1 WHERE id = ?",
+              [id],
+              (err3, result) => {
+                if (err3) {
+                  console.error("❌ MySQL Soft Delete Error:", err3);
+                  reject(err3);
+                  return;
+                }
+
+                if (result.affectedRows === 0) {
+                  resolve(null); // Không tìm thấy thương hiệu để xóa
+                  return;
+                }
+
+                resolve(result); // Trả về kết quả sau khi xóa thành công
+              }
+            );
+          }
+        );
       }
     );
   });
 };
+
+
+
 const restore = async (db, id) => {
   return new Promise((resolve, reject) => {
     db.query(
@@ -151,5 +218,6 @@ module.exports = {
   deleteBrand,
   getAllIsDelete,
   softDelete,
-  restore
+  restore,
+  
 };

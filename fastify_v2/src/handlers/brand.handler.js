@@ -118,6 +118,7 @@ async function IsDelete(req, res) {
     res.status(500).send({ error: 'Internal Server Error' });
   }
 }
+
 async function restore(req, res) {
   try {
     const id = parseInt(req.params.id, 10);

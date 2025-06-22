@@ -32,6 +32,7 @@ const getOneProductSchema = {
                     items: {
                         type: 'object',
                         properties: {
+                            images_id:{type:"number"},
                             url: { type: 'string' },
                             color: { type: ['string', 'null'] },
                             price:{type:'number'}

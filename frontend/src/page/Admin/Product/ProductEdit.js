@@ -264,7 +264,7 @@ const UpdateProduct = () => {
                             name="imageUrl"
                         />
                     </div>
-                    <div className="col-md-8">
+                    {/* <div className="col-md-8">
                         <label className="form-label"><strong>Hình ảnh liên quan</strong></label>
                         <div className="image-preview mb-2">
                             {product?.imagesurl?.length > 0 ? (
@@ -290,7 +290,7 @@ const UpdateProduct = () => {
                             multiple
                             accept="image/*"
                         />
-                    </div>
+                    </div> */}
                     <div className="col-12">
                         <button type="submit" className="btn btn-primary w-100">Lưu thay đổi</button>
                     </div>

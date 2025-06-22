@@ -24,6 +24,7 @@ module.exports = function (fastify, opts, done) {
   fastify.get('/api/products/newest',{ schema: productShema.getNewest },productHandler.getNewest);
 
   fastify.post('/api/upload-images', {  schema: productShema.imagesuploadProductSchema }, productHandler.handleUploadImage);
+  fastify.delete('/api/delete-images', {  schema: productShema.imagesDeleteProductSchema }, productHandler.handleDeleteImage);
 
   done();
 };

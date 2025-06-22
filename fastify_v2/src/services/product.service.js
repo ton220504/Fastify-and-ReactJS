@@ -101,26 +101,7 @@ const getProductById = async (db, id) => {
 };
 
 
-// const createProduct = async (db, product) => {
-//   const { name, brand, category, price, description, stock_quantity, image, release_date, product_available, isDelete } = product;
 
-//   return new Promise((resolve, reject) => {
-//     db.query(
-//       `INSERT INTO product 
-//       (name, brand, category, price, description, stock_quantity, image, release_date, product_available, isDelete) 
-//       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-//       [name, brand, category, price, description, stock_quantity, image, release_date, product_available, isDelete],
-//       (err, result) => {
-//         if (err) {
-//           console.error("❌ MySQL Insert Error:", err);
-//           reject(err);
-//           return;
-//         }
-//         resolve({ id: result.insertId, ...product });
-//       }
-//     );
-//   });
-// };
 const createProduct = async (db, product) => {
   const { name, brand, category, price, description, stock_quantity, image, release_date, product_available, isDelete } = product;
 
@@ -244,22 +225,98 @@ const deleteProduct = async (db, id) => {
     );
   });
 };
+// const softDeleteProduct = async (db, id) => {
+//   return new Promise((resolve, reject) => {
+//     db.query(
+//       "UPDATE product SET isDelete = 1 WHERE id = ?",
+//       [id],
+//       (err, result) => {
+//         if (err) {
+//           console.error("❌ MySQL Soft Delete Error:", err);
+//           reject(err);
+//           return;
+//         }
+//         resolve(result);
+//       }
+//     );
+//   });
+// };
 const softDeleteProduct = async (db, id) => {
   return new Promise((resolve, reject) => {
+    // Kiểm tra sản phẩm có trong giỏ hàng hay không
     db.query(
-      "UPDATE product SET isDelete = 1 WHERE id = ?",
+      "SELECT * FROM cart_item WHERE product_id = ?",
       [id],
-      (err, result) => {
+      (err, cartResult) => {
         if (err) {
-          console.error("❌ MySQL Soft Delete Error:", err);
-          reject(err);
+          console.error("❌ MySQL Error (cart check):", err);
+          reject({
+            message: "Lỗi khi kiểm tra giỏ hàng",
+            detail: err.message,
+            code: 500, // Code tùy chỉnh cho lỗi
+          });
           return;
         }
-        resolve(result);
+
+        if (cartResult.length > 0) {
+          // Sản phẩm có trong giỏ hàng, không cho phép xóa
+          reject({
+            message: "Sản phẩm đang có trong giỏ hàng, không thể xóa!",
+            code: 400, // Lỗi client (sản phẩm không thể xóa vì có trong giỏ hàng)
+          });
+          return;
+        }
+
+        // Kiểm tra sản phẩm có trong wishlist hay không
+        db.query(
+          "SELECT * FROM wishlist_item WHERE product_id = ?",
+          [id],
+          (err2, wishlistResult) => {
+            if (err2) {
+              console.error("❌ MySQL Error (wishlist check):", err2);
+              reject({
+                message: "Lỗi khi kiểm tra wishlist",
+                detail: err2.message,
+                code: 500, // Code tùy chỉnh cho lỗi
+              });
+              return;
+            }
+
+            if (wishlistResult.length > 0) {
+              // Sản phẩm có trong wishlist, không cho phép xóa
+              reject({
+                message: "Sản phẩm đang có trong danh sách yêu thích, không thể xóa!",
+                code: 400, // Lỗi client (sản phẩm không thể xóa vì có trong wishlist)
+              });
+              return;
+            }
+
+            // Nếu không có trong cart hoặc wishlist, thực hiện xóa sản phẩm
+            db.query(
+              "UPDATE product SET isDelete = 1 WHERE id = ?",
+              [id],
+              (err3, result) => {
+                if (err3) {
+                  console.error("❌ MySQL Soft Delete Error:", err3);
+                  reject({
+                    message: "Lỗi khi thực hiện xóa sản phẩm",
+                    detail: err3.message,
+                    code: 500, // Lỗi server
+                  });
+                  return;
+                }
+                resolve(result);
+              }
+            );
+          }
+        );
       }
     );
   });
 };
+
+
+
 const restore = async (db, id) => {
   return new Promise((resolve, reject) => {
     db.query(
@@ -280,7 +337,7 @@ const searchProducts = async (db, searchTerm, page, limit) => {
   return new Promise((resolve, reject) => {
     // Tính tổng số sản phẩm tìm được với điều kiện lọc theo searchTerm
     db.query(
-      'SELECT COUNT(*) AS total FROM product WHERE name LIKE ?',
+      'SELECT COUNT(*) AS total FROM product WHERE name LIKE ? AND IsDelete = 0',
       [`%${searchTerm}%`],  // Sử dụng LIKE để tìm kiếm các sản phẩm có tên chứa searchTerm
       (err, countResult) => {
         if (err) {
@@ -290,7 +347,7 @@ const searchProducts = async (db, searchTerm, page, limit) => {
 
         // Lấy các sản phẩm phù hợp với searchTerm và phân trang
         db.query(
-          'SELECT * FROM product WHERE name LIKE ? LIMIT ?, ?',
+          'SELECT * FROM product WHERE name LIKE ? AND IsDelete = 0 LIMIT ?, ?',
           [`%${searchTerm}%`, (page - 1) * limit, limit],
           (err, products) => {
             if (err) {
@@ -427,7 +484,7 @@ const getNewestProducts = (db, limit = 5) => {
 };
 const getNameProducts = (db) => {
   return new Promise((resolve, reject) => {
-    const sql = `SELECT id,name FROM product`;
+    const sql = `SELECT id,name FROM product WHERE IsDelete = 0`;
     db.query(sql, (err, result) => {
       if (err) return reject(err);
       resolve(result);
@@ -471,7 +528,7 @@ const getProductImages = async (db, productId) => {
   return new Promise((resolve, reject) => {
     db.query(
       `
-      SELECT i.image_url, i.color_name, i.price
+      SELECT i.id, i.image_url, i.color_name, i.price
       FROM product_images pi
       JOIN images i ON pi.image_id = i.id
       WHERE pi.product_id = ?
@@ -486,6 +543,7 @@ const getProductImages = async (db, productId) => {
 
         // Format kết quả trước khi trả về
         const formattedImages = results.map(row => ({
+          images_id: row.id,
           url: row.image_url,
           color: row.color_name,
           price: row.price
@@ -510,68 +568,7 @@ const getStock = async (db, productName) => {
     });
   });
 };
-// const uploadImage = async (db, { image_url, color_name, price }) => {
-//   return new Promise((resolve, reject) => {
-//     // Thực hiện truy vấn để thêm ảnh vào bảng `images`
-//     db.query(
-//       `INSERT INTO images (image_url, color_name, price) 
-//        VALUES (?, ?, ?)`,
-//       [image_url, color_name, price],
-//       (err, result) => {
-//         if (err) {
-//           console.error("❌ MySQL Insert Error:", err);
-//           reject(err); // Nếu có lỗi, reject Promise
-//           return;
-//         }
 
-//         // Thành công, trả về id của ảnh vừa thêm và thông tin ảnh
-//         resolve({ id: result.insertId, image_url, color_name, price });
-//       }
-//     );
-//   });
-// };
-// const uploadImage = async (db, { image_url, color_name, price, product_id, sort_order }) => {
-//   return new Promise((resolve, reject) => {
-//     // Thực hiện truy vấn để thêm ảnh vào bảng `images`
-//     db.query(
-//       `INSERT INTO images (image_url, color_name, price) 
-//        VALUES (?, ?, ?)`,
-//       [image_url, color_name, price],
-//       (err, result) => {
-//         if (err) {
-//           console.error("❌ MySQL Insert Error:", err);
-//           reject(err); // Nếu có lỗi, reject Promise
-//           return;
-//         }
-
-//         // Lấy image_id từ kết quả insert vào bảng images
-//         const image_id = result.insertId;
-
-//         // Thực hiện truy vấn để thêm dữ liệu vào bảng `product_images`
-//         db.query(
-//           `INSERT INTO product_images (product_id, image_id, sort_order) 
-//            VALUES (?, ?, ?)`,
-//           [product_id, image_id, sort_order],
-//           (err2, result2) => {
-//             if (err2) {
-//               console.error("❌ MySQL Insert Error (product_images):", err2);
-//               reject(err2); // Nếu có lỗi trong quá trình insert vào product_images, reject Promise
-//               return;
-//             }
-
-//             // Thành công, trả về kết quả
-//             resolve({ 
-//               message: 'Image uploaded and linked to product successfully',
-//               image_id,
-//               product_id,
-//               sort_order
-//             });
-//           }
-//         );
-//       }
-//     );
-//   });
-// };
 const uploadImage = async (db, { image_url, color_name, price, product_id }) => {
   return new Promise((resolve, reject) => {
     // Bước 1: Thêm ảnh vào bảng `images`
@@ -591,7 +588,7 @@ const uploadImage = async (db, { image_url, color_name, price, product_id }) => 
 
         // Bước 2: Tính toán sort_order cho ảnh mới
         db.query(
-          `SELECT COUNT(*) AS count FROM product_images WHERE product_id = ?`,
+          `SELECT MAX(sort_order) AS max_sort_order FROM product_images WHERE product_id = ?`,
           [product_id],
           (err2, countResult) => {
             if (err2) {
@@ -600,13 +597,16 @@ const uploadImage = async (db, { image_url, color_name, price, product_id }) => 
               return;
             }
 
-            const sortOrder = countResult[0].count;  // `sort_order` tiếp theo sẽ là số lượng ảnh hiện tại
+            // Lấy giá trị sort_order cao nhất hiện tại
+            const maxSortOrder = countResult[0].max_sort_order || 0;
+
+            const newSortOrder = maxSortOrder + 1;  // Tính toán sort_order mới
 
             // Bước 3: Thêm ảnh vào bảng `product_images` với sort_order mới
             db.query(
               `INSERT INTO product_images (product_id, image_id, sort_order) 
                VALUES (?, ?, ?)`,
-              [product_id, imageId, sortOrder],
+              [product_id, imageId, newSortOrder],
               (err3) => {
                 if (err3) {
                   console.error("❌ MySQL Insert Error (product_images):", err3);
@@ -619,10 +619,47 @@ const uploadImage = async (db, { image_url, color_name, price, product_id }) => 
                   message: 'Image uploaded and linked to product successfully',
                   image_id: imageId,
                   product_id,
-                  sort_order: sortOrder
+                  sort_order: newSortOrder
                 });
               }
             );
+          }
+        );
+      }
+    );
+  });
+};
+
+
+const deleteImage = async (db, { image_id }) => {
+  return new Promise((resolve, reject) => {
+    // Bước 1: Xóa ảnh khỏi bảng `product_images`
+    db.query(
+      `DELETE FROM product_images WHERE image_id = ?`,
+      [image_id],
+      (err) => {
+        if (err) {
+          console.error("❌ MySQL Delete Error (product_images):", err);
+          reject(err);  // Nếu có lỗi, reject Promise
+          return;
+        }
+
+        // Bước 2: Xóa ảnh khỏi bảng `images`
+        db.query(
+          `DELETE FROM images WHERE id = ?`,
+          [image_id],
+          (err2) => {
+            if (err2) {
+              console.error("❌ MySQL Delete Error (images):", err2);
+              reject(err2);
+              return;
+            }
+
+            // Nếu cả hai bước xóa thành công
+            resolve({
+              message: 'Image deleted successfully',
+              image_id,
+            });
           }
         );
       }
@@ -654,5 +691,7 @@ module.exports = {
   restore,
   getNameProducts,
   getStock,
-  uploadImage
+  uploadImage,
+  deleteImage,
+  
 };
