@@ -83,13 +83,13 @@ const Order = () => {
     };
     const deleteAbates = async (id) => {
         const isConfirm = await Swal.fire({
-            title: "Are you sure?",
-            text: "You won't be able to revert this!",
+            title: "Bạn chắc chứ?",
+            text: "Bạn không thể khôi phục thao thác!",
             icon: "warning",
             showCancelButton: true,
             confirmButtonColor: "#3085d6",
             cancelButtonColor: "#d33",
-            confirmButtonText: "Yes, delete it!",
+            confirmButtonText: "Đúng, xóa nó!",
         });
 
         if (!isConfirm.isConfirmed) {
@@ -100,7 +100,7 @@ const Order = () => {
             await axios.delete(`http://localhost:3000/api/orders/${id}`);
             Swal.fire({
                 icon: "success",
-                title: "Deleted!",
+                title: "Xóa thành công!",
             }).then(() => {
                 getOrders();
             });
