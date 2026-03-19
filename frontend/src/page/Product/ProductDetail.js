@@ -202,7 +202,7 @@ const ProductDetail = () => {
             setUser(null);
             window.location.reload();
         }
-    }, []);
+    }, [setUser]);
     useEffect(() => {
         getUserData();
 
