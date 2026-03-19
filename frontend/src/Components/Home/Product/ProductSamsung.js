@@ -15,8 +15,6 @@ const ProductSamsung = () => {
     const [favoriteProducts, setFavoriteProducts] = useState([]); // Lưu trữ danh sách sản phẩm yêu thích
     const navigate = useNavigate();
     const perPage = 10; // Số sản phẩm mỗi trang
-    const [currentPage, setCurrentPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
     const formatCurrency = (value) => {
         return numeral(value).format('0,0') + ' ₫';
     };

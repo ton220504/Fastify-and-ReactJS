@@ -8,7 +8,6 @@ const TabTrans = (props) => {
 
     const [orderuserid, setOrderUserid] = useState([]);
     const [product, setProduct] = useState({}); // Store product details
-    const [error, setError] = useState(null);
 
     const fetchProductDetails = useCallback(async (product_id) => {
         if (!product_id) return; // Nếu productId không tồn tại, không gọi API

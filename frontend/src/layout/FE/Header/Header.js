@@ -16,9 +16,7 @@ const Header = () => {
 
     const [input, setInput] = useState("");
     const [searchResults, setSearchResults] = useState([]);
-    const [noResults, setNoResults] = useState(false);
     const [searchFocused, setSearchFocused] = useState(false);
-    const [showSearchResults, setShowSearchResults] = useState(false);
     const formatCurrency = (value) => {
         return numeral(value).format('0,0') + ' ₫';
     };

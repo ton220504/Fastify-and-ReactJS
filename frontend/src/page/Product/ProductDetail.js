@@ -206,7 +206,7 @@ const ProductDetail = () => {
     useEffect(() => {
         getUserData();
 
-    }, []);
+    }, [getUserData]);
     
     useEffect(() => {
         fetchReviews();
