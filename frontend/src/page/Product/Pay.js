@@ -13,7 +13,7 @@ const Pay = () => {
     const [provinces, setProvinces] = useState([]);
     const [districts, setDistricts] = useState([]);
     const [wards, setWards] = useState([]);
-    //const [loading, setLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
 
 
     const [selectedProvince, setSelectedProvince] = useState("");
