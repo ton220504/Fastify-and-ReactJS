@@ -1,20 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { Button, Modal } from "react-bootstrap";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import axios from "axios";
 
 import Swal from "sweetalert2";
-import { ip } from "../../../api/Api";
 
 const Brand = () => {
-    const { id } = useParams();
     const [brands, setBrands] = useState([]);
     const [name, setName] = useState("");
-    const navigate = useNavigate();
     const [editModalShow, setEditModalShow] = useState(false);
     const [editbrandId, setEditbrandId] = useState(null);
     const [editbrandName, setEditbrandName] = useState("");
-    const [success, setSuccess] = useState(false);
 
     const changeHandler = (event) => {
         const { name, value } = event.target;
@@ -25,7 +21,7 @@ const Brand = () => {
         e.preventDefault();
         const token = localStorage.getItem("token");
         try {
-            const response = await axios.post(`http://localhost:3000/api/brand`, { name }, {
+             await axios.post(`http://localhost:3000/api/brand`, { name }, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -94,7 +90,6 @@ const Brand = () => {
             console.error("Lỗi khi xóa", error);
             Swal.fire({
                 toast: true,
-                icon: 'success',
                 position: "top-end",
                 text: "Không thể xóa vì đang có sản phẩm sử dụng nó!",
                 icon: "error",
@@ -129,7 +124,7 @@ const Brand = () => {
     const handleEditBrand = async () => {
         try {
             const token = localStorage.getItem("token");
-            const response = await axios.put(`http://localhost:3000/api/brand/${editbrandId}`, { name: editbrandName }, {
+             await axios.put(`http://localhost:3000/api/brand/${editbrandId}`, { name: editbrandName }, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }

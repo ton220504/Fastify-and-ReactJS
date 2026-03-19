@@ -1,12 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { FaUser } from "react-icons/fa";
+import {  useLocation, useNavigate } from "react-router-dom";
 import "../../scss/Pay.scss"
-import { SiCashapp } from "react-icons/si";
-import { Button, Table, Form, Modal } from "react-bootstrap";
+import { Form } from "react-bootstrap";
 import axios from "axios";
 import Swal from "sweetalert2";
-import confetti from 'canvas-confetti';
 import { Spinner } from 'react-bootstrap';
 
 
@@ -26,8 +23,6 @@ const Pay = () => {
     const navigate = useNavigate();
     const [errorMessage, setErrorMessage] = useState("");
 
-    const [editModalShow, setEditModalShow] = useState(false);
-    const [isLocationSelected, setIsLocationSelected] = useState(false); // Trạng thái chọn địa phương
     const location = useLocation();
     const { selectedItems, totalAmount, userItems } = location.state || { selectedItems: [], totalAmount: 0, userItems: [] };
     const [totalMoney, setTotalMoney] = useState(totalAmount);
@@ -36,7 +31,6 @@ const Pay = () => {
     const [email, setEmail] = useState(userItems.email || "");
     const [name, setName] = useState(userItems.username || "");
     const [phone, setPhone] = useState(userItems.phone || "");
-    const [products, setProducts] = useState([]);
     const [province, setProvince] = useState([]);
     const [district, setDistrict] = useState([]);
     const [ward, setWard] = useState([]);
@@ -111,7 +105,6 @@ const Pay = () => {
             setErrorMessage("Vui lòng nhập đầy đủ thông tin!");
             return;
         }
-        const token = localStorage.getItem('token');
         const user = JSON.parse(localStorage.getItem("user"));
         // Tạo danh sách items theo định dạng mới
         const items = selectedItems
@@ -137,7 +130,7 @@ const Pay = () => {
         };
         try {
             // 1. Gửi đơn hàng
-            const res = await axios.post(`http://127.0.0.1:3000/api/orders`, orderData);
+            await axios.post(`http://127.0.0.1:3000/api/orders`, orderData);
             // 🔥 Trừ tồn kho sau khi tạo đơn hàng thành công
             await Promise.all(items.map(item =>
                 axios.put(`http://localhost:3000/api/products/${item.product_id}/stock`, {
@@ -210,7 +203,7 @@ const Pay = () => {
     useEffect(() => {
         const newTotal = calculateTotalAmount();
         setTotalMoney(newTotal + fee); // fee là phí vận chuyển (nếu có)
-    }, [selectedItems, selectedItemsChecked, fee]);
+    }, [selectedItems, selectedItemsChecked, fee, calculateTotalAmount]);
 
     const formatCurrency = (value) => {
         if (!value || isNaN(value)) return "0 VND"; // Nếu không có giá trị hợp lệ, trả về "0 VND"
@@ -334,7 +327,7 @@ const Pay = () => {
                     <div className=" row">
                         <div className="col-8">
                             <div className="main-header">
-                                <img className="logo" style={{ width: "300px", paddingTop: "10px", display: "block", margin: "0 auto" }} src="https://bizweb.dktcdn.net/100/497/960/themes/923878/assets/checkout_logo.png?1726452627090" />
+                                <img className="logo" style={{ width: "300px", paddingTop: "10px", display: "block", margin: "0 auto" }} src="https://bizweb.dktcdn.net/100/497/960/themes/923878/assets/checkout_logo.png?1726452627090" alt="image" />
                             </div>
                             {errorMessage && (
                                 <div className="alert alert-danger text-center">
@@ -457,7 +450,7 @@ const Pay = () => {
                                                     onChange={() => handleSelect(method.value)}
                                                 />
                                                 <span style={{ marginLeft: '8px' }}>{method.label}</span>
-                                                <img style={{ width: "30px", height: "25px", marginLeft: "10px" }} src={method.img} />
+                                                <img style={{ width: "30px", height: "25px", marginLeft: "10px" }} src={method.img} alt={method.label} />
                                             </div>
                                         ))}
                                     </div>

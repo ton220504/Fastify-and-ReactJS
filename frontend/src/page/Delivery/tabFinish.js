@@ -9,7 +9,7 @@ import { Link } from "react-router-dom";
 const TabFinish = (props) => {
     const { show, handleShow, handleClose } = props;
     const [orderuserid, setOrderUserid] = useState([]);
-    const [error, setError] = useState(null);
+    const [ setError] = useState(null);
     const [reviewContent, setReviewContent] = useState("");
     const [selectedProduct, setSelectedProduct] = useState(null); // ✅ Lưu sản phẩm thay vì ID
     const [product, setProduct] = useState({}); // Store product details
@@ -104,7 +104,7 @@ const TabFinish = (props) => {
                 });
             });
         }
-    }, [orderuserid]);
+    }, [orderuserid, fetchProductDetails]);
 
 
     const fetchProductDetails = async (product_id) => {

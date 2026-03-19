@@ -2,7 +2,6 @@ import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import { Button, Modal, Spinner } from "react-bootstrap";
 import Swal from "sweetalert2";
-import { ip } from "../../../api/Api";
 import html2canvas from "html2canvas";
 import "../../../assets/css/order.css";
 
@@ -13,7 +12,7 @@ const Order = () => {
     const [detailModalShow, setDetailModalShow] = useState(false);
     const [abateprint, setAbatePrint] = useState([]);
     const [detailPrintModalShow, setDetailPrintModalShow] = useState(false);
-    const [error, setError] = useState(null);
+    const [ setError] = useState(null);
     const [loadingId, setLoadingId] = useState(null);
 
     const labelRef = useRef();
@@ -393,21 +392,21 @@ const Order = () => {
                                         <hr />
                                         <div style={{ marginTop: '10px', display: "flex", justifyContent: "space-between" }}>
                                             <div style={{ width: "220px" }}>
-                                                <a>Tiền thu Người nhận:</a><br />
+                                                <span>Tiền thu Người nhận:</span><br />
                                                 <div style={{ textAlign: "center", marginTop: "10px", marginBottom: "10px" }}>
                                                     <strong style={{ fontSize: "20px" }}>
                                                         {abateprint.total_price?.toLocaleString()} VND
                                                     </strong>
                                                 </div>
                                                 <div>
-                                                    <a>Chỉ dẫn giao hàng:</a><br />
+                                                    <span>Chỉ dẫn giao hàng:</span><br />
                                                     - Không đồng kiểm<br />
                                                     - Giao hàng sau 3 lần phát<br />
                                                     - Chuyển hoàn tối đa 3 lần
                                                 </div>
                                             </div>
                                             <div>
-                                                <a>Khối lượng tịnh:</a> 300g
+                                                <span>Khối lượng tịnh:</span> 300g
                                                 <div style={{ border: "1px solid #ccc", padding: "8px", width: "300px", height: "150px", textAlign: "center" }}>
                                                     <strong>Chữ ký người nhận</strong><br />
                                                     <p style={{ fontSize: "13px" }}>Xác nhận hàng nguyên vẹn, không móp méo, bể/vỡ</p>

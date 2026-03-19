@@ -2,7 +2,6 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
 import { useDispatch } from 'react-redux';
-import ToastMessage from '../ToastMessage';
 
 const Individual = () => {
     const [user, setUser] = useState({});
@@ -46,7 +45,7 @@ const Individual = () => {
 
     useEffect(() => {
         getUser();
-    }, []);
+    }, [getUser]);
 
     const handleUpdateUser = async () => {
         const token = localStorage.getItem("token");
@@ -119,7 +118,7 @@ const Individual = () => {
             return;
         }
         try {
-            const res = await axios.put(`http://localhost:3000/api/users/${user.id}/password`, { oldPassword, newPassword }, {
+             await axios.put(`http://localhost:3000/api/users/${user.id}/password`, { oldPassword, newPassword }, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     'Content-Type': 'application/json'
@@ -165,7 +164,7 @@ const Individual = () => {
             return;
         }
         try {
-            const res = await axios.put(`http://localhost:3000/api/users/${user.id}/createpassword`, { createPassword }, {
+             await axios.put(`http://localhost:3000/api/users/${user.id}/createpassword`, { createPassword }, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     'Content-Type': 'application/json'

@@ -1,20 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { Button, Modal } from "react-bootstrap";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import axios from "axios";
 
 import Swal from "sweetalert2";
-import { ip } from "../../../api/Api";
 
 const Banner = () => {
-    const { id } = useParams();
     const [banner, setBanner] = useState([]);
     const [name, setName] = useState("");
-    const navigate = useNavigate();
     const [editModalShow, setEditModalShow] = useState(false);
     const [editbannerId, setEditbannerId] = useState(null);
     const [editbannerName, setEditbannerName] = useState("");
-    const [success, setSuccess] = useState(false);
     const [imageFile, setImageFile] = useState(null);
     const [editBannerImage, setEditBannerImage] = useState(null); // File ảnh mới
     const [editImagePreview, setEditImagePreview] = useState("");
@@ -58,7 +54,7 @@ const Banner = () => {
             };
 
             // 3. Gửi POST request
-            const response = await axios.post("http://localhost:3000/api/banners", postData, {
+             await axios.post("http://localhost:3000/api/banners", postData, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     "Content-Type": "application/json"

@@ -1,18 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Button, Table, Toast } from 'react-bootstrap';
+import { Button, Table } from 'react-bootstrap';
 import ComeBack from "../../Components/ComeBack";
 import { toast, ToastContainer } from 'react-toastify';
 
 import numeral from 'numeral';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import "../../scss/Cart.scss";
-import { ip } from '../../api/Api';
 import Swal from 'sweetalert2';
 
 const Cart = () => {
     const [cartitems, setCartItems] = useState([]);
-    const [productPrices, setProductPrices] = useState({}); // Lưu giá sản phẩm
     const [loadingCart, setLoadingCart] = useState(true);
     const [loadingUser, setLoadingUser] = useState(true);
     const [user, setUser] = useState(null);
@@ -169,7 +167,6 @@ const Cart = () => {
                 quantity: item?.quantity ?? 1,
                 stock: item?.product.stockQuantity,
                 fromCart: true,
-                cartItemId: item.id,
             }));
         console.log(selectedItems);
         const userItems = {
@@ -256,7 +253,7 @@ const Cart = () => {
     };
     useEffect(() => {
         checkUserLogin();
-    }, []);
+    }, [checkUserLogin]);
     const handleRemove = async (cartItemId) => {
         try {
             await axios.delete(`http://localhost:3000/api/cartsItem/${cartItemId}`);

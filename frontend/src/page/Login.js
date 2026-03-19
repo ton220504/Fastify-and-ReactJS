@@ -4,7 +4,6 @@ import ComeBack from "../Components/ComeBack";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
-import { ip } from "../api/Api";
 
 const Login = () => {
     const [email, setEmail] = useState("")
@@ -90,7 +89,7 @@ const Login = () => {
                 );
             }
         };
-    }, []);
+    }, [handleGoogleResponse]);
 
     const handleGoogleResponse = async (response) => {
         try {

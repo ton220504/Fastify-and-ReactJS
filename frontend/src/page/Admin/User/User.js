@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Button, Form, Modal } from "react-bootstrap";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import axios from "axios";
 
 import Swal from "sweetalert2";
-import { ip } from "../../../api/Api";
 
 
 const User = () => {
@@ -145,10 +144,7 @@ const User = () => {
             Swal.fire({ text: "Failed to update user", icon: "error" });
         }
     };
-    const closeEditModal = () => {
-        setEditModalShow(false);
-
-    };
+    
     return (
         <div >
 

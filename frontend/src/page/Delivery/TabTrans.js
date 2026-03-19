@@ -1,39 +1,16 @@
 import { useEffect, useState } from "react";
 import "../../scss/Delivery.scss"
 import { CiDeliveryTruck } from "react-icons/ci";
-import { Link } from "react-router-dom";
-import { Button, Form, Modal } from "react-bootstrap";
-import Swal from 'sweetalert2';
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { jwtDecode } from 'jwt-decode';
-import numeral from "numeral";
-import { ip } from "../../api/Api";
-
 
 
 const TabTrans = (props) => {
 
-    const { show, products, handleClose, handleShow } = props
     const [orderuserid, setOrderUserid] = useState([]);
     const [product, setProduct] = useState({}); // Store product details
 
-    const formatCurrency = (value) => {
-        return numeral(value).format('0,0') + ' ₫';
-    };
 
-    const handleDanhgia = () => {
-        handleClose();
-        Swal.fire({
-            icon: 'success',
-            title: 'Cảm ơn bạn đã đánh giá!',
-            confirmButtonText: 'OK'
-        });
-        //return 0;
-
-    }
-
-    const [error, setError] = useState(null);
+    const [ setError] = useState(null);
 
     useEffect(() => {
         const getOrderByUserId = async () => {
@@ -73,7 +50,7 @@ const TabTrans = (props) => {
                 });
             });
         }
-    }, [orderuserid]);
+    }, [orderuserid, fetchProductDetails]);
     
 
     const fetchProductDetails = async (product_id) => {

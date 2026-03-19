@@ -5,9 +5,6 @@ import Follow from "./Follow";
 import Banner from "./Banner";
 import ProductiPhone from "./Product/ProductiPhone";
 import ProductSamsung from "./Product/ProductSamsung";
-import Laptop from "./Product/Laptop";
-import Cammera from "./Product/Cammera";
-import Headphones from "./Product/Headphones";
 import ToastMessage from "../ToastMessage";
 import Post from "./Post";
 import { useEffect, useState } from "react";
@@ -62,11 +59,11 @@ const Home = () => {
                     <div className="col-3 banner-right mt-3">
 
                         <img src="https://bizweb.dktcdn.net/thumb/grande/100/497/960/themes/923878/assets/slider_1.jpg?1719291840576"
-                            style={{ width: "330px" }} className="" />
+                            style={{ width: "330px" }} className="" alt="image"/>
                         <img src="https://bizweb.dktcdn.net/thumb/grande/100/497/960/themes/923878/assets/slider_2.jpg?1719291840576"
-                            style={{ width: "330px" }} className="mt-2" />
+                            style={{ width: "330px" }} className="mt-2" alt="image 2"/>
                         <img src="https://bizweb.dktcdn.net/thumb/grande/100/497/960/themes/923878/assets/slider_3.jpg?1719291840576"
-                            style={{ width: "330px" }} className="mt-2" />
+                            style={{ width: "330px" }} className="mt-2" alt="image 3"/>
 
                     </div>
 

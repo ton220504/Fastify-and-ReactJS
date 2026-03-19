@@ -1,24 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Button, Modal } from "react-bootstrap";
-import { useNavigate, useParams } from "react-router-dom";
+import { Button } from "react-bootstrap";
 import axios from "axios";
 
 import Swal from "sweetalert2";
-import { ip } from "../../../api/Api";
 
 const PostComment = () => {
-    const { id } = useParams();
     const [postcomments, setPostcomment] = useState([]);
-    const [productName, setProductName] = useState("");
-    const [loading, setLoading] = useState(false);
-
-    const navigate = useNavigate();
-    const [editModalShow, setEditModalShow] = useState(false);
-    const [editreviewId, setEditReviewId] = useState(null);
-    const [editreviewContent, setEditReviewContent] = useState("");
-    const [editreviewUser, setEditReviewUser] = useState("");
-    const [editreviewProduct, setEditReviewProduct] = useState("");
-    const [allReviews, setAllReviews] = useState([]);
     const [filteredReviews, setFilteredReviews] = useState([]);
     const [posts, setPosts] = useState([]);
     const [selectedPostId, setSelectedPostId] = useState("");

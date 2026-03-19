@@ -3,7 +3,7 @@ import { Link, } from "react-router-dom";
 import Deal from "./Deal";
 
 const Popular = () => {
-    const [phone, setPhone] = useState([
+    const [phone] = useState([
         {
             id: 1, name: "Iphone", img: "https://bizweb.dktcdn.net/100/497/960/themes/923878/assets/danhmuc_1.jpg?1719291840576",
             price: "35.000.000đ", title: "iPhone 14 Pro Max 512GB Chính hãng VN/A",
@@ -41,7 +41,7 @@ const Popular = () => {
 
                             <div className="col-2 content p-2" key={index}>
                                 <div className="img">
-                                    <img src={item.img} />
+                                    <img src={item.img} alt={item.name} />
                                 </div>
                                 <span>{item.name}</span>
                             </div>

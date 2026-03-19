@@ -3,35 +3,30 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 
 import ComeBack from "../../Components/ComeBack";
 import numeral from "numeral";
-import Axios from "axios";
 import { Card } from "react-bootstrap";
 
 
 import "../../../src/assets/css/pagination.css";
 import "../../assets/css/productbrand.css";
 import { useCallback } from "react";
-import Pagination from "react-js-pagination";
 import Swal from "sweetalert2";
 import axios from "axios";
 
-import { toast, ToastContainer } from "react-toastify";
+import {  ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-import { ip } from "../../api/Api";
 import { FaInstagram } from "react-icons/fa";
 
 
 const ProductByCategory = () => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [totalItemsCount, setTotalItemsCount] = useState(0); // Tổng số sản phẩm
-    const [total, setTotal] = useState(0);
     const [favoriteProducts, setFavoriteProducts] = useState([]); // Lưu trữ danh sách sản phẩm yêu thích
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const perPage = 10; // Số sản phẩm mỗi trang
     const { brandName } = useParams(); // Lấy brand từ URL
     const navigate = useNavigate();
-    const [banner, setBanner] = useState([
+    const [banner] = useState([
         { id: 1, img: "https://bizweb.dktcdn.net/100/497/960/themes/923878/assets/img_3banner_1.jpg?1719291840576", icon: <FaInstagram /> },
         { id: 2, img: "https://bizweb.dktcdn.net/100/497/960/themes/923878/assets/img_3banner_2.jpg?1719291840576", icon: <FaInstagram /> },
         { id: 3, img: "https://bizweb.dktcdn.net/100/497/960/themes/923878/assets/img_3banner_3.jpg?1719291840576", icon: <FaInstagram /> },
@@ -182,7 +177,7 @@ const ProductByCategory = () => {
                 height: '100vh' // chiều cao 100% của viewport,
 
             }}>
-                <img style={{ width: "100px", height: "100px" }} src="../img/loading-gif-png-5.gif" />
+                <img style={{ width: "100px", height: "100px" }} src="../img/loading-gif-png-5.gif" alt="image" />
             </div>
         );
     }
@@ -198,7 +193,7 @@ const ProductByCategory = () => {
                             return (
                                 <div className="col-4 " key={item.id}>
                                     <div>
-                                        <img src={item.img} className="image" />
+                                        <img src={item.img} className="image" alt={item.name} />
                                     </div>
                                 </div>
                             );

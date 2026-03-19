@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Button, Modal } from "react-bootstrap";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import axios from "axios";
 
 import Swal from "sweetalert2";
 import { Editor } from '@tinymce/tinymce-react';
 const Post = () => {
-    const { id } = useParams();
     const [posts, setPosts] = useState([]);
-    const [post, setPost] = useState([]);
     const [title, setTitle] = useState("");
     const [slug, setSlug] = useState("");
     const [description, setDescription] = useState("");
@@ -18,9 +16,7 @@ const Post = () => {
 
 
 
-    const navigate = useNavigate();
     const [editModalShow, setEditModalShow] = useState(false);
-    const [editShow, setEditShow] = useState(false);
     const [editPostId, setEditPostId] = useState(null);
     const [editPostTitle, setEditPostTitle] = useState("");
     const [editPostSlug, setEditPostSlug] = useState("");
@@ -29,16 +25,13 @@ const Post = () => {
     const [editPostTopicId, setEditPostTopicId] = useState("");
 
     const [imageFile, setImageFile] = useState(null);
-    const handleImageChange = (e) => {
-        setImageFile(e.target.files[0]);
-    };
+    
     const [editPostImage, setEditPostImage] = useState(null); // File ảnh mới
     const [editImagePreview, setEditImagePreview] = useState(""); // URL ảnh để preview
     const [editImageFilename, setEditImageFilename] = useState(""); // Tên file gốc của ảnh cũ
 
 
 
-    const [success, setSuccess] = useState(false);
 
     const changeHandler = (e) => {
         const { name, value } = e.target;
@@ -98,7 +91,7 @@ const Post = () => {
             };
 
             // 3. Gửi POST request
-            const response = await axios.post("http://localhost:3000/api/posts", postData, {
+            await axios.post("http://localhost:3000/api/posts", postData, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     "Content-Type": "application/json"

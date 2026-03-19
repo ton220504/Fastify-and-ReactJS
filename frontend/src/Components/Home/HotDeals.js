@@ -64,7 +64,7 @@ const HotDeals = () => {
 		if (endDate) {
 			startTimer();
 		}
-	}, [endDate]);
+	}, [endDate, startTimer]);
 
 	return (
 		<div id="hot-deal" className="section">

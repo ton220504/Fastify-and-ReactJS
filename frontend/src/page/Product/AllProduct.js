@@ -7,7 +7,7 @@ import axios from "axios";
 import { Card } from "react-bootstrap";
 import "../../../src/assets/css/pagination.css";
 import Swal from "sweetalert2";
-import { toast, ToastContainer } from "react-toastify";
+import {  ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { FaInstagram } from "react-icons/fa";
 import { Grid, List } from 'lucide-react';
@@ -33,7 +33,7 @@ const AllProduct = () => {
     const formatCurrency = (value) => {
         return numeral(value).format('0,0') + ' ₫';
     };
-    const [banner, setBanner] = useState([
+    const [banner] = useState([
         { id: 1, img: "https://bizweb.dktcdn.net/100/497/960/themes/923878/assets/img_3banner_1.jpg?1719291840576", icon: <FaInstagram /> },
         { id: 2, img: "https://bizweb.dktcdn.net/100/497/960/themes/923878/assets/img_3banner_2.jpg?1719291840576", icon: <FaInstagram /> },
         { id: 3, img: "https://bizweb.dktcdn.net/100/497/960/themes/923878/assets/img_3banner_3.jpg?1719291840576", icon: <FaInstagram /> },
@@ -253,9 +253,7 @@ const AllProduct = () => {
         setViewMode(mode);
     };
     
-    const handlePriceRangeChange = (min, max) => {
-        setPriceRange({ min, max });
-    };
+    
     
     // Xử lý áp dụng bộ lọc giá
     const applyPriceFilter = () => {

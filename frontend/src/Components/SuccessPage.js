@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 
 const SuccessPage = () => {
   const navigate = useNavigate();
@@ -14,7 +13,7 @@ const SuccessPage = () => {
     } else {
       navigate('/login');
     }
-  }, []);
+  }, [navigate]);
 
   return (
     <div style={{ textAlign: 'center', marginTop: '100px' }}>

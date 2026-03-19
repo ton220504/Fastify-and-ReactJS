@@ -3,10 +3,9 @@ import { Dropdown } from "react-bootstrap";
 import { FaUser, FaShoppingCart, FaHeart } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { ip } from "../../../api/Api";
 import "../../../assets/css/header.css";
 const ContentHeader = () => {
-    const [menu, setMenu] = useState([
+    const [menu] = useState([
         { id: 1, name: "iPhone 15" },
         { id: 2, name: "Xiaomi" },
         { id: 3, name: "Samsung" },
@@ -14,7 +13,6 @@ const ContentHeader = () => {
         { id: 5, name: "Realme C25s" }
     ]);
     const [user, setUser] = useState(null); // Trạng thái lưu người dùng
-    const [brands, setBrands] = useState([]);
     const [categories, setCategories] = useState([]);
 
     const navigate = useNavigate(); // Hook để điều hướng trang
@@ -26,7 +24,6 @@ const ContentHeader = () => {
     const handleMouseLeaveUser = () => setShowUser(false);
     const [cartItemCount, setCartItemCount] = useState(0); // Đếm sản phẩm giỏ hàng
     const [WishListItemCount, setWishListItemCount] = useState(0);
-    const [activeCategory, setActiveCategory] = useState(null);
 
     //category
     useEffect(() => {
@@ -63,7 +60,7 @@ const ContentHeader = () => {
         } else {
             console.log("Lỗi....... Không có token");
         }
-    }, []);
+    }, [getUserData, fetchCartCount, fecthCountWishlist]); 
     const getUserData = async () => {
         const token = localStorage.getItem("token");
         const userString = localStorage.getItem("user");
@@ -109,7 +106,6 @@ const ContentHeader = () => {
     };
     const fetchCartCount = async () => {
         try {
-            const token = localStorage.getItem("token");
             const userString = localStorage.getItem("user");
             const user = userString ? JSON.parse(userString) : null;
             if (!user || !user.id) {
@@ -127,7 +123,6 @@ const ContentHeader = () => {
     }
     const fecthCountWishlist = async () => {
         try {
-            const token = localStorage.getItem("token");
             const userString = localStorage.getItem("user");
             const user = userString ? JSON.parse(userString) : null;
             if (!user || !user.id) {

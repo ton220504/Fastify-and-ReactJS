@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ip } from '../../api/Api';
 import ComeBack from '../ComeBack';
 
 const PostDetail = () => {
@@ -75,7 +74,7 @@ const PostDetail = () => {
         fetchPostDetail();
         fetchTopic()
         fetchPostComment()
-    }, [id]); // Gọi API mỗi khi id thay đổi
+    }, [id, fetchPostComment,fetchPostDetail ]); // Gọi API mỗi khi id thay đổi
 
     const handleDanhgia = async (event) => {
         event.preventDefault();

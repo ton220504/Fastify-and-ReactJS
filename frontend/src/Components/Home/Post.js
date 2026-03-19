@@ -33,7 +33,7 @@ const Post = () => {
     };
     useEffect(() => {
         fetchPosts();
-    }, []);
+    }, [fetchPosts]);
 
     // Lấy 3 bài viết đầu tiên
     const displayedPosts = posts.slice(0, 3);

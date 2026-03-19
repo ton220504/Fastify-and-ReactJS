@@ -1,19 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Button, Card, Table } from 'react-bootstrap';
+import {  Card } from 'react-bootstrap';
 import ComeBack from "../../Components/ComeBack";
-import ProductWishListDetail from './ProductWishListDetail';
 import numeral from 'numeral';
-import { Link, Navigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import "../../scss/Cart.scss";
 import 'react-toastify/dist/ReactToastify.css';
-import { toast, ToastContainer } from "react-toastify";
-import { ip } from '../../api/Api';
-import Swal from "sweetalert2";
 
 const WishList = () => {
     const [wishlist, setWishList] = useState([]);
-    const [productPrices, setProductPrices] = useState({}); // Lưu giá sản phẩm
     const [loadingCart, setLoadingCart] = useState(true);
     const [loadingUser, setLoadingUser] = useState(true);
     const [user, setUser] = useState(null);
@@ -160,7 +155,7 @@ const WishList = () => {
     useEffect(() => {
         checkUserLogin();
         getUserData();
-    }, []);
+    }, [checkUserLogin]);
 
 
 

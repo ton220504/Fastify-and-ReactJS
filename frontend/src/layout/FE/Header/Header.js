@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {  useState } from "react";
 import { LuPhoneCall } from "react-icons/lu";
 import { HiOutlineBuildingStorefront } from "react-icons/hi2";
 import { CiSearch } from "react-icons/ci";
@@ -13,34 +13,21 @@ import numeral from "numeral";
 
 
 const Header = () => {
-    const [products, setProducts] = useState([]);
 
     const getInitialTheme = () => {
         const storedTheme = localStorage.getItem("theme");
         return storedTheme ? storedTheme : "light-theme";
     };
-    const [selectedCategory, setSelectedCategory] = useState("");
-    const [theme, setTheme] = useState(getInitialTheme());
     const [input, setInput] = useState("");
     const [searchResults, setSearchResults] = useState([]);
-    const [noResults, setNoResults] = useState(false);
+    const [ setNoResults] = useState(false);
     const [searchFocused, setSearchFocused] = useState(false);
-    const [showSearchResults, setShowSearchResults] = useState(false);
-    const [showDropdown, setShowDropdown] = useState(false);
+    const [ setShowSearchResults] = useState(false);
     const formatCurrency = (value) => {
         return numeral(value).format('0,0') + ' ₫';
     };
     
-    // Danh sách sản phẩm ví dụ
-    const product = [
-        "Laptop Dell",
-        "Laptop HP",
-        "iPhone 13",
-        "Samsung Galaxy S21",
-        "Sony Headphones",
-        "MacBook Air",
-        "Apple Watch",
-    ];
+
 
     const handleChange = async (value) => {
         setInput(value);
@@ -105,8 +92,8 @@ const Header = () => {
                     <div className="row">
                         <div className="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-xs-12 col-12 header-logo">
                             <Link to={"/"}>
-                                <img className="img-header"
-                                    src="https://bizweb.dktcdn.net/100/497/960/themes/923878/assets/logo.png?1719291840576" />
+                                <img className="img-header" 
+                                    src="https://bizweb.dktcdn.net/100/497/960/themes/923878/assets/logo.png?1719291840576" alt="image" />
                             </Link>
                         </div>
                         <div className="col-xl-7 col-lg-6 col-md-12 col-sm-12 col-xs-12 col-12 position-relative">

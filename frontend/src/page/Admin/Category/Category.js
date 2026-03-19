@@ -4,17 +4,13 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 
 import Swal from "sweetalert2";
-import { ip } from "../../../api/Api";
 
 const Category = () => {
-    const { id } = useParams();
     const [brands, setBrands] = useState([]);
     const [name, setName] = useState("");
-    const navigate = useNavigate();
     const [editModalShow, setEditModalShow] = useState(false);
     const [editcategoryId, setEditcategoryId] = useState(null);
     const [editcategoryName, setEditCategoryName] = useState("");
-    const [success, setSuccess] = useState(false);
 
     const changeHandler = (event) => {
         const { name, value } = event.target;
@@ -26,7 +22,7 @@ const Category = () => {
         const token = localStorage.getItem("token");
         try {
 
-            const response = await axios.post(`http://localhost:3000/api/category`, { name }, {
+             await axios.post(`http://localhost:3000/api/category`, { name }, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -95,7 +91,6 @@ const Category = () => {
             console.error("Lỗi khi xóa", error);
             Swal.fire({
                 toast: true,
-                icon: 'success',
                 position: "top-end",
                 text: "Không thể xóa danh mục này vì đang có sản phẩm sử dụng nó!",
                 icon: "error",
@@ -130,7 +125,7 @@ const Category = () => {
     const handleEditCategory = async () => {
         try {
             const token = localStorage.getItem("token");
-            const response = await axios.put(`http://localhost:3000/api/category/${editcategoryId}`, { name: editcategoryName }, {
+             await axios.put(`http://localhost:3000/api/category/${editcategoryId}`, { name: editcategoryName }, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }

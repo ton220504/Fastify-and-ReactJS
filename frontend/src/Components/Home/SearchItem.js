@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { Link } from "react-router-dom";
@@ -16,10 +16,9 @@ const SearchResults = () => {
         return numeral(value).format('0,0') + ' ₫';
     };
     const [totalPages, setTotalPages] = useState(1);
-    const perPage = 10; // Số sản phẩm mỗi trang
     const [currentPage, setCurrentPage] = useState(1);
 
-    const fetchResults = async (pageNumber = 1) => {
+    const fetchResults = useCallback(async (pageNumber = 1) => {
         if (!query) return;
 
         try {
@@ -55,13 +54,13 @@ const SearchResults = () => {
             console.error("Lỗi khi lấy kết quả tìm kiếm:", error);
             setResults([]);
         }
-    };
+    }, [query]);
 
 
     useEffect(() => {
 
         fetchResults();
-    }, [query]);
+    }, [fetchResults]);
     // 🟢 Điều hướng trang
     const goToPage = (page) => {
         if (page >= 1 && page <= totalPages) {

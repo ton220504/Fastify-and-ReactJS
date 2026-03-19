@@ -1,4 +1,3 @@
-import { FaShoppingCart } from "react-icons/fa";
 import React, { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from "react-router-dom";
 import ComeBack from "../../Components/ComeBack";
@@ -8,7 +7,6 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 import { Card } from "react-bootstrap";
-import { ip } from "../../api/Api";
 
 
 
@@ -17,8 +15,6 @@ const ProductDetail = () => {
     const [activeTab, setActiveTab] = useState('des');
     const [isShow, setIsShow] = useState(false);
     const [quantity, setQuantity] = useState(1);
-    const [name, setName] = useState('')
-    const [price, setPrice] = useState(0)
 
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -26,10 +22,8 @@ const ProductDetail = () => {
     const navigate = useNavigate();
     const [cartLoading, setCartLoading] = useState(false);
     const [variations, setVariations] = useState([]);
-    const [selectedImage, setSelectedImage] = useState(null);
     const [selectedIndex, setSelectedIndex] = useState(0);
     const [relatedProducts, setRelatedProducts] = useState([]);
-    const [mainProductName, setMainProductName] = useState("");
     const [reviews, setReviews] = useState([]);
     const formatCurrency = (value) => {
         return numeral(value).format('0,0') + ' ₫';
@@ -40,7 +34,7 @@ const ProductDetail = () => {
     const [isDragging, setIsDragging] = useState(false);
     const [startX, setStartX] = useState(0);
     const [scrollLeft, setScrollLeft] = useState(0);
-    const [user, setUser] = useState(null);
+    const [ setUser] = useState(null);
     useEffect(() => {
         const fetchProduct = async () => {
             try {
@@ -66,7 +60,7 @@ const ProductDetail = () => {
             }
         };
         fetchProduct();
-    }, [id]);
+    }, [id, fetchReviews]);
 
     ///lấy đánh giá sản phẩm
     const fetchReviews = async () => {
@@ -322,7 +316,7 @@ const ProductDetail = () => {
                 height: '100vh' // chiều cao 100% của viewport,
 
             }}>
-                <img style={{ width: "100px", height: "100px" }} src="../../../img/loading-gif-png-5.gif" />
+                <img style={{ width: "100px", height: "100px" }} src="../../../img/loading-gif-png-5.gif" alt="Loading" />
             </div>
         );
     }
@@ -335,7 +329,7 @@ const ProductDetail = () => {
                 height: '100vh' // chiều cao 100% của viewport,
 
             }}>
-                <img style={{ width: "100px", height: "100px" }} src="../../../img/loading-gif-png-5.gif" />
+                <img style={{ width: "100px", height: "100px" }} src="../../../img/loading-gif-png-5.gif" alt="Loading" />
             </div>
         );
     }
@@ -539,7 +533,7 @@ const ProductDetail = () => {
 
                         {/* Price and Storage Options */}
                         <div className="product-price">
-                            <p>Giá: <a>{formatCurrency(product.price)}</a></p>
+                            <p>Giá: <span>{formatCurrency(product.price)}</span></p>
                             {/* <span>Giá cũ: <strike className="price-old">10.000.000đ</strike></span> */}
                         </div>
 
@@ -608,7 +602,7 @@ const ProductDetail = () => {
                                 <button className="mua-tra-gop" style={{ backgroundColor: "#503eb6", color: "white" }} disabled={outOfStock} onClick={handleCheckout} > Mua ngay</button>
                             </div>
                         </div>
-                        <img style={{ height: "auto", maxWidth: "565px", borderRadius: "7px", marginTop: "7px" }} src="https://clickbuy.com.vn/uploads/media/657-LHKNd.jpg" />
+                        <img style={{ height: "auto", maxWidth: "565px", borderRadius: "7px", marginTop: "7px" }} src="https://clickbuy.com.vn/uploads/media/657-LHKNd.jpg" alt="image" />
 
                     </div>
                     <div className='col-md-3 form-policy'>
@@ -617,19 +611,19 @@ const ProductDetail = () => {
                             <div className="policies">
                                 <div className="section-title">Chính Sách Của Chúng Tôi</div>
                                 <p>
-                                    <img src="https://bizweb.dktcdn.net/100/497/960/themes/923878/assets/policy_image_1.png?1719291840576" />
+                                    <img src="https://bizweb.dktcdn.net/100/497/960/themes/923878/assets/policy_image_1.png?1719291840576" alt="iamge" />
                                     <span style={{ marginLeft: '8px' }}>Miễn phí vận chuyển tại TP.HCM</span>
                                 </p>
                                 <p>
-                                    <img src="https://bizweb.dktcdn.net/100/497/960/themes/923878/assets/policy_image_2.png?1719291840576" />
+                                    <img src="https://bizweb.dktcdn.net/100/497/960/themes/923878/assets/policy_image_2.png?1719291840576" alt="iamge" />
                                     <span style={{ marginLeft: '8px' }}>Bảo hành chính hãng toàn quốc </span>
                                 </p>
                                 <p>
-                                    <img src="https://bizweb.dktcdn.net/100/497/960/themes/923878/assets/policy_image_3.png?1719291840576" />
+                                    <img src="https://bizweb.dktcdn.net/100/497/960/themes/923878/assets/policy_image_3.png?1719291840576" alt="iamge" />
                                     <span style={{ marginLeft: '8px' }}>Cam kết chính hãng 100%</span>
                                 </p>
                                 <p>
-                                    <img src="https://bizweb.dktcdn.net/100/497/960/themes/923878/assets/policy_image_4.png?1719291840576" />
+                                    <img src="https://bizweb.dktcdn.net/100/497/960/themes/923878/assets/policy_image_4.png?1719291840576" alt="iamge" />
                                     <span style={{ marginLeft: '8px' }}>1 đổi 1 nếu sản phẩm lỗi</span>
                                 </p>
                             </div>
@@ -639,7 +633,7 @@ const ProductDetail = () => {
                                 <div className="section-title">Có Thể Bạn Thích</div>
                                 <div className="recommendation-item">
                                     <img className="img"
-                                        src="https://bizweb.dktcdn.net/thumb/large/100/497/960/products/sac-egnezy.jpg?v=1696428931143"
+                                        src="https://bizweb.dktcdn.net/thumb/large/100/497/960/products/sac-egnezy.jpg?v=1696428931143" alt="image"
                                     />
                                     <div>
                                         <span className="product-name">Pin Dự Phòng Energizer</span><br />
@@ -649,7 +643,7 @@ const ProductDetail = () => {
                                 </div>
                                 <div className="recommendation-item">
                                     <img className="img"
-                                        src="https://bizweb.dktcdn.net/thumb/large/100/497/960/products/sac-egnezy.jpg?v=1696428931143"
+                                        src="https://bizweb.dktcdn.net/thumb/large/100/497/960/products/sac-egnezy.jpg?v=1696428931143" alt="image"
                                     />
                                     <div>
                                         <span className="product-name">Pin Dự Phòng Energizer</span><br />
@@ -659,7 +653,7 @@ const ProductDetail = () => {
                                 </div>
                                 <div className="recommendation-item">
                                     <img className="img"
-                                        src="https://bizweb.dktcdn.net/thumb/large/100/497/960/products/sac-egnezy.jpg?v=1696428931143"
+                                        src="https://bizweb.dktcdn.net/thumb/large/100/497/960/products/sac-egnezy.jpg?v=1696428931143" alt="image"
                                     />
                                     <div>
                                         <span className="product-name">Pin Dự Phòng Energizer</span><br />
@@ -698,9 +692,9 @@ const ProductDetail = () => {
                                 )}
                                 {/* <span>{product.description}</span> */}
                                 <div className="bg-cl-active"></div>
-                                <a className="showmore" onClick={() => handleShowmore()}>
+                                <span className="showmore" onClick={() => handleShowmore()}>
                                     {isShow ? "Thu gọn" : "Xem thêm"}
-                                </a><br />
+                                </span><br />
 
 
                             </div>
@@ -769,7 +763,7 @@ const ProductDetail = () => {
 
                 </div>
                 <div className="comments mt-4 form-control">
-                    <p className="mt-3 " style={{ fontStyle: "italic", fontWeight: "600", fontSize: "20px", fontWeight: "bold" }}>Đánh giá sản phẩm({reviews.length})</p>
+                    <p className="mt-3 " style={{ fontStyle: "italic", fontWeight: "600", fontSize: "20px" }}>Đánh giá sản phẩm({reviews.length})</p>
                     {reviews.map((re, index) => (
                         <>
                             <div className="comment my-2  ">

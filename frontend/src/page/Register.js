@@ -4,7 +4,6 @@ import ComeBack from "../Components/ComeBack";
 import { useState } from "react";
 import axios from "axios";
 import Swal from 'sweetalert2';
-import { ip } from "../api/Api";
 
 const Register = (props) => {
     const [name, setName] = useState("");

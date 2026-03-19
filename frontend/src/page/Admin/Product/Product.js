@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Axios from "axios";
 import Spinner from "react-bootstrap/Spinner";
-import Pagination from "react-js-pagination";
-import { Button, Modal, ModalBody, ModalFooter, ModalHeader, ModalTitle } from "react-bootstrap";
+import { Button, Modal} from "react-bootstrap";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 import axios from "axios";
@@ -15,17 +14,15 @@ const Products = () => {
   // State hooks to replace class state
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const [perPage, setPerPage] = useState(10);
+  const [perPage] = useState(10);
   const [products, setProducts] = useState([]);
   const [deletingProductId, setDeletingProductId] = useState(null);
   const [product, setProduct] = useState([]);
   const [detailModalShow, setDetailModalShow] = useState(false);
   const [imagesModalShow, SetImagesModalShow] = useState(false);
   const [totalPages, setTotalPages] = useState(1);
-  const [searchResults, setSearchResults] = useState([]);
-  const [input, setInput] = useState("");
-  const [noResults, setNoResults] = useState(false);
-  const [showSearchResults, setShowSearchResults] = useState(false);
+  const [setSearchResults] = useState([]);
+  const [setNoResults] = useState(false);
   const [addform, setAddform] = useState([{ id: 1 }]);
   const [image, setImage] = useState(null);
   const [colorName, setColorName] = useState('');
@@ -129,7 +126,7 @@ const Products = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [perPage]);
   // 🟢 Gọi API khi component mount
   useEffect(() => {
     getProducts(1);
@@ -159,9 +156,7 @@ const Products = () => {
     getProducts();
   }, [getProducts]);
 
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
+  
   //chi tiết
   const openDetailModal = async (id) => {
     try {
@@ -334,27 +329,7 @@ const Products = () => {
       setLoading(false);
     }
   };
-  const handleChange = async (value) => {
-    const keyword = value.trim();  // Lọc khoảng trắng đầu và cuối
-
-    setInput(value);  // Cập nhật input (chưa trim) cho việc hiển thị trực tiếp
-
-    if (keyword.length >= 1) {
-      setShowSearchResults(true);  // Hiển thị kết quả tìm kiếm
-
-      try {
-        await searchProducts(keyword, 1);  // Gọi tìm kiếm từ trang 1
-      } catch (error) {
-        console.error('Lỗi khi tìm kiếm:', error);
-        // Có thể hiển thị thông báo lỗi nếu cần
-      }
-    } else {
-      setShowSearchResults(false);  // Ẩn kết quả tìm kiếm nếu không có từ khóa
-      setSearchResults([]);  // Reset kết quả tìm kiếm
-      setNoResults(false);  // Đặt lại trạng thái không có kết quả
-      getProducts(1);  // Reset lại danh sách sản phẩm gốc từ trang 1
-    }
-  };
+  
 
   return (
     <div className="container-fluid">

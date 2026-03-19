@@ -1,40 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { Button, Modal } from "react-bootstrap";
-import { useNavigate, useParams } from "react-router-dom";
+import { Button } from "react-bootstrap";
+import {  useParams } from "react-router-dom";
 import axios from "axios";
 
 import Swal from "sweetalert2";
-import { ip } from "../../../api/Api";
 
 const Review = () => {
-    const { id } = useParams();
     const [reviews, setReviews] = useState([]);
-    const [productName, setProductName] = useState("");
-    const [loading, setLoading] = useState(false);
 
-    const navigate = useNavigate();
-    const [editModalShow, setEditModalShow] = useState(false);
-    const [editreviewId, setEditReviewId] = useState(null);
-    const [editreviewContent, setEditReviewContent] = useState("");
-    const [editreviewUser, setEditReviewUser] = useState("");
-    const [editreviewProduct, setEditReviewProduct] = useState("");
-    const [allReviews, setAllReviews] = useState([]);
     const [filteredReviews, setFilteredReviews] = useState([]);
     const [products, setProduct] = useState([]);
     const [selectedProductId, setSelectedProductId] = useState("");
-    const searchReviews = async () => {
-        setLoading(true);
-        try {
-            const response = await axios.get(`http://localhost:3000/api/reviews/search?name=${productName}`);
-            setFilteredReviews(response.data);
-            setProductName("");
-        } catch (error) {
-            console.error("Lỗi khi tìm đánh giá:", error);
-            alert("Đã xảy ra lỗi khi tìm đánh giá.");
-        } finally {
-            setLoading(false);
-        }
-    };
+    
     const deletereview = async (id) => {
         const isConfirm = await Swal.fire({
             title: "Bạn có chắc không?",

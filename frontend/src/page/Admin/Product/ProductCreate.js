@@ -67,13 +67,13 @@ const AddProduct = () => {
         if (brands.length > 0 && !product.brand) {
             setProduct(prev => ({ ...prev, brand: brands[0].name }));
         }
-    }, [brands]);
+    }, [brands, product.brand]);
 
     useEffect(() => {
         if (category.length > 0 && !product.category) {
             setProduct(prev => ({ ...prev, category: category[0].name }));
         }
-    }, [category]);
+    }, [category, product.category]);
 
     const submitHandler = async (event) => {
         event.preventDefault();

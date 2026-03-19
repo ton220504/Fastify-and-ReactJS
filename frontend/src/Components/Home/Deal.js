@@ -1,15 +1,14 @@
 
 import { useEffect, useState } from "react";
-import { Card, ListGroup } from "react-bootstrap";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Card } from "react-bootstrap";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";  // Import axios
 import HotDeals from "./HotDeals";
 import numeral from 'numeral';
 import '../../assets/css/Deal.css'; // Đảm bảo rằng đường dẫn đến file CSS là chính xác
 import Swal from "sweetalert2";
-import { toast, ToastContainer } from "react-toastify";
+import {  ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-import { ip } from "../../api/Api";
 
 
 
@@ -138,7 +137,7 @@ const Deal = () => {
                 height: '100vh' // chiều cao 100% của viewport,
 
             }}>
-                <img style={{ width: "100px", height: "100px" }} src="./img/loading-gif-png-5.gif" />
+                <img style={{ width: "100px", height: "100px" }} src="./img/loading-gif-png-5.gif" alt="img" />
             </div>
         );
     }
@@ -161,6 +160,7 @@ const Deal = () => {
                         <div className="icon">
                             <img src="https://bizweb.dktcdn.net/100/497/960/themes/923878/assets/flash-yl.png?1719291840576"
                                 style={{ width: "15px" }}
+                                alt="img"
                             />
                         </div>
                         {/* <div className="content">

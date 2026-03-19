@@ -1,6 +1,5 @@
 import React from 'react'
 import { Button, Form, Spinner } from "react-bootstrap";
-import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
 import Swal from 'sweetalert2';
@@ -13,7 +12,6 @@ const CreateUser = () => {
 
     const [loading, setLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState(""); // Lưu thông báo lỗi từ server
-    const navigate = useNavigate();
 
     function handleSubmit(e) {
         e.preventDefault();

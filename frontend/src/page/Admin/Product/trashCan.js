@@ -1,24 +1,18 @@
 import React, { useState, useEffect, useCallback } from "react";
 import Axios from "axios";
 import Spinner from "react-bootstrap/Spinner";
-import Pagination from "react-js-pagination";
-import { Button, Modal } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 import Swal from "sweetalert2";
-import { Link } from "react-router-dom";
 import axios from "axios";
 
 const TrashCan = () => {
     const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
-    const [perPage, setPerPage] = useState(10);
-    const [total, setTotal] = useState(0);
+    const [perPage] = useState(10);
     const [products, setProducts] = useState([]);
-    const [searchproducts, setS] = useState([]);
     const [deletingProductId, setDeletingProductId] = useState(null);
     const [RestoreProductId, setRestoreProductId] = useState(null);
 
-    const [product, setProduct] = useState([]);
-    const [detailModalShow, setDetailModalShow] = useState(false);
     const [totalPages, setTotalPages] = useState(1);
     // 🟢 Hàm gọi API lấy sản phẩm theo trang, ưu tiên sản phẩm có releaseDate sớm nhất
     const getProducts = useCallback(async (pageNumber = 1) => {
@@ -50,7 +44,7 @@ const TrashCan = () => {
         } finally {
             setLoading(false);
         }
-    }, []);
+    }, [perPage]);
     // 🟢 Gọi API khi component mount
     useEffect(() => {
         getProducts(1);
@@ -80,9 +74,7 @@ const TrashCan = () => {
         getProducts();
     }, [getProducts]);
 
-    const handlePageChange = (pageNumber) => {
-        setCurrentPage(pageNumber);
-    };
+   
     const handleDelete = (id) => {
         setDeletingProductId(id);
 
@@ -174,10 +166,7 @@ const TrashCan = () => {
             }
         });
     };
-    const closeProductDetailModal = () => {
-        setDetailModalShow(false);
-        setProduct([])
-    }
+    
 
 
 

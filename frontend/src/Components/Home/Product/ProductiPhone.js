@@ -1,13 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
-import { Card, ListGroup } from "react-bootstrap";
+import { Card } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import numeral from 'numeral';
 import axios from "axios";
 import Swal from "sweetalert2";
 import '../../../scss/Accessory.scss'
-import { toast, ToastContainer } from "react-toastify";
+import {  ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-import { ip } from "../../../api/Api";
 
 
 
@@ -17,8 +16,6 @@ const ProductiPhone = () => {
     const [favoriteProducts, setFavoriteProducts] = useState([]); // Lưu trữ danh sách sản phẩm yêu thích
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
     const perPage = 10; // Số sản phẩm mỗi trang
     const formatCurrency = (value) => {
         return numeral(value).format('0,0') + ' ₫';
@@ -157,7 +154,7 @@ const ProductiPhone = () => {
                 alignItems: 'center',
                 height: '100vh' // chiều cao 100% của viewport,
             }}>
-                <img style={{ width: "100px", height: "100px" }} src="./img/loading-gif-png-5.gif" />
+                <img style={{ width: "100px", height: "100px" }} src="./img/loading-gif-png-5.gif" alt="image" />
             </div>
         );
     }

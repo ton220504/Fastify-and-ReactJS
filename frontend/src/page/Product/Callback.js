@@ -1,17 +1,4 @@
-// import React from 'react'
-// import { Link } from 'react-router-dom'
 
-// const Callback = () => {
-//   return (
-//     <div style={{height:"300px"}}>
-//         <h2>Đặt hàng thành công !</h2>
-//         <p>Tiếp tục mua hàng</p>
-//         <Link to={"/ca-nhan"}><p>Xem thông tin đơn hàng</p></Link>
-//     </div>
-//   )
-// }
-
-// export default Callback
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
@@ -37,7 +24,7 @@ const Callback = () => {
                 localStorage.setItem("orderProcessed", "true");
 
                 // 1. Gửi đơn hàng
-                const res = await axios.post(`http://127.0.0.1:3000/api/orders`, orderData);
+                await axios.post(`http://127.0.0.1:3000/api/orders`, orderData);
 
                 // 2. Trừ tồn kho
                 await Promise.all(orderData.items.map(item =>

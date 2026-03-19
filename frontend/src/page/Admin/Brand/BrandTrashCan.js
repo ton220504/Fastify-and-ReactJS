@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Button, Modal } from "react-bootstrap";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Button} from "react-bootstrap";
 import axios from "axios";
 
 import Swal from "sweetalert2";
 const BrandTrashCan = () => {
     const [brands, setBrands] = useState([]);
-    const [deletingId, setDeletingId] = useState(null);
     const [RestoreId, setRestoreId] = useState(null);
     const fetchBrands = async () => {
         try {

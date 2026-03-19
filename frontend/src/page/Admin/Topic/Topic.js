@@ -1,26 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { Button, Modal } from "react-bootstrap";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import axios from "axios";
 
 import Swal from "sweetalert2";
-import { ip } from "../../../api/Api";
 
 const Topic = () => {
-    const { id } = useParams();
     const [topics, setTopics] = useState([]);
     const [name, setName] = useState("");
     const [slug, setSlug] = useState("");
     const [description, setDescription] = useState("");
 
-    const navigate = useNavigate();
     const [editModalShow, setEditModalShow] = useState(false);
     const [editTopicId, setEditTopicId] = useState(null);
     const [editTopicName, setEditTopicName] = useState("");
     const [editTopicSlug, setEditTopicSlug] = useState("");
     const [editTopicDescription, setEditTopicDescription] = useState("");
 
-    const [success, setSuccess] = useState(false);
 
     const changeHandler = (event) => {
         const { name, value } = event.target;
@@ -45,7 +41,7 @@ const Topic = () => {
         }
     
         try {
-            const response = await axios.post(
+             await axios.post(
                 `http://localhost:3000/api/topics`,
                 {
                     name,
@@ -167,7 +163,7 @@ const Topic = () => {
     const handleEditTopic = async () => {
         try {
             const token = localStorage.getItem("token");
-            const response = await axios.put(
+            await axios.put(
                 `http://localhost:3000/api/topics/${editTopicId}`, // Sửa "topic" thành "topics" nếu đúng RESTful
                 {
                     name: editTopicName,

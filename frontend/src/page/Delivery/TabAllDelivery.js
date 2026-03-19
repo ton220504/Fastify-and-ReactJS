@@ -1,30 +1,21 @@
 import { useEffect, useState } from "react";
 import "../../scss/Delivery.scss"
 import { CiDeliveryTruck } from "react-icons/ci";
-import { json, Link } from "react-router-dom";
-import { Button, Form, Modal } from "react-bootstrap";
 import Swal from 'sweetalert2';
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { jwtDecode } from 'jwt-decode';
-import numeral from "numeral";
-import { ip } from "../../api/Api";
 
 
 
 const TabAllDelivery = (props) => {
-    const { show, product, handleClose, handleShow } = props
     const [orderuserid, setOrderuserid] = useState([]);
     const [products, setProduct] = useState({}); // Store product details
-    const [loading, setLoading] = useState(false);
-    const formatCurrency = (value) => {
-        return numeral(value).format('0,0') + ' ₫';
-    };
+    const [loading] = useState(false);
+    
 
 
 
 
-    const [error, setError] = useState(null);
+    const [ setError] = useState(null);
     const getOrderByUserId = async () => {
         try {
             const token = localStorage.getItem("token");
@@ -65,7 +56,7 @@ const TabAllDelivery = (props) => {
     useEffect(() => {
 
         getOrderByUserId();
-    }, []);
+    }, [getOrderByUserId]);
 
     const fetchProductDetails = async (product_id) => {
         if (!product_id) return; // Nếu productId không tồn tại, không gọi API
