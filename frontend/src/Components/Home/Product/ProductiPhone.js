@@ -17,6 +17,8 @@ const ProductiPhone = () => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(false);
     const perPage = 10; // Số sản phẩm mỗi trang
+    const [, setCurrentPage] = useState(1);
+    const [, setTotalPages] = useState(1);
     const formatCurrency = (value) => {
         return numeral(value).format('0,0') + ' ₫';
     };
