@@ -297,38 +297,7 @@ const Products = () => {
   }, [getProducts]);
 
   //search
-  const searchProducts = async (keyword, page = 1) => {
-    try {
-      setLoading(true);
-      const response = await axios.get(`http://localhost:3000/api/products/search`, {
-        params: {
-          searchTerm: keyword,
-          page: 1,
-          limit: 10
-        }
-      });
-
-      const { content = [], totalPages, currentPage } = response.data.data || {};
-
-      // Kiểm tra dữ liệu nhận được từ API
-      //console.log("Dữ liệu API:", response.data.products);
-
-      setProducts(response.data.products);  // Cập nhật state sản phẩm
-      setSearchResults(content);  // Cập nhật kết quả tìm kiếm
-      setNoResults(content.length === 0);
-      setTotalPages(totalPages);
-      setCurrentPage(currentPage + 1);
-
-      // Nếu cần xử lý thêm, bạn có thể thêm logic sau
-      fetchImagesAndUpdateProducts(response.data.products);
-    } catch (error) {
-      console.error("Lỗi tìm kiếm:", error);
-      setProducts([]);  // Nếu có lỗi, đảm bảo reset lại products
-      setSearchResults([]);
-    } finally {
-      setLoading(false);
-    }
-  };
+  
   
 
   return (

@@ -169,7 +169,7 @@ const ProductDetail = () => {
             setRelatedProducts([]);
         }
     };
-    const getUserData = async () => {
+    const getUserData = useCallback(async () => {
         const token = localStorage.getItem("token");
         const userString = localStorage.getItem("user");
         const user = userString ? JSON.parse(userString) : null;
@@ -190,7 +190,7 @@ const ProductDetail = () => {
                 //console.log("User roles:", roles);
                 //console.log("id", response.data.id);
 
-                return userData; // ✅ thêm dòng này để trả về user
+                return userData;
             } else {
                 console.error("Dữ liệu user không hợp lệ:", response.data);
                 setUser(null);
@@ -202,7 +202,7 @@ const ProductDetail = () => {
             setUser(null);
             window.location.reload();
         }
-    };
+    }, []);
     useEffect(() => {
         getUserData();
 

@@ -10,7 +10,7 @@ const TabAllDelivery = (props) => {
     const [orderuserid, setOrderuserid] = useState([]);
     const [products, setProduct] = useState({}); // Store product details
     const [loading] = useState(false);
-    const [error, setError] = useState(null);
+    const [, setError] = useState(null);
 
     const fetchProductDetails = useCallback(async (product_id) => {
         if (!product_id) return; // Nếu productId không tồn tại, không gọi API
