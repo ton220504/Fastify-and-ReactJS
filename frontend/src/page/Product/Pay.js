@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {  useLocation, useNavigate } from "react-router-dom";
 import "../../scss/Pay.scss"
 import { Form } from "react-bootstrap";
@@ -14,7 +14,6 @@ const Pay = () => {
     const [districts, setDistricts] = useState([]);
     const [wards, setWards] = useState([]);
     //const [loading, setLoading] = useState(true);
-    const [isLoading, setIsLoading] = useState(false);
 
 
     const [selectedProvince, setSelectedProvince] = useState("");
@@ -190,14 +189,14 @@ const Pay = () => {
         return price * quantity;
     };
     // 🟢 Hàm tính tổng tiền toàn bộ đơn hàng
-    const calculateTotalAmount = () => {
+    const calculateTotalAmount = useCallback(() => {
         return selectedItems.reduce((acc, item, index) => {
             if (selectedItemsChecked[index]) {
                 return acc + calculateItemTotal(item);
             }
             return acc;
         }, 0);
-    };
+    }, [selectedItems, selectedItemsChecked]);
 
     // 🟢 useEffect để cập nhật tổng tiền khi selectedItems thay đổi
     useEffect(() => {
@@ -327,7 +326,7 @@ const Pay = () => {
                     <div className=" row">
                         <div className="col-8">
                             <div className="main-header">
-                                <img className="logo" style={{ width: "300px", paddingTop: "10px", display: "block", margin: "0 auto" }} src="https://bizweb.dktcdn.net/100/497/960/themes/923878/assets/checkout_logo.png?1726452627090" alt="image" />
+                                <img className="logo" style={{ width: "300px", paddingTop: "10px", display: "block", margin: "0 auto" }} src="https://bizweb.dktcdn.net/100/497/960/themes/923878/assets/checkout_logo.png?1726452627090" alt="Logo checkout" />
                             </div>
                             {errorMessage && (
                                 <div className="alert alert-danger text-center">

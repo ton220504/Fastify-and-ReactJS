@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
 import { useDispatch } from 'react-redux';
 
@@ -17,11 +17,13 @@ const Individual = () => {
 
 
     const dispatch = useDispatch();
-    const getUser = async () => {
+    const getUser = useCallback(async () => {
         try {
             const token = localStorage.getItem('token');
             const userString = localStorage.getItem("user");
             const userObj = userString ? JSON.parse(userString) : null;
+
+            if (!userObj?.id) return;
 
             const response = await axios.get(`http://127.0.0.1:3000/api/users/${userObj.id}`, {
                 headers: {
@@ -41,7 +43,7 @@ const Individual = () => {
         } catch (error) {
             console.log("lỗi khi gọi user", error)
         }
-    };
+    }, [dispatch]);
 
     useEffect(() => {
         getUser();

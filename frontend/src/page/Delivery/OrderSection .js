@@ -1,4 +1,4 @@
-import { Link, Outlet } from "react-router-dom";
+import { Link } from "react-router-dom";
 import "../../scss/Delivery.scss"
 import { useEffect, useState } from "react";
 import TabAllDelivery from "./TabAllDelivery";
@@ -6,7 +6,6 @@ import TabCancel from "./TabCancel";
 
 import TabFinish from "./tabFinish";
 import TabWait from "./TabWait";
-import TabPay from "./TabPay";
 import TabRefund from "./TabRefund";
 import TabTrans from "./TabTrans";
 
@@ -80,12 +79,6 @@ const OrderSection = () => {
     const handleShowTrans = () => {
         resetTabs();
         setShowTrans(true);
-        getAllOrder();
-    };
-
-    const handleShowWait = () => {
-        resetTabs();
-        setShowWait(true);
         getAllOrder();
     };
 

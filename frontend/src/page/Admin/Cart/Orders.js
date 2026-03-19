@@ -165,8 +165,7 @@ const Order = () => {
         }
     };
     useEffect(() => {
-        openDetailModal();
-        openModalWithOrder();
+        getOrders();
     }, []);
 
     return (

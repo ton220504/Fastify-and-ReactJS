@@ -17,8 +17,8 @@ const ProductiPhone = () => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(false);
     const perPage = 10; // Số sản phẩm mỗi trang
-    const [ setCurrentPage] = useState(1);
-    const [ setTotalPages] = useState(1);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
     const formatCurrency = (value) => {
         return numeral(value).format('0,0') + ' ₫';
     };
@@ -124,7 +124,7 @@ const ProductiPhone = () => {
         } finally {
             setLoading(false);
         }
-    }, []);
+    }, [perPage, setCurrentPage, setTotalPages]);
     // 🟢 Gọi API khi component mount
     useEffect(() => {
         getProducts(1);
@@ -156,7 +156,7 @@ const ProductiPhone = () => {
                 alignItems: 'center',
                 height: '100vh' // chiều cao 100% của viewport,
             }}>
-                <img style={{ width: "100px", height: "100px" }} src="./img/loading-gif-png-5.gif" alt="image" />
+                <img style={{ width: "100px", height: "100px" }} src="./img/loading-gif-png-5.gif" alt="Loading" />
             </div>
         );
     }

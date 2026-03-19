@@ -1,9 +1,7 @@
 import './App.scss';
-import Users from './Components/Users';
 import TableUsers from './Components/TableUsers';
-import Top_Header from './layout/FE/Header/Header';
 import Home from './Components/Home';
-import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Layoutfontend from './layout/FE/layout';
 import Login from './page/Login';
 import Register from './page/Register';

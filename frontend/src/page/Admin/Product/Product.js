@@ -297,16 +297,16 @@ const Products = () => {
   }, [getProducts]);
 
   //search
-  const searchProducts = async (keyword, page = 1) => {
-    try {
-      setLoading(true);
-      const response = await axios.get(`http://localhost:3000/api/products/search`, {
-        params: {
-          searchTerm: keyword,
-          page: 1,
-          limit: 10
-        }
-      });
+  // const searchProducts = async (keyword, page = 1) => {
+  //   try {
+  //     setLoading(true);
+  //     const response = await axios.get(`http://localhost:3000/api/products/search`, {
+  //       params: {
+  //         searchTerm: keyword,
+  //         page: 1,
+  //         limit: 10
+  //       }
+  //     });
 
       const { content = [], totalPages, currentPage } = response.data.data || {};
 

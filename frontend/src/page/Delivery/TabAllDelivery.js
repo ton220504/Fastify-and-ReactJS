@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import "../../scss/Delivery.scss"
 import { CiDeliveryTruck } from "react-icons/ci";
 import Swal from 'sweetalert2';
@@ -10,13 +10,28 @@ const TabAllDelivery = (props) => {
     const [orderuserid, setOrderuserid] = useState([]);
     const [products, setProduct] = useState({}); // Store product details
     const [loading] = useState(false);
-    
+    const [error, setError] = useState(null);
 
+    const fetchProductDetails = useCallback(async (product_id) => {
+        if (!product_id) return; // Nếu productId không tồn tại, không gọi API
+        if (!products[product_id]) { // Chỉ fetch nếu sản phẩm chưa có
 
+            try {
+                const response = await axios.get(`http://localhost:3000/api/products/${product_id}`);
+                const product = response.data;
+                product.image = `http://127.0.0.1:3000/uploads/${product.image}`;
+                setProduct(prevProducts => ({
+                    ...prevProducts,
+                    [product_id]: response.data
+                }));
 
+            } catch (error) {
+                console.error("Lỗi khi gọi API sản phẩm:", error);
+            }
+        }
+    }, [products]);
 
-    const [ setError] = useState(null);
-    const getOrderByUserId = async () => {
+    const getOrderByUserId = useCallback(async () => {
         try {
             const token = localStorage.getItem("token");
             const user = JSON.parse(localStorage.getItem("user"));
@@ -40,7 +55,7 @@ const TabAllDelivery = (props) => {
             console.error("Lỗi khi gọi API đơn hàng:", error);
             setError("Không thể tải dữ liệu đơn hàng.");
         }
-    };
+    }, [setError]);
 
     useEffect(() => {
         if (orderuserid.length > 0) {
@@ -52,30 +67,11 @@ const TabAllDelivery = (props) => {
                 });
             });
         }
-    }, [orderuserid]);
-    useEffect(() => {
+    }, [orderuserid, fetchProductDetails]);
 
+    useEffect(() => {
         getOrderByUserId();
     }, [getOrderByUserId]);
-
-    const fetchProductDetails = async (product_id) => {
-        if (!product_id) return; // Nếu productId không tồn tại, không gọi API
-        if (!products[product_id]) { // Chỉ fetch nếu sản phẩm chưa có
-
-            try {
-                const response = await axios.get(`http://localhost:3000/api/products/${product_id}`);
-                const product = response.data;
-                product.image = `http://127.0.0.1:3000/uploads/${product.image}`;
-                setProduct(prevProducts => ({
-                    ...prevProducts,
-                    [product_id]: response.data
-                }));
-
-            } catch (error) {
-                console.error("Lỗi khi gọi API sản phẩm:", error);
-            }
-        }
-    };
 
     const Canceled = async (id) => {
 

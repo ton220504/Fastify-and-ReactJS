@@ -70,16 +70,16 @@ const Footer = () => {
                             <h5 className="Title-menu mt-2">Phương thức thanh toán</h5>
                             <div className="pay mt-2">
                                 <Link>
-                                    <img src="https://bizweb.dktcdn.net/100/497/960/themes/923878/assets/payment-1.png?1719291840576" className="payment" alt="image" />
+                                    <img src="https://bizweb.dktcdn.net/100/497/960/themes/923878/assets/payment-1.png?1719291840576" className="payment" alt="Payment method 1" />
                                 </Link>
                                 <Link>
-                                    <img src="https://bizweb.dktcdn.net/100/497/960/themes/923878/assets/payment-2.png?1719291840576" className="payment" alt="image" />
+                                    <img src="https://bizweb.dktcdn.net/100/497/960/themes/923878/assets/payment-2.png?1719291840576" className="payment" alt="Payment method 2" />
                                 </Link>
                                 <Link>
-                                    <img src="https://bizweb.dktcdn.net/100/497/960/themes/923878/assets/payment-4.png?1719291840576" className="payment" alt="image" />
+                                    <img src="https://bizweb.dktcdn.net/100/497/960/themes/923878/assets/payment-4.png?1719291840576" className="payment" alt="Payment method 3" />
                                 </Link>
                                 <Link>
-                                    <img src="https://bizweb.dktcdn.net/100/497/960/themes/923878/assets/payment-3.png?1719291840576" className="payment" alt="image" />
+                                    <img src="https://bizweb.dktcdn.net/100/497/960/themes/923878/assets/payment-3.png?1719291840576" className="payment" alt="Payment method 4" />
                                 </Link>
                             </div>
 

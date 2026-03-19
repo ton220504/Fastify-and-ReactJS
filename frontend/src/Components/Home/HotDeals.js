@@ -24,7 +24,22 @@ const HotDeals = () => {
 		return formattedEndDate;
 	};
 
-	const startTimer = () => {
+	const formatTime = (time) => {
+		return time < 10 ? `0${time}` : time;
+	};
+
+	useEffect(() => {
+		const calculatedEndDate = calculateEndDate(); // Tính toán ngày kết thúc sau 5 ngày
+		setEndDate(calculatedEndDate); // Thiết lập endDate với ngày kết thúc tính được
+
+		return () => {
+			clearInterval(interval.current);
+		};
+	}, []);
+
+	useEffect(() => {
+		if (!endDate) return;
+
 		const countDownDate = new Date(endDate).getTime();
 
 		interval.current = setInterval(() => {
@@ -45,26 +60,11 @@ const HotDeals = () => {
 				setTimerSeconds(formatTime(seconds));
 			}
 		}, 1000);
-	};
-
-	const formatTime = (time) => {
-		return time < 10 ? `0${time}` : time;
-	};
-
-	useEffect(() => {
-		const calculatedEndDate = calculateEndDate(); // Tính toán ngày kết thúc sau 5 ngày
-		setEndDate(calculatedEndDate); // Thiết lập endDate với ngày kết thúc tính được
 
 		return () => {
 			clearInterval(interval.current);
 		};
-	}, []);
-
-	useEffect(() => {
-		if (endDate) {
-			startTimer();
-		}
-	}, [endDate, startTimer]);
+	}, [endDate]);
 
 	return (
 		<div id="hot-deal" className="section">

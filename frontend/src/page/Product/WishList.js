@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import axios from 'axios';
 import {  Card } from 'react-bootstrap';
 import ComeBack from "../../Components/ComeBack";
@@ -98,7 +98,7 @@ const WishList = () => {
         }
     };
 
-    const checkUserLogin = async () => {
+    const checkUserLogin = useCallback(async () => {
         const token = localStorage.getItem("token");
         if (token) {
             try {
@@ -113,7 +113,7 @@ const WishList = () => {
             setUser(null);
             setLoadingUser(false);
         }
-    };
+    }, []);
     
 
     // // Hàm lấy thông tin người dùng từ API

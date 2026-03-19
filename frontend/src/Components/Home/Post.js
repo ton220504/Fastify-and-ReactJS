@@ -5,19 +5,7 @@ import { Link } from 'react-router-dom';
 const Post = () => {
     const [posts, setPosts] = useState([]);
 
-    const fetchPosts = async () => {
-        try {
-            const response = await axios.get(`http://localhost:3000/api/posts`);
-            //console.log('Fetched posts:', response.data);
-            setPosts(response.data || []);
-            const po = response.data;
-            fetchImagesPost(po)
-        } catch (error) {
-            console.error('Error fetching posts', error);
-            setPosts([]);
-        }
-    };
-    const fetchImagesPost = async (po) => {
+    const fetchImagesPost = (po) => {
         if (!po || po.length === 0) return;
 
         const updatedPost = po.map((pos) => {
@@ -31,9 +19,20 @@ const Post = () => {
 
         setPosts(updatedPost);
     };
+
     useEffect(() => {
+        const fetchPosts = async () => {
+            try {
+                const response = await axios.get(`http://localhost:3000/api/posts`);
+                const po = response.data || [];
+                fetchImagesPost(po);
+            } catch (error) {
+                console.error('Error fetching posts', error);
+                setPosts([]);
+            }
+        };
         fetchPosts();
-    }, [fetchPosts]);
+    }, []);
 
     // Lấy 3 bài viết đầu tiên
     const displayedPosts = posts.slice(0, 3);

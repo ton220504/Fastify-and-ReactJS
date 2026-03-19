@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import ComeBack from '../ComeBack';
 
@@ -11,7 +11,7 @@ const PostDetail = () => {
     const [comments, setComments] = useState([]); // Danh sách bình luận
     const [newComment, setNewComment] = useState({ content: '' }); // Giá trị bình luận mới
 
-    const fetchPosts = async () => {
+    const fetchPosts = useCallback(async () => {
         try {
             const response = await axios.get(`http://localhost:3000/api/posts`);
             console.log('Fetched posts:', response.data);
@@ -29,29 +29,26 @@ const PostDetail = () => {
             console.error('Error fetching posts', error);
             setPosts([]);
         }
-    };
+    }, []);
 
-    const fetchPostDetail = async () => {
+    const fetchPostDetail = useCallback(async () => {
         try {
             const response = await axios.get(`http://localhost:3000/api/posts/${id}`);
             console.log('Fetched post detail:', response.data);
             const po = response.data;
-            const updatedPost = () => {
-                //console.log("Image name:", pos.image);
-                const imageUrl = po.image
-                    ? `http://127.0.0.1:3000/uploads/${po.image}`
-                    : "/images/default-placeholder.jpg"; // ảnh mặc định nếu không có
 
-                return { ...po, imageUrl };
-            };
-            setCurrentPost(updatedPost);
+            const imageUrl = po.image
+                ? `http://127.0.0.1:3000/uploads/${po.image}`
+                : "/images/default-placeholder.jpg"; // ảnh mặc định nếu không có
+
+            setCurrentPost({ ...po, imageUrl });
         } catch (error) {
             console.error('Error fetching post detail', error);
             setCurrentPost(null);
         }
-    };
+    }, [id]);
 
-    const fetchTopic = async () => {
+    const fetchTopic = useCallback(async () => {
         try {
             const response = await axios.get("http://127.0.0.1:3000/api/topics")
             const top = response.data;
@@ -59,8 +56,9 @@ const PostDetail = () => {
         } catch (error) {
             console.log("Lỗi call Topic: ", error);
         }
-    }
-    const fetchPostComment = async () => {
+    }, []);
+
+    const fetchPostComment = useCallback(async () => {
         try {
             const response = await axios.get(`http://127.0.0.1:3000/api/postsComment/post/${id}`)
             const com = response.data;
@@ -68,13 +66,14 @@ const PostDetail = () => {
         } catch (error) {
             console.log("Lỗi call Topic: ", error);
         }
-    }
+    }, [id]);
+
     useEffect(() => {
         fetchPosts();
         fetchPostDetail();
-        fetchTopic()
-        fetchPostComment()
-    }, [id, fetchPostComment,fetchPostDetail ]); // Gọi API mỗi khi id thay đổi
+        fetchTopic();
+        fetchPostComment();
+    }, [fetchPosts, fetchPostDetail, fetchTopic, fetchPostComment, id]); // Gọi API mỗi khi id thay đổi
 
     const handleDanhgia = async (event) => {
         event.preventDefault();

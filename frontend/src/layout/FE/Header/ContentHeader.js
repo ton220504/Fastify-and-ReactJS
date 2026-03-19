@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Dropdown } from "react-bootstrap";
 import { FaUser, FaShoppingCart, FaHeart } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
@@ -24,6 +24,76 @@ const ContentHeader = () => {
     const handleMouseLeaveUser = () => setShowUser(false);
     const [cartItemCount, setCartItemCount] = useState(0); // Đếm sản phẩm giỏ hàng
     const [WishListItemCount, setWishListItemCount] = useState(0);
+
+    const getUserData = useCallback(async (token) => {
+        const userString = localStorage.getItem("user");
+        const user = userString ? JSON.parse(userString) : null;
+
+        if (!token || !user || !user.id) {
+            console.log("Không có token hoặc user ID, yêu cầu đăng nhập!");
+            setUser(null);
+            return;
+        }
+
+        try {
+            const response = await axios.get(`http://127.0.0.1:3000/api/users/${user.id}`);
+            if (response.data) {
+                // Nếu roles là 1 string như "user" hoặc "admin"
+                const roles = [response.data.role]; // Chuyển thành mảng
+
+                setUser({ ...response.data, roles });
+                //console.log("User roles:", roles);
+            } else {
+                console.error("Dữ liệu user không hợp lệ:", response.data);
+                setUser(null);
+            }
+        } catch (error) {
+            if (error.response && error.response.status === 401) {
+                console.warn("Token hết hạn hoặc không hợp lệ.");
+            } else {
+                console.error("Lỗi lấy thông tin người dùng:", error);
+            }
+            localStorage.removeItem("token");
+            localStorage.removeItem("user");
+            setUser(null);
+            navigate("/login");
+        }
+    }, [navigate]);
+
+    const fetchCartCount = useCallback(async () => {
+        try {
+            const userString = localStorage.getItem("user");
+            const user = userString ? JSON.parse(userString) : null;
+            if (!user || !user.id) {
+                console.log("Không tìm thấy user");
+                return;
+            }
+
+            const response = await axios(`http://localhost:3000/api/carts/count/${user.id}`);
+            const cartCountFromBackend = response.data.count;
+
+            setCartItemCount(cartCountFromBackend);
+        } catch (error) {
+            console.error("Lỗi: ", error);
+        }
+    }, []);
+
+    const fecthCountWishlist = useCallback(async () => {
+        try {
+            const userString = localStorage.getItem("user");
+            const user = userString ? JSON.parse(userString) : null;
+            if (!user || !user.id) {
+                console.log("không tìm thấy user");
+                return;
+            }
+            const response = await axios.get(`http://localhost:3000/api/wishlist/count/${user.id}`);
+            const wishlistcountFrombackend = response.data.count;
+            setWishListItemCount(wishlistcountFrombackend);
+
+        } catch (error) {
+            console.log("Lỗi: ", error);
+        }
+    }, []);
 
     //category
     useEffect(() => {
@@ -60,42 +130,8 @@ const ContentHeader = () => {
         } else {
             console.log("Lỗi....... Không có token");
         }
-    }, [getUserData, fetchCartCount, fecthCountWishlist]); 
-    const getUserData = async () => {
-        const token = localStorage.getItem("token");
-        const userString = localStorage.getItem("user");
-        const user = userString ? JSON.parse(userString) : null;
+    }, [getUserData, fetchCartCount, fecthCountWishlist]);
 
-        if (!token || !user || !user.id) {
-            console.log("Không có token hoặc user ID, yêu cầu đăng nhập!");
-            setUser(null);
-            return;
-        }
-
-        try {
-            const response = await axios.get(`http://127.0.0.1:3000/api/users/${user.id}`);
-            if (response.data) {
-                // Nếu roles là 1 string như "user" hoặc "admin"
-                const roles = [response.data.role]; // Chuyển thành mảng
-
-                setUser({ ...response.data, roles });
-                //console.log("User roles:", roles);
-            } else {
-                console.error("Dữ liệu user không hợp lệ:", response.data);
-                setUser(null);
-            }
-        } catch (error) {
-            if (error.response && error.response.status === 401) {
-                console.warn("Token hết hạn hoặc không hợp lệ.");
-            } else {
-                console.error("Lỗi lấy thông tin người dùng:", error);
-            }
-            localStorage.removeItem("token");
-            localStorage.removeItem("user");
-            setUser(null);
-            navigate("/login");
-        }
-    };
     // Hàm đăng xuất
     const logout = () => {
         localStorage.removeItem("token"); // Xóa token khỏi localStorage
@@ -104,39 +140,7 @@ const ContentHeader = () => {
         navigate("/"); // Điều hướng về trang chủ sau khi đăng xuất
         window.location.reload(); // Tải lại trang
     };
-    const fetchCartCount = async () => {
-        try {
-            const userString = localStorage.getItem("user");
-            const user = userString ? JSON.parse(userString) : null;
-            if (!user || !user.id) {
-                console.log("Không tìm thấy user");
-                return;
-            }
 
-            const response = await axios(`http://localhost:3000/api/carts/count/${user.id}`);
-            const cartCountFromBackend = response.data.count;
-
-            setCartItemCount(cartCountFromBackend);
-        } catch (error) {
-            console.error("Lỗi: ", error);
-        }
-    }
-    const fecthCountWishlist = async () => {
-        try {
-            const userString = localStorage.getItem("user");
-            const user = userString ? JSON.parse(userString) : null;
-            if (!user || !user.id) {
-                console.log("không tìm thấy user");
-                return;
-            }
-            const response = await axios.get(`http://localhost:3000/api/wishlist/count/${user.id}`);
-            const wishlistcountFrombackend = response.data.count;
-            setWishListItemCount(wishlistcountFrombackend);
-
-        } catch (error) {
-            console.log("Lỗi: ", error);
-        }
-    }
     return (
         <div className="content-header">
             <div className="container">

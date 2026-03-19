@@ -59,11 +59,11 @@ const Home = () => {
                     <div className="col-3 banner-right mt-3">
 
                         <img src="https://bizweb.dktcdn.net/thumb/grande/100/497/960/themes/923878/assets/slider_1.jpg?1719291840576"
-                            style={{ width: "330px" }} className="" alt="image"/>
+                            style={{ width: "330px" }} className="" alt="Promotional banner 1"/>
                         <img src="https://bizweb.dktcdn.net/thumb/grande/100/497/960/themes/923878/assets/slider_2.jpg?1719291840576"
-                            style={{ width: "330px" }} className="mt-2" alt="image 2"/>
+                            style={{ width: "330px" }} className="mt-2" alt="Promotional banner 2"/>
                         <img src="https://bizweb.dktcdn.net/thumb/grande/100/497/960/themes/923878/assets/slider_3.jpg?1719291840576"
-                            style={{ width: "330px" }} className="mt-2" alt="image 3"/>
+                            style={{ width: "330px" }} className="mt-2" alt="Promotional banner 3"/>
 
                     </div>
 

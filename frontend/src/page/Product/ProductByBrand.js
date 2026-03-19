@@ -177,7 +177,7 @@ const ProductByCategory = () => {
                 height: '100vh' // chiều cao 100% của viewport,
 
             }}>
-                <img style={{ width: "100px", height: "100px" }} src="../img/loading-gif-png-5.gif" alt="image" />
+                <img style={{ width: "100px", height: "100px" }} src="../img/loading-gif-png-5.gif" alt="Loading product by brand" />
             </div>
         );
     }

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from "react-router-dom";
 import ComeBack from "../../Components/ComeBack";
 import "../../scss/ProductDetail.scss";
@@ -35,6 +35,19 @@ const ProductDetail = () => {
     const [startX, setStartX] = useState(0);
     const [scrollLeft, setScrollLeft] = useState(0);
     const [ setUser] = useState(null);
+    
+    ///lấy đánh giá sản phẩm
+    const fetchReviews = useCallback(async () => {
+        try {
+            const response = await axios.get(`http://localhost:3000/api/reviews/product/${id}`);
+            const dataReviews = response.data;
+            setReviews(dataReviews);
+            //console.log(dataReviews);
+        } catch (error) {
+            console.log("Lỗi: ", error);
+        }
+    }, [id]);
+    
     useEffect(() => {
         const fetchProduct = async () => {
             try {
@@ -61,18 +74,6 @@ const ProductDetail = () => {
         };
         fetchProduct();
     }, [id, fetchReviews]);
-
-    ///lấy đánh giá sản phẩm
-    const fetchReviews = async () => {
-        try {
-            const response = await axios.get(`http://localhost:3000/api/reviews/product/${id}`);
-            const dataReviews = response.data;
-            setReviews(dataReviews);
-            //console.log(dataReviews);
-        } catch (error) {
-            console.log("Lỗi: ", error);
-        }
-    }
 
     // Hàm lọc tên sản phẩm chính xác
     const extractProductName = (fullName) => {
@@ -206,6 +207,10 @@ const ProductDetail = () => {
         getUserData();
 
     }, []);
+    
+    useEffect(() => {
+        fetchReviews();
+    }, [fetchReviews]);
     
     const handleCheckout = async () => {
         const token = localStorage.getItem("token");
@@ -602,7 +607,7 @@ const ProductDetail = () => {
                                 <button className="mua-tra-gop" style={{ backgroundColor: "#503eb6", color: "white" }} disabled={outOfStock} onClick={handleCheckout} > Mua ngay</button>
                             </div>
                         </div>
-                        <img style={{ height: "auto", maxWidth: "565px", borderRadius: "7px", marginTop: "7px" }} src="https://clickbuy.com.vn/uploads/media/657-LHKNd.jpg" alt="image" />
+                        <img style={{ height: "auto", maxWidth: "565px", borderRadius: "7px", marginTop: "7px" }} src="https://clickbuy.com.vn/uploads/media/657-LHKNd.jpg" alt="Product promotion banner" />
 
                     </div>
                     <div className='col-md-3 form-policy'>
@@ -611,19 +616,19 @@ const ProductDetail = () => {
                             <div className="policies">
                                 <div className="section-title">Chính Sách Của Chúng Tôi</div>
                                 <p>
-                                    <img src="https://bizweb.dktcdn.net/100/497/960/themes/923878/assets/policy_image_1.png?1719291840576" alt="iamge" />
+                                    <img src="https://bizweb.dktcdn.net/100/497/960/themes/923878/assets/policy_image_1.png?1719291840576" alt="Free shipping policy" />
                                     <span style={{ marginLeft: '8px' }}>Miễn phí vận chuyển tại TP.HCM</span>
                                 </p>
                                 <p>
-                                    <img src="https://bizweb.dktcdn.net/100/497/960/themes/923878/assets/policy_image_2.png?1719291840576" alt="iamge" />
+                                    <img src="https://bizweb.dktcdn.net/100/497/960/themes/923878/assets/policy_image_2.png?1719291840576" alt="Warranty policy" />
                                     <span style={{ marginLeft: '8px' }}>Bảo hành chính hãng toàn quốc </span>
                                 </p>
                                 <p>
-                                    <img src="https://bizweb.dktcdn.net/100/497/960/themes/923878/assets/policy_image_3.png?1719291840576" alt="iamge" />
+                                    <img src="https://bizweb.dktcdn.net/100/497/960/themes/923878/assets/policy_image_3.png?1719291840576" alt="Authenticity guarantee" />
                                     <span style={{ marginLeft: '8px' }}>Cam kết chính hãng 100%</span>
                                 </p>
                                 <p>
-                                    <img src="https://bizweb.dktcdn.net/100/497/960/themes/923878/assets/policy_image_4.png?1719291840576" alt="iamge" />
+                                    <img src="https://bizweb.dktcdn.net/100/497/960/themes/923878/assets/policy_image_4.png?1719291840576" alt="Exchange guarantee" />
                                     <span style={{ marginLeft: '8px' }}>1 đổi 1 nếu sản phẩm lỗi</span>
                                 </p>
                             </div>
@@ -633,7 +638,7 @@ const ProductDetail = () => {
                                 <div className="section-title">Có Thể Bạn Thích</div>
                                 <div className="recommendation-item">
                                     <img className="img"
-                                        src="https://bizweb.dktcdn.net/thumb/large/100/497/960/products/sac-egnezy.jpg?v=1696428931143" alt="image"
+                                        src="https://bizweb.dktcdn.net/thumb/large/100/497/960/products/sac-egnezy.jpg?v=1696428931143" alt="Power bank Energizer"
                                     />
                                     <div>
                                         <span className="product-name">Pin Dự Phòng Energizer</span><br />
@@ -643,7 +648,7 @@ const ProductDetail = () => {
                                 </div>
                                 <div className="recommendation-item">
                                     <img className="img"
-                                        src="https://bizweb.dktcdn.net/thumb/large/100/497/960/products/sac-egnezy.jpg?v=1696428931143" alt="image"
+                                        src="https://bizweb.dktcdn.net/thumb/large/100/497/960/products/sac-egnezy.jpg?v=1696428931143" alt="Power bank Energizer"
                                     />
                                     <div>
                                         <span className="product-name">Pin Dự Phòng Energizer</span><br />
@@ -653,7 +658,7 @@ const ProductDetail = () => {
                                 </div>
                                 <div className="recommendation-item">
                                     <img className="img"
-                                        src="https://bizweb.dktcdn.net/thumb/large/100/497/960/products/sac-egnezy.jpg?v=1696428931143" alt="image"
+                                        src="https://bizweb.dktcdn.net/thumb/large/100/497/960/products/sac-egnezy.jpg?v=1696428931143" alt="Power bank Energizer"
                                     />
                                     <div>
                                         <span className="product-name">Pin Dự Phòng Energizer</span><br />

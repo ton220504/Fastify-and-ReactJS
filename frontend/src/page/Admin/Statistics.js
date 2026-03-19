@@ -139,7 +139,7 @@ const RevenueChart = () => {
     };
 
     fetchOrders();
-  }, []);
+  }, [setLoading]);
   const maxRevenue = Math.max(...chartData.map(item => item.totalRevenue), 0);
   const yAxisMax = Math.ceil(maxRevenue / 10000000) * 10000000 + 10000000;
   ////////////////
@@ -198,7 +198,6 @@ const RevenueChart = () => {
   
 
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
-  const RADIAN = Math.PI / 180;
   
   return (
     <>

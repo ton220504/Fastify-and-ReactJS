@@ -1,7 +1,7 @@
 import { Button, Form, Modal, Spinner } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import ComeBack from "../Components/ComeBack";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 
@@ -68,30 +68,8 @@ const Login = () => {
         if (e.target.name === "password") setPassword(e.target.value);
 
     }
-    useEffect(() => {
-        // Load Google Identity script
-        const script = document.createElement("script");
-        script.src = "https://accounts.google.com/gsi/client";
-        script.async = true;
-        script.defer = true;
-        document.body.appendChild(script);
 
-        script.onload = () => {
-            if (window.google) {
-                window.google.accounts.id.initialize({
-                    client_id: "868723265725-jfhktq3r7mcqt3qca18bptrgt44eqvgs.apps.googleusercontent.com",
-                    callback: handleGoogleResponse,
-                });
-
-                window.google.accounts.id.renderButton(
-                    document.getElementById("google-signin"),
-                    { theme: "outline", size: "large", width: "100%" }
-                );
-            }
-        };
-    }, [handleGoogleResponse]);
-
-    const handleGoogleResponse = async (response) => {
+    const handleGoogleResponse = useCallback(async (response) => {
         try {
             const res = await axios.post("http://localhost:3000/auth/google", {
                 token: response.credential,
@@ -118,7 +96,31 @@ const Login = () => {
                 text: "Vui lòng thử lại sau.",
             });
         }
-    };
+    }, [navigate]);
+
+    useEffect(() => {
+        // Load Google Identity script
+        const script = document.createElement("script");
+        script.src = "https://accounts.google.com/gsi/client";
+        script.async = true;
+        script.defer = true;
+        document.body.appendChild(script);
+
+        script.onload = () => {
+            if (window.google) {
+                window.google.accounts.id.initialize({
+                    client_id: "868723265725-jfhktq3r7mcqt3qca18bptrgt44eqvgs.apps.googleusercontent.com",
+                    callback: handleGoogleResponse,
+                });
+
+                window.google.accounts.id.renderButton(
+                    document.getElementById("google-signin"),
+                    { theme: "outline", size: "large", width: "100%" }
+                );
+            }
+        };
+    }, [handleGoogleResponse]);
+
     const closeEditModal = () => {
         setEditModalShow(false);
     };
