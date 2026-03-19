@@ -21,8 +21,6 @@ const Products = () => {
   const [detailModalShow, setDetailModalShow] = useState(false);
   const [imagesModalShow, SetImagesModalShow] = useState(false);
   const [totalPages, setTotalPages] = useState(1);
-  const [setSearchResults] = useState([]);
-  const [setNoResults] = useState(false);
   const [addform, setAddform] = useState([{ id: 1 }]);
   const [image, setImage] = useState(null);
   const [colorName, setColorName] = useState('');
