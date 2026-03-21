@@ -15,7 +15,7 @@ import axios from "axios";
 import {  ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { FaInstagram } from "react-icons/fa";
-import { ip } from '../../../api/Api';
+import { ip } from '../../api/Api';
 
 
 const ProductByCategory = () => {

@@ -8,7 +8,7 @@ import numeral from 'numeral';
 import { Link, useNavigate } from 'react-router-dom';
 import "../../scss/Cart.scss";
 import Swal from 'sweetalert2';
-import { ip } from '../../../api/Api';
+import { ip } from '../../api/Api';
 
 const Cart = () => {
     const [cartitems, setCartItems] = useState([]);

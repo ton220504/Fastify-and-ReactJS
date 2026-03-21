@@ -5,7 +5,7 @@ import { Form } from "react-bootstrap";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { Spinner } from 'react-bootstrap';
-import { ip } from '../../../api/Api';
+import { ip } from '../../api/Api';
 
 
 const Pay = () => {

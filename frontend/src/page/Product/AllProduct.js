@@ -11,7 +11,7 @@ import {  ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { FaInstagram } from "react-icons/fa";
 import { Grid, List } from 'lucide-react';
-import { ip } from "../../../api/Api";
+import { ip } from "../../api/Api";
 const AllProduct = () => {
     const [favoriteProducts, setFavoriteProducts] = useState([]);
     const [products, setProducts] = useState([]);

@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import axios from 'axios';
-import { ip } from '../../../api/Api';
+import { ip } from '../../api/Api';
 
 const Callback = () => {
     const navigate = useNavigate();
