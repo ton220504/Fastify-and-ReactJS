@@ -28,12 +28,6 @@ fastify.register(fastifyStatic, {
         res.setHeader('Access-Control-Allow-Origin', '*');
     }
 });
-await fastify.register(require('@fastify/cors'), {
-  origin: [
-    "http://localhost:5173",
-    "https://fastify-and-react-js.vercel.app"
-  ]
-})
 
 /////////////////AUthorization//////////////////
 const jwt = require('jsonwebtoken');
@@ -60,13 +54,22 @@ fastify.decorate("authenticate", async function (request, reply) {
 });
 
 
-fastify.register(require('@fastify/cors'), {
-    origin: "*", // Cho phép tất cả origin (có thể giới hạn lại nếu cần)
-    methods: ["GET", "POST", "PUT", "DELETE"], // Chỉ định các method được phép
+// fastify.register(require('@fastify/cors'), {
+//     origin: "*", // Cho phép tất cả origin (có thể giới hạn lại nếu cần)
+//     methods: ["GET", "POST", "PUT", "DELETE"], // Chỉ định các method được phép
+//     allowedHeaders: ["Content-Type", "Authorization"],
+//     exposedHeaders: ["Authorization"],
+//     credentials: true
+// });
+await fastify.register(require('@fastify/cors'), {
+    origin: [
+        "http://localhost:5173",
+        "https://fastify-and-react-js.vercel.app"
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
-    exposedHeaders: ["Authorization"],
     credentials: true
-});
+})
 // Đăng ký Swagger
 fastify.register(require('@fastify/swagger'), {
     routePrefix: '/docs',
@@ -77,7 +80,7 @@ fastify.register(require('@fastify/swagger'), {
             version: '0.1.0'
         },
         servers: [
-            { url: 'http://localhost:3000', description: 'Development server' }
+            { url: 'http://localhost:3001', description: 'Development server' }
         ],
         schemes: ['http'], // Chỉ định rõ HTTP
         consumes: ['application/json'],
@@ -168,13 +171,13 @@ fastify.register(require('./routes/statistics/statistics'));
 //     // Server is now listening on ${address}
 // })
 const start = async () => {
-  try {
-    await fastify.listen({ port: 3000, host: "0.0.0.0" })
-    console.log("Server running")
-  } catch (err) {
-    fastify.log.error(err)
-    process.exit(1)
-  }
+    try {
+        await fastify.listen({ port: 3000, host: "0.0.0.0" })
+        console.log("Server running")
+    } catch (err) {
+        fastify.log.error(err)
+        process.exit(1)
+    }
 }
 
 start()
