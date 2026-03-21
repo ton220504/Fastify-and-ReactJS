@@ -28,7 +28,12 @@ fastify.register(fastifyStatic, {
         res.setHeader('Access-Control-Allow-Origin', '*');
     }
 });
-
+await fastify.register(require('@fastify/cors'), {
+  origin: [
+    "http://localhost:5173",
+    "https://fastify-and-react-js.vercel.app"
+  ]
+})
 
 /////////////////AUthorization//////////////////
 const jwt = require('jsonwebtoken');
