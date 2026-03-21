@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import "../../../assets/css/header.css";
 import axios from "axios";
 import numeral from "numeral";
+import { ip } from "../../../api/Api";
 
 //Lấy dữ liệu từ database
 
@@ -34,7 +35,7 @@ const Header = () => {
     
             try {
                 const response = await axios.get(
-                    `http://127.0.0.1:3000/api/products/search`,
+                    `${ip}/products/search`,
                     {
                         params: {
                             searchTerm: searchKeyword,

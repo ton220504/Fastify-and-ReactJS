@@ -4,6 +4,7 @@ import ComeBack from "../Components/ComeBack";
 import { useState } from "react";
 import axios from "axios";
 import Swal from 'sweetalert2';
+import { ip } from "../api/Api";
 
 const Register = (props) => {
     const [name, setName] = useState("");
@@ -52,7 +53,7 @@ const Register = (props) => {
 
 
         axios
-            .post("http://127.0.0.1:3000/api/users", {
+            .post(`${ip}/users`, {
                 username: name,
                 email: email,
                 phone: phone,

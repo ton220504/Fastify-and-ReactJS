@@ -8,6 +8,7 @@ import numeral from 'numeral';
 import { Link, useNavigate } from 'react-router-dom';
 import "../../scss/Cart.scss";
 import Swal from 'sweetalert2';
+import { ip } from '../../../api/Api';
 
 const Cart = () => {
     const [cartitems, setCartItems] = useState([]);
@@ -23,7 +24,7 @@ const Cart = () => {
     const fetchCartItems = async (token, user) => {
         try {
 
-            const response = await axios.get(`http://127.0.0.1:3000/api/carts/user/${user.id}`, {
+            const response = await axios.get(`${ip}/carts/user/${user.id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -39,12 +40,12 @@ const Cart = () => {
             const updatedCartItems = await Promise.all(
                 cartData.items.map(async (item) => {
                     try {
-                        const productRes = await axios.get(`http://127.0.0.1:3000/api/products/${item.product_id}`);
+                        const productRes = await axios.get(`${ip}/products/${item.product_id}`);
                         const product = productRes.data;
 
                         // Ưu tiên item.image, fallback nếu không có
                         const imageFilename = item.image && item.image.trim() !== "" ? item.image : product.image;
-                        const imageUrl = `http://127.0.0.1:3000/uploads/${imageFilename}`;
+                        const imageUrl = `${ip}/uploads/${imageFilename}`;
 
                         return {
                             id: item.id,

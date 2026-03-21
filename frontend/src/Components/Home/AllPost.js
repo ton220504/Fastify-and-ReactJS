@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { ip } from '../../api/Api';
 
 const AllPost = () => {
     const [posts, setPosts] = useState([]);
@@ -11,14 +12,14 @@ const AllPost = () => {
         const fetchData = async () => {
             try {
                 const [topicsRes, postsRes] = await Promise.all([
-                    axios.get('http://127.0.0.1:3000/api/topics'),
-                    axios.get('http://127.0.0.1:3000/api/posts')
+                    axios.get(`${ip}/topics`),
+                    axios.get(`${ip}/posts`)
                 ]);
 
                 const postsWithImageUrl = postsRes.data.map(post => ({
                     ...post,
                     imageUrl: post.image
-                        ? `http://127.0.0.1:3000/uploads/${post.image}`
+                        ? `${ip}/uploads/${post.image}`
                         : '/images/default-placeholder.jpg'
                 }));
 

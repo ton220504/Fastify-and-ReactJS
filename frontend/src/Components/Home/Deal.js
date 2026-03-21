@@ -9,6 +9,7 @@ import '../../assets/css/Deal.css'; // Đảm bảo rằng đường dẫn đế
 import Swal from "sweetalert2";
 import {  ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import { ip } from '../../api/Api';
 
 
 
@@ -44,7 +45,7 @@ const Deal = () => {
             }
     
             const response = await axios.post(
-                "http://127.0.0.1:3000/api/wishlist",
+                `${ip}/wishlist`,
                 {
                     user_id: user.id,
                     product_id: productId
@@ -98,7 +99,7 @@ const Deal = () => {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const response = await axios.get("http://localhost:3000/api/products/newest");
+                const response = await axios.get(`${ip}/products/newest`);
                 const fetchProductsDeal = response.data;
                 setProducts(fetchProductsDeal);
                 fetchImagesAndUpdateProducts(fetchProductsDeal);
@@ -118,7 +119,7 @@ const Deal = () => {
     
         const updatedProducts = data.map((product) => {
             const imageUrl = product.image
-                ? `http://127.0.0.1:3000/uploads/${product.image}`
+                ? `http://127.0.0.1:3001/uploads/${product.image}`
                 : "/images/default-placeholder.jpg"; // ảnh mặc định nếu không có
     
             return { ...product, imageUrl };

@@ -4,6 +4,7 @@ import { FaUser, FaShoppingCart, FaHeart } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../../../assets/css/header.css";
+import { ip } from "../../../api/Api";
 const ContentHeader = () => {
     const [menu] = useState([
         { id: 1, name: "iPhone 15" },
@@ -36,7 +37,7 @@ const ContentHeader = () => {
         }
 
         try {
-            const response = await axios.get(`http://127.0.0.1:3000/api/users/${user.id}`);
+            const response = await axios.get(`${ip}/users/${user.id}`);
             if (response.data) {
                 // Nếu roles là 1 string như "user" hoặc "admin"
                 const roles = [response.data.role]; // Chuyển thành mảng
@@ -69,7 +70,7 @@ const ContentHeader = () => {
                 return;
             }
 
-            const response = await axios(`http://localhost:3000/api/carts/count/${user.id}`);
+            const response = await axios(`${ip}/carts/count/${user.id}`);
             const cartCountFromBackend = response.data.count;
 
             setCartItemCount(cartCountFromBackend);
@@ -86,7 +87,7 @@ const ContentHeader = () => {
                 console.log("không tìm thấy user");
                 return;
             }
-            const response = await axios.get(`http://localhost:3000/api/wishlist/count/${user.id}`);
+            const response = await axios.get(`${ip}/wishlist/count/${user.id}`);
             const wishlistcountFrombackend = response.data.count;
             setWishListItemCount(wishlistcountFrombackend);
 
@@ -99,7 +100,7 @@ const ContentHeader = () => {
     useEffect(() => {
         const fetchcategory = async () => {
             try {
-                const response = await axios.get("http://127.0.0.1:3000/api/category");
+                const response = await axios.get(`${ip}/category`);
                 //console.log(response.data); // Kiểm tra dữ liệu trả về
                 if (Array.isArray(response.data)) {
                     setCategories(response.data);

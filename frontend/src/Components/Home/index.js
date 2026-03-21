@@ -9,6 +9,7 @@ import ToastMessage from "../ToastMessage";
 import Post from "./Post";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { ip } from "../../api/Api";
 //import Deal from "./Deal";
 
 
@@ -17,13 +18,13 @@ const Home = () => {
 
     const getBanner = async () => {
         try {
-            const response = await axios.get("http://127.0.0.1:3000/api/banners");
+            const response = await axios.get(`${ip}/banners`);
             const banners = response.data;
 
             const updatedBanners = banners.map((banner) => ({
                 ...banner,
                 imageUrl: banner.image
-                    ? `http://127.0.0.1:3000/uploads/${banner.image}`
+                    ? `${ip}/uploads/${banner.image}`
                     : "/images/default-placeholder.jpg"
             }));
 

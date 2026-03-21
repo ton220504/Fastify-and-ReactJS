@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import axios from 'axios';
+import { ip } from '../../../api/Api';
 
 const Callback = () => {
     const navigate = useNavigate();
@@ -24,11 +25,11 @@ const Callback = () => {
                 localStorage.setItem("orderProcessed", "true");
 
                 // 1. Gửi đơn hàng
-                await axios.post(`http://127.0.0.1:3000/api/orders`, orderData);
+                await axios.post(`${ip}/orders`, orderData);
 
                 // 2. Trừ tồn kho
                 await Promise.all(orderData.items.map(item =>
-                    axios.put(`http://localhost:3000/api/products/${item.product_id}/stock`, {
+                    axios.put(`${ip}/products/${item.product_id}/stock`, {
                         stock_quantity: item.quantity
                     })
                 ));
@@ -46,7 +47,7 @@ const Callback = () => {
                 if (cartItemIds.length > 0) {
                     await Promise.all(
                         cartItemIds.map(id =>
-                            axios.delete(`http://127.0.0.1:3000/api/cartsItem/${id}`)
+                            axios.delete(`${ip}/cartsItem/${id}`)
                                 .catch(err => {
                                     console.error(`❌ Lỗi xóa cartItem ${id}`, err);
                                 })

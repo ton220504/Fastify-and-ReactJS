@@ -11,6 +11,7 @@ import {  ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { FaInstagram } from "react-icons/fa";
 import { Grid, List } from 'lucide-react';
+import { ip } from "../../../api/Api";
 const AllProduct = () => {
     const [favoriteProducts, setFavoriteProducts] = useState([]);
     const [products, setProducts] = useState([]);
@@ -43,7 +44,7 @@ const AllProduct = () => {
     const fetchCategories = async () => {
         try {
             setLoading(true);
-            const response = await axios.get("http://localhost:3000/api/category");
+            const response = await axios.get(`${ip}/category`);
             if (response.data) {
                 setCategories(response.data);
             }
@@ -58,7 +59,7 @@ const AllProduct = () => {
     const fetchBrands = async () => {
         try {
             setLoading(true);
-            const response = await axios.get("http://localhost:3000/api/brand");
+            const response = await axios.get(`${ip}/brand`);
             if (response.data) {
                 setBrands(response.data);
             }
@@ -94,7 +95,7 @@ const AllProduct = () => {
             }
 
             const response = await axios.post(
-                "http://127.0.0.1:3000/api/wishlist",
+                `${ip}/wishlist`,
                 {
                     user_id: user.id,
                     product_id: productId
@@ -147,7 +148,7 @@ const AllProduct = () => {
         try {
             setLoading(true);
     
-            let url = `http://localhost:3000/api/products?page=${pageNumber}&limit=${perPage}`;
+            let url = `${ip}/products?page=${pageNumber}&limit=${perPage}`;
     
             if (brandFilter) {
                 url = `http://localhost:3000/api/products/brand/${encodeURIComponent(brandFilter)}?page=${pageNumber}&limit=${perPage}`;

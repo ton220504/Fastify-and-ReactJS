@@ -5,6 +5,7 @@ import { Form } from "react-bootstrap";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { Spinner } from 'react-bootstrap';
+import { ip } from '../../../api/Api';
 
 
 const Pay = () => {
@@ -129,10 +130,10 @@ const Pay = () => {
         };
         try {
             // 1. Gửi đơn hàng
-            await axios.post(`http://127.0.0.1:3000/api/orders`, orderData);
+            await axios.post(`${ip}/orders`, orderData);
             // 🔥 Trừ tồn kho sau khi tạo đơn hàng thành công
             await Promise.all(items.map(item =>
-                axios.put(`http://localhost:3000/api/products/${item.product_id}/stock`, {
+                axios.put(`${ip}/products/${item.product_id}/stock`, {
                     stock_quantity: item.quantity // Đảm bảo `stock_quantity` là số lượng bạn muốn trừ
                 })
                     .catch(err => {
@@ -150,7 +151,7 @@ const Pay = () => {
             if (cartItemIds.length > 0) {
                 await Promise.all(
                     cartItemIds.map(id =>
-                        axios.delete(`http://127.0.0.1:3000/api/cartsItem/${id}`)
+                        axios.delete(`${ip}/cartsItem/${id}`)
                     )
                 );
                 console.log('Đã xóa sản phẩm khỏi giỏ hàng.');

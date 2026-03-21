@@ -3,6 +3,7 @@ import "../../scss/Delivery.scss"
 import { CiDeliveryTruck } from "react-icons/ci";
 import Swal from 'sweetalert2';
 import axios from "axios";
+import { ip } from '../../api/Api';
 
 
 
@@ -17,9 +18,9 @@ const TabAllDelivery = (props) => {
         if (!products[product_id]) { // Chỉ fetch nếu sản phẩm chưa có
 
             try {
-                const response = await axios.get(`http://localhost:3000/api/products/${product_id}`);
+                const response = await axios.get(`${ip}/products/${product_id}`);
                 const product = response.data;
-                product.image = `http://127.0.0.1:3000/uploads/${product.image}`;
+                product.image = `${ip}/uploads/${product.image}`;
                 setProduct(prevProducts => ({
                     ...prevProducts,
                     [product_id]: response.data
@@ -41,7 +42,7 @@ const TabAllDelivery = (props) => {
                 return;
             }
 
-            const response = await axios.get(`http://127.0.0.1:3000/api/orders/user/${user.id}`, {
+            const response = await axios.get(`${ip}/orders/user/${user.id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },

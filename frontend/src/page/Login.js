@@ -4,6 +4,7 @@ import ComeBack from "../Components/ComeBack";
 import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { ip } from "../api/Api";
 
 const Login = () => {
     const [email, setEmail] = useState("")
@@ -22,7 +23,7 @@ const Login = () => {
         setErrorMessage(""); // Clear previous error
 
         axios
-            .post("http://127.0.0.1:3000/api/users/login", {
+            .post(`${ip}/users/login`, {
                 email,
                 password,
             })
