@@ -54,22 +54,22 @@ fastify.decorate("authenticate", async function (request, reply) {
 });
 
 
-// fastify.register(require('@fastify/cors'), {
-//     origin: "*", // Cho phép tất cả origin (có thể giới hạn lại nếu cần)
-//     methods: ["GET", "POST", "PUT", "DELETE"], // Chỉ định các method được phép
-//     allowedHeaders: ["Content-Type", "Authorization"],
-//     exposedHeaders: ["Authorization"],
-//     credentials: true
-// });
-await fastify.register(require('@fastify/cors'), {
-    origin: [
-        "http://localhost:5173",
-        "https://fastify-and-react-js.vercel.app"
-    ],
-    methods: ["GET", "POST", "PUT", "DELETE"],
+fastify.register(require('@fastify/cors'), {
+    origin: "*", // Cho phép tất cả origin (có thể giới hạn lại nếu cần)
+    methods: ["GET", "POST", "PUT", "DELETE"], // Chỉ định các method được phép
     allowedHeaders: ["Content-Type", "Authorization"],
+    exposedHeaders: ["Authorization"],
     credentials: true
-})
+});
+// await fastify.register(require('@fastify/cors'), {
+//     origin: [
+//         "http://localhost:5173",
+//         "https://fastify-and-react-js.vercel.app"
+//     ],
+//     methods: ["GET", "POST", "PUT", "DELETE"],
+//     allowedHeaders: ["Content-Type", "Authorization"],
+//     credentials: true
+// })
 // Đăng ký Swagger
 fastify.register(require('@fastify/swagger'), {
     routePrefix: '/docs',
@@ -80,7 +80,7 @@ fastify.register(require('@fastify/swagger'), {
             version: '0.1.0'
         },
         servers: [
-            { url: 'http://localhost:3001', description: 'Development server' }
+            { url: 'http://localhost:3000', description: 'Development server' }
         ],
         schemes: ['http'], // Chỉ định rõ HTTP
         consumes: ['application/json'],
@@ -106,9 +106,9 @@ fastify.register(import('@fastify/swagger-ui'), {
     transformSpecificationClone: true
 })
 // Declare a route
-fastify.get('/', function (request, reply) {
-    reply.send({ hello: 'worldddd' })
-})
+// fastify.get('/', function (request, reply) {
+//     reply.send({ hello: 'worldddd' })
+// })
 fastify.get('/hello', {
     schema: {
         description: 'Lấy thông tin chào mừng',
@@ -162,7 +162,7 @@ fastify.register(require('./routes/wishlist/wishlist'));
 //import Statistic
 fastify.register(require('./routes/statistics/statistics'));
 
-// Run the server!
+//Run the server!
 // fastify.listen({ port: 3000 }, function (err, address) {
 //     if (err) {
 //         fastify.log.error(err)
@@ -170,17 +170,27 @@ fastify.register(require('./routes/statistics/statistics'));
 //     }
 //     // Server is now listening on ${address}
 // })
-const start = async () => {
-    try {
-        await fastify.listen({ port: 3000, host: "0.0.0.0" })
-        console.log("Server running")
-    } catch (err) {
-        fastify.log.error(err)
-        process.exit(1)
-    }
-}
+fastify.get("/", async () => {
+  return { status: "API running" }
+})
 
-start()
+fastify.listen(
+  {
+    port: process.env.PORT || 3000,
+    host: "0.0.0.0"
+  },
+  function (err, address) {
+    if (err) {
+      fastify.log.error(err)
+      process.exit(1)
+    }
+
+    console.log(`Server running at ${address}`)
+  }
+)
+
+
+
 
 //////////////////////////////////////////////////
 const { OAuth2Client } = require('google-auth-library');
