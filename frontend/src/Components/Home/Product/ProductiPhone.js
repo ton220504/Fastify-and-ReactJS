@@ -7,6 +7,7 @@ import Swal from "sweetalert2";
 import '../../../scss/Accessory.scss'
 import {  ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import {ip} from "../../../api/Api";
 
 
 

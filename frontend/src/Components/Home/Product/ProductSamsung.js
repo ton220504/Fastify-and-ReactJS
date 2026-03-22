@@ -7,6 +7,7 @@ import '../../../scss/Accessory.scss'
 import Swal from "sweetalert2";
 import {  ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import {ip} from "../../../api/Api";
 
 const ProductSamsung = () => {
 
