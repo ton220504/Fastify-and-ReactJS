@@ -64,13 +64,18 @@ const ContentHeader = () => {
     const fetchCartCount = useCallback(async () => {
         try {
             const userString = localStorage.getItem("user");
+            const token = localStorage.getItem("token");
             const user = userString ? JSON.parse(userString) : null;
             if (!user || !user.id) {
                 console.log("Không tìm thấy user");
                 return;
             }
 
-            const response = await axios(`${ip}/carts/count/${user.id}`);
+            const response = await axios.get(`${ip}/carts/count/${user.id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
             const cartCountFromBackend = response.data.count;
 
             setCartItemCount(cartCountFromBackend);
@@ -82,12 +87,17 @@ const ContentHeader = () => {
     const fecthCountWishlist = useCallback(async () => {
         try {
             const userString = localStorage.getItem("user");
+            const token = localStorage.getItem("token");
             const user = userString ? JSON.parse(userString) : null;
             if (!user || !user.id) {
                 console.log("không tìm thấy user");
                 return;
             }
-            const response = await axios.get(`${ip}/wishlist/count/${user.id}`);
+            const response = await axios.get(`${ip}/wishlist/count/${user.id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
             const wishlistcountFrombackend = response.data.count;
             setWishListItemCount(wishlistcountFrombackend);
 
