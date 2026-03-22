@@ -4,6 +4,7 @@ import Spinner from "react-bootstrap/Spinner";
 import { Button } from "react-bootstrap";
 import Swal from "sweetalert2";
 import axios from "axios";
+import { ip } from "../../../api/Api";
 
 const TrashCan = () => {
     const [loading, setLoading] = useState(true);
@@ -20,7 +21,7 @@ const TrashCan = () => {
             setLoading(true);
 
             const response = await axios.get(
-                `http://127.0.0.1:3000/api/productsIsDelete?page=${pageNumber}&limit=${perPage}`
+                `${ip}/productsIsDelete?page=${pageNumber}&limit=${perPage}`
             );
 
             const resData = response.data;
@@ -60,7 +61,7 @@ const TrashCan = () => {
         if (!data || data.length === 0) return;
         const updatedProducts = data.map((product) => {
             const imageUrl = product.image
-                ? `http://127.0.0.1:3000/uploads/${product.image}`
+                ? `${ip}/uploads/${product.image}`
                 : "/images/default-placeholder.jpg"; // ảnh mặc định nếu không có
 
             return { ...product, imageUrl };
@@ -89,7 +90,7 @@ const TrashCan = () => {
         }).then((result) => {
             if (result.isConfirmed) {
                 const token = localStorage.getItem("token");
-                Axios.delete(`http://localhost:3000/api/products/${id}`, {
+                Axios.delete(`${ip}/products/${id}`, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
@@ -133,7 +134,7 @@ const TrashCan = () => {
             if (result.isConfirmed) {
                 const token = localStorage.getItem("token");
                 Axios.put(
-                    `http://localhost:3000/api/products/${id}/restore`,
+                    `${ip}/products/${id}/restore`,
                     {}, // <- body trống vì không gửi gì
                     {
                         headers: {

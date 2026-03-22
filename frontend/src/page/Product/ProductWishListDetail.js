@@ -3,6 +3,7 @@ import axios from 'axios';
 import numeral from 'numeral';
 import { Link } from 'react-router-dom';
 import { Card } from 'react-bootstrap';
+import { ip } from '../../api/Api';
 
 const ProductWishListDetail = ({ id, onPriceChange }) => {
     const [product, setProduct] = useState(null);
@@ -14,7 +15,7 @@ const ProductWishListDetail = ({ id, onPriceChange }) => {
     useEffect(() => {
         const fetchProduct = async () => {
             try {
-                const response = await axios.get(`http://localhost:8080/api/product/${id}`);
+                const response = await axios.get(`${ip}/product/${id}`);
                 const productData = response.data;
 
                 if (productData) {
@@ -32,7 +33,7 @@ const ProductWishListDetail = ({ id, onPriceChange }) => {
     const fetchImageAndUpdateProduct = async (productData) => {
         try {
             const response = await axios.get(
-                `http://localhost:8080/api/product/${productData.id}/image`,
+                `${ip}/product/${productData.id}/image`,
                 { responseType: "blob" }
             );
             const imageUrl = URL.createObjectURL(response.data);

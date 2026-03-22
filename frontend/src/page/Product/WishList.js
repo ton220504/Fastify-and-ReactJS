@@ -6,6 +6,7 @@ import numeral from 'numeral';
 import { Link } from 'react-router-dom';
 import "../../scss/Cart.scss";
 import 'react-toastify/dist/ReactToastify.css';
+import { ip } from '../../api/Api';
 
 const WishList = () => {
     const [wishlist, setWishList] = useState([]);
@@ -27,7 +28,7 @@ const WishList = () => {
                 return;
             }
     
-            const response = await axios.get(`http://127.0.0.1:3000/api/wishlist/${user.id}`, {
+            const response = await axios.get(`${ip}/wishlist/${user.id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -43,10 +44,10 @@ const WishList = () => {
             const updatedCartItems = await Promise.all(
                 cartData.items.map(async (item) => {
                     try {
-                        const productRes = await axios.get(`http://127.0.0.1:3000/api/products/${item.product_id}`);
+                        const productRes = await axios.get(`${ip}/products/${item.product_id}`);
                         const product = productRes.data;
     
-                        const imageUrl = `http://127.0.0.1:3000/uploads/${product.image}`;
+                        const imageUrl = `${ip}/uploads/${product.image}`;
     
                         return {
                             id: item.id,
@@ -89,7 +90,7 @@ const WishList = () => {
     const handleRemove = async (wishlistItemId) => {
         try {
             
-            await axios.delete(`http://localhost:3000/api/wishlist/${wishlistItemId}`);
+            await axios.delete(`${ip}/wishlist/${wishlistItemId}`);
             setFavoriteProducts(prevFavorites => prevFavorites.filter(id => id !== wishlistItemId));
             setWishList(prevItems => prevItems.filter(item => item.id !== wishlistItemId));
             console.log("Sản phẩm đã được xóa khỏi yêu thích!");
@@ -129,7 +130,7 @@ const WishList = () => {
         }
     
         try {
-            const response = await axios.get(`http://127.0.0.1:3000/api/users/${user.id}`);
+            const response = await axios.get(`${ip}/users/${user.id}`);
             if (response.data) {
                 const roles = [response.data.role];
                 const userData = { ...response.data, roles };

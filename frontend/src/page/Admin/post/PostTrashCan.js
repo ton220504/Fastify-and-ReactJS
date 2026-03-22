@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
 import axios from "axios";
-
 import Swal from "sweetalert2";
+import { ip } from "../../../api/Api";
+
 const PostTrashCan = () => {
     const [posts, setPosts] = useState([]);
     const [RestoreId, setRestoreId] = useState(null);
     const fetchPost = async () => {
         try {
-            const response = await axios.get(`http://localhost:3000/api/postsIsDelete`);
+            const response = await axios.get(`${ip}/postsIsDelete`);
             const post = (response.data || []).sort((a, b) => a.id - b.id);
             setPosts(post);
         } catch (error) {
@@ -36,7 +37,7 @@ const PostTrashCan = () => {
 
         try {
             const token = localStorage.getItem("token");
-            await axios.delete(`http://localhost:3000/api/posts/${id}`, {
+            await axios.delete(`${ip}/posts/${id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -76,7 +77,7 @@ const PostTrashCan = () => {
             if (result.isConfirmed) {
                 const token = localStorage.getItem("token");
                 axios.put(
-                    `http://localhost:3000/api/posts/${id}/restore`,
+                    `${ip}/posts/${id}/restore`,
                     {}, // <- body trống vì không gửi gì
                     {
                         headers: {
@@ -133,7 +134,7 @@ const PostTrashCan = () => {
                                             <td><img
                                                 height="60px"
                                                 width="100px"
-                                                src={`http://127.0.0.1:3000/uploads/${pot.image}`}
+                                                src={`${ip}/uploads/${pot.image}`}
                                                 alt={pot.title}
                                             /></td>
                                             <td>

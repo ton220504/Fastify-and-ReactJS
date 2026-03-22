@@ -6,6 +6,7 @@ import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import numeral from "numeral";
+import {ip} from "../../../api/Api";
 
 
 
@@ -50,7 +51,7 @@ const Products = () => {
       const imageForm = new FormData();
       imageForm.append("file", image);
 
-      const uploadRes = await axios.post("http://localhost:3000/api/upload", imageForm);
+      const uploadRes = await axios.post(`${ip}/upload`, imageForm);
       const imageName = uploadRes.data.filename;
 
       // 2. Tạo object sản phẩm chuẩn API yêu cầu
@@ -63,7 +64,7 @@ const Products = () => {
       };
 
       // 3. Gửi lên API
-      const response = await axios.post("http://localhost:3000/api/upload-images", productData, {
+      const response = await axios.post(`${ip}/upload-images`, productData, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -100,7 +101,7 @@ const Products = () => {
       setLoading(true);
 
       const response = await axios.get(
-        `http://127.0.0.1:3000/api/products?page=${pageNumber}&limit=${perPage}`
+        `${ip}/products?page=${pageNumber}&limit=${perPage}`
       );
 
       const resData = response.data;
@@ -141,7 +142,7 @@ const Products = () => {
 
     const updatedProducts = data.map((product) => {
       const imageUrl = product.image
-        ? `http://127.0.0.1:3000/uploads/${product.image}`
+        ? `${ip}/uploads/${product.image}`
         : "/images/default-placeholder.jpg"; // ảnh mặc định nếu không có
 
       return { ...product, imageUrl };
@@ -158,19 +159,19 @@ const Products = () => {
   //chi tiết
   const openDetailModal = async (id) => {
     try {
-      const response = await axios.get(`http://localhost:3000/api/products/${id}`);
+      const response = await axios.get(`${ip}/products/${id}`);
       const productDetails = response.data;
 
       // Gắn đường dẫn ảnh cho ảnh đại diện
       const updatedProduct = {
         ...productDetails,
         imageUrl: productDetails.image
-          ? `http://127.0.0.1:3000/uploads/${productDetails.image}`  // Ảnh đại diện
+          ? `${ip}/uploads/${productDetails.image}`  // Ảnh đại diện
           : "/images/default-placeholder.jpg",
 
         // Gắn đường dẫn ảnh cho ảnh liên quan
         variations: productDetails.images.map((img) => ({
-          imageUrl: `http://127.0.0.1:3000/uploads/${img.url}`,  // Đường dẫn ảnh liên quan
+          imageUrl: `${ip}/uploads/${img.url}`,  // Đường dẫn ảnh liên quan
 
         }))
       };
@@ -195,12 +196,12 @@ const Products = () => {
       if (!id) {
         throw new Error('Product ID is missing');
       }
-      const response = await axios.get(`http://localhost:3000/api/products/${id}`);
+      const response = await axios.get(`${ip}/products/${id}`);
       const productDetails = response.data;
       const updatedProduct = {
         ...productDetails,
         variations: productDetails.images.map((img) => ({
-          imageUrl: `http://127.0.0.1:3000/uploads/${img.url}`,
+          imageUrl: `${ip}/uploads/${img.url}`,
           color: img.color,
           price: img.price,
           image_id: img.images_id
@@ -231,7 +232,7 @@ const Products = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         const token = localStorage.getItem("token");
-        Axios.delete(`http://localhost:3000/api/products/${id}/soft-delete`, {
+        Axios.delete(`${ip}/products/${id}/soft-delete`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -262,7 +263,7 @@ const Products = () => {
   const handleDeleteImage = async (image_id) => {
     const proId = product.id;
     try {
-      const res = await axios.delete("http://localhost:3000/api/delete-images", {
+      const res = await axios.delete(`${ip}/delete-images`, {
         headers: {
           'Content-Type': 'application/json'
         },

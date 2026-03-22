@@ -108,7 +108,7 @@ const ProductByCategory = () => {
             setLoading(true);
 
             const response = await axios.get(
-                `http://127.0.0.1:3000/api/products/category/${brandName}?page=${pageNumber}&limit=${perPage}`
+                `${ip}/products/category/${brandName}?page=${pageNumber}&limit=${perPage}`
             );
 
             const resData = response.data;
@@ -151,7 +151,7 @@ const ProductByCategory = () => {
     
         const updatedProducts = data.map((product) => {
             const imageUrl = product.image
-                ? `http://127.0.0.1:3000/uploads/${product.image}`
+                ? `${ip}/uploads/${product.image}`
                 : "/images/default-placeholder.jpg"; // ảnh mặc định nếu không có
     
             return { ...product, imageUrl };

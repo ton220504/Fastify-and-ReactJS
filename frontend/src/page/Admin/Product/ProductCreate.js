@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
+import {ip} from "../../../api/Api";
 // import "./AddProduct.css"; // Tạo file CSS riêng nếu muốn tuỳ chỉnh thêm
 
 const AddProduct = () => {
@@ -33,7 +34,7 @@ const AddProduct = () => {
     useEffect(() => {
         const fetchbrand = async () => {
             try {
-                const response = await axios.get("http://localhost:3000/api/brand");
+                const response = await axios.get(`${ip}/brand`);
                 console.log(response.data); // Kiểm tra dữ liệu trả về
                 if (Array.isArray(response.data)) {
                     setBrands(response.data);
@@ -50,7 +51,7 @@ const AddProduct = () => {
     useEffect(() => {
         const fetchcategory = async () => {
             try {
-                const response = await axios.get("http://localhost:3000/api/category");
+                const response = await axios.get(`${ip}/category`);
                 console.log(response.data); // Kiểm tra dữ liệu trả về
                 if (Array.isArray(response.data)) {
                     setCategory(response.data);
@@ -83,7 +84,7 @@ const AddProduct = () => {
             const imageForm = new FormData();
             imageForm.append("file", image);
 
-            const uploadRes = await axios.post("http://localhost:3000/api/upload", imageForm);
+            const uploadRes = await axios.post(`${ip}/upload`, imageForm);
             const imageName = uploadRes.data.filename;
 
             // 2. Format lại ngày đúng chuẩn ISO
@@ -105,7 +106,7 @@ const AddProduct = () => {
 
             // 4. Gửi lên API
             const token = localStorage.getItem("token");
-            const response = await axios.post("http://localhost:3000/api/products", productData, {
+            const response = await axios.post(`${ip}/products`, productData, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`,

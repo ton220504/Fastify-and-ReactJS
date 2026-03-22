@@ -40,7 +40,7 @@ const ProductSamsung = () => {
             }
     
             const response = await axios.post(
-                "http://127.0.0.1:3000/api/wishlist",
+                `${ip}/wishlist`,
                 {
                     user_id: user.id,
                     product_id: productId
@@ -94,7 +94,7 @@ const ProductSamsung = () => {
             setLoading(true);
 
             const response = await axios.get(
-                `http://127.0.0.1:3000/api/products/brand/samsung?page=${pageNumber}&limit=${perPage}`
+                `${ip}/products/brand/samsung?page=${pageNumber}&limit=${perPage}`
             );
 
             const resData = response.data;
@@ -131,7 +131,7 @@ const ProductSamsung = () => {
     
         const updatedProducts = data.map((product) => {
             const imageUrl = product.image
-                ? `http://127.0.0.1:3000/uploads/${product.image}`
+                ? `${ip}/uploads/${product.image}`
                 : "/images/default-placeholder.jpg"; // ảnh mặc định nếu không có
     
             return { ...product, imageUrl };

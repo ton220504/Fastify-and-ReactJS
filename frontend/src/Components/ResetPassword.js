@@ -3,6 +3,7 @@ import { Form, Button } from "react-bootstrap";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import {ip} from "../api/Api";
 
 function ResetPassword() {
     const [otp, setOtp] = useState("");
@@ -27,7 +28,7 @@ function ResetPassword() {
     
         try {
             Swal.showLoading();
-            await axios.post("http://localhost:3000/reset-password", {
+            await axios.post(`${ip}/reset-password`, {
                 email: email,
                 otp: otp,
                 newPassword: newPassword,

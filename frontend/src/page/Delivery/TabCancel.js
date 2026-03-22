@@ -3,6 +3,7 @@ import "../../scss/Delivery.scss"
 import { CiDeliveryTruck } from "react-icons/ci";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { ip } from '../../api/Api';
 
 
 const TabCancel = (props) => {
@@ -15,9 +16,9 @@ const TabCancel = (props) => {
         if (!product[product_id]) { // Chỉ fetch nếu sản phẩm chưa có
 
             try {
-                const response = await axios.get(`http://localhost:3000/api/products/${product_id}`);
+                const response = await axios.get(`${ip}/products/${product_id}`);
                 const productData = response.data;
-                productData.image = `http://127.0.0.1:3000/uploads/${productData.image}`;
+                productData.image = `${ip}/uploads/${productData.image}`;
                 setProduct(prevProducts => ({
                     ...prevProducts,
                     [product_id]: response.data
@@ -40,7 +41,7 @@ const TabCancel = (props) => {
                     return;
                 }
 
-                const response = await axios.get(`http://localhost:3000/api/orders/user/${user.id}`, {
+                const response = await axios.get(`${ip}/orders/user/${user.id}`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -99,7 +100,7 @@ const TabCancel = (props) => {
                                                 <>
                                                     
                                                     <img
-                                                        src={`http://127.0.0.1:3000/uploads/${item.image}`}
+                                                        src={`${ip}/uploads/${item.image}`}
                                                         alt={`Ảnh sản phẩm ${item.name}`}
                                                         className="rounded"
                                                         style={{ width: '70px', height: '70px', marginRight: '10px' }}

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Button, Form, Modal } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import axios from "axios";
-
+import { ip } from "../../../api/Api";
 import Swal from "sweetalert2";
 
 
@@ -14,7 +14,7 @@ const User = () => {
     const getUser = async () => {
         const token = localStorage.getItem("token");
         try {
-            const response = await axios.get(`http://127.0.0.1:3000/api/users`, {
+            const response = await axios.get(`${ip}/users`, {
 
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -51,7 +51,7 @@ const User = () => {
 
         try {
             await axios.delete(
-                `http://localhost:3000/api/users/${id}`, // Đường dẫn API với ID người dùng
+                `${ip}/users/${id}`, // Đường dẫn API với ID người dùng
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,  // Đưa token vào trong header
@@ -82,7 +82,7 @@ const User = () => {
     const openEditModal = async (id) => {
         const token = localStorage.getItem("token");
         try {
-            const response = await axios.get(`http://localhost:3000/api/users/${id}`, {
+            const response = await axios.get(`${ip}/users/${id}`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             //console.log("User Data:", response.data);
@@ -118,7 +118,7 @@ const User = () => {
                 requestBody.password = editUser.password;
             }
              await axios.put(
-                `http://localhost:3000/api/users/${editUser.id}`, // Đường dẫn API với ID người dùng
+                `${ip}/users/${editUser.id}`, // Đường dẫn API với ID người dùng
                 requestBody, // Body của yêu cầu là JSON
                 {
                     headers: {

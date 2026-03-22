@@ -4,7 +4,7 @@ import { Button, Modal, Spinner } from "react-bootstrap";
 import Swal from "sweetalert2";
 import html2canvas from "html2canvas";
 import "../../../assets/css/order.css";
-
+import {ip} from "../../../api/Api";
 const Order = () => {
 
     const [orders, setOrders] = useState([]);
@@ -56,7 +56,7 @@ const Order = () => {
     };
     const getOrders = async () => {
         try {
-            const response = await axios.get(`http://localhost:3000/api/orders`)
+            const response = await axios.get(`${ip}/orders`)
             const ords = response.data;
             setOrders(ords);
         } catch (error) {
@@ -66,7 +66,7 @@ const Order = () => {
     const putOrdersStatus = async (id, status) => {
         try {
             const response = await axios.put(
-                `http://localhost:3000/api/orders/${id}/status`,
+                `${ip}/orders/${id}/status`,
                 { status });
 
             console.log("Cập nhật trạng thái thành công:", response.data);
@@ -96,7 +96,7 @@ const Order = () => {
         }
 
         try {
-            await axios.delete(`http://localhost:3000/api/orders/${id}`);
+            await axios.delete(`${ip}/orders/${id}`);
             Swal.fire({
                 icon: "success",
                 title: "Xóa thành công!",
@@ -125,7 +125,7 @@ const Order = () => {
                 return;
             }
 
-            const response = await axios.get(`http://localhost:3000/api/orders/${id}`, {
+            const response = await axios.get(`${ip}/orders/${id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -151,7 +151,7 @@ const Order = () => {
                 setError("Không tìm thấy thông tin người dùng.");
                 return;
             }
-            const response = await axios.get(`http://localhost:3000/api/orders/${id}`, {
+            const response = await axios.get(`${ip}/orders/${id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }

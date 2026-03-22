@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Button, Spinner, Form } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import {ip} from "../../api/Api";
 
 const LoginAdmin = () => {
     const [email, setEmail] = useState("");
@@ -28,7 +29,7 @@ const LoginAdmin = () => {
         }
 
         try {
-            const response = await axios.post(`http://localhost:8080/api/auth/signin`, {
+            const response = await axios.post(`${ip}/auth/signin`, {
                 email,
                 password,
             });

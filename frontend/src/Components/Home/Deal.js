@@ -119,7 +119,7 @@ const Deal = () => {
     
         const updatedProducts = data.map((product) => {
             const imageUrl = product.image
-                ? `http://127.0.0.1:3001/uploads/${product.image}`
+                ? `${ip}/uploads/${product.image}`
                 : "/images/default-placeholder.jpg"; // ảnh mặc định nếu không có
     
             return { ...product, imageUrl };

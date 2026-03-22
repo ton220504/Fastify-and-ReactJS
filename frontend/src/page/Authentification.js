@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
 import Dropdown from "react-bootstrap/Dropdown";
 import Login from "./Login";
-import Register from "./Register";
 import { ip } from "../api/Api";
 
 const Authentification = () => {

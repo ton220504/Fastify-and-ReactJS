@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import { Button, Modal } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import axios from "axios";
-
 import Swal from "sweetalert2";
+import {ip} from "../../../api/Api";
+
 
 const Category = () => {
     const [brands, setBrands] = useState([]);
@@ -22,7 +23,7 @@ const Category = () => {
         const token = localStorage.getItem("token");
         try {
 
-             await axios.post(`http://localhost:3000/api/category`, { name }, {
+             await axios.post(`${ip}/category`, { name }, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -72,7 +73,7 @@ const Category = () => {
 
         try {
             const token = localStorage.getItem("token");
-            await axios.delete(`http://localhost:3000/api/category/${id}/soft-delete`, {
+            await axios.delete(`${ip}/category/${id}/soft-delete`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -102,7 +103,7 @@ const Category = () => {
 
     const openEditModal = async (id) => {
         try {
-            const response = await axios.get(`http://localhost:3000/api/category/${id}`);
+            const response = await axios.get(`${ip}/category/${id}`);
             const brand = response.data;
             setEditcategoryId(brand.id);
             setEditCategoryName(brand.name);
@@ -125,7 +126,7 @@ const Category = () => {
     const handleEditCategory = async () => {
         try {
             const token = localStorage.getItem("token");
-             await axios.put(`http://localhost:3000/api/category/${editcategoryId}`, { name: editcategoryName }, {
+             await axios.put(`${ip}/category/${editcategoryId}`, { name: editcategoryName }, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -163,7 +164,7 @@ const Category = () => {
 
     const fetchCategory = async () => {
         try {
-            const response = await axios.get(`http://localhost:3000/api/category`);
+            const response = await axios.get(`${ip}/category`);
             const sortedCategories = (response.data || []).sort((a, b) => a.id - b.id);
             setBrands(sortedCategories);
         } catch (error) {

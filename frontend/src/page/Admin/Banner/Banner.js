@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Button, Modal } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { ip } from '../../../api/Api';
 
 import Swal from "sweetalert2";
 
@@ -43,7 +44,7 @@ const Banner = () => {
                 const formData = new FormData();
                 formData.append("file", imageFile); // key: "file" theo backend
 
-                const uploadRes = await axios.post("http://localhost:3000/api/upload", formData);
+                const uploadRes = await axios.post(`${ip}/upload`, formData);
                 imageName = uploadRes.data.filename;
             }
 
@@ -54,7 +55,7 @@ const Banner = () => {
             };
 
             // 3. Gửi POST request
-             await axios.post("http://localhost:3000/api/banners", postData, {
+             await axios.post(`${ip}/banners`, postData, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     "Content-Type": "application/json"
@@ -111,7 +112,7 @@ const Banner = () => {
 
         try {
             const token = localStorage.getItem("token");
-            await axios.delete(`http://localhost:3000/api/banners/${id}/soft-delete`, {
+            await axios.delete(`${ip}/banners/${id}/soft-delete`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -137,11 +138,11 @@ const Banner = () => {
 
     const openEditModal = async (id) => {
         try {
-            const response = await axios.get(`http://localhost:3000/api/banners/${id}`);
+            const response = await axios.get(`${ip}/banners/${id}`);
             const banner = response.data;
             setEditbannerId(banner.id);
             setEditbannerName(banner.name);
-            const imageUrl = banner.image ? `http://localhost:3000/uploads/${banner.image}` : "/images/default-placeholder.jpg";
+            const imageUrl = banner.image ? `${ip}/uploads/${banner.image}` : "/images/default-placeholder.jpg";
             setEditImagePreview(imageUrl);
             setEditImageFilename(banner.image || ""); // <-- Lưu lại tên ảnh gốc
             setEditBannerImage(null); // Clear file input
@@ -171,7 +172,7 @@ const Banner = () => {
                 const formData = new FormData();
                 formData.append("imageFile", editBannerImage);
 
-                const uploadRes = await axios.post("http://localhost:3000/api/upload", formData);
+                const uploadRes = await axios.post(`${ip}/upload`, formData);
                 imageFilename = uploadRes.data.filename; // <-- cập nhật với tên file mới
             }
 
@@ -181,7 +182,7 @@ const Banner = () => {
                 
             };
 
-            await axios.put(`http://localhost:3000/api/banners/${editbannerId}`, updatedPost, {
+            await axios.put(`${ip}/banners/${editbannerId}`, updatedPost, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`
@@ -216,7 +217,7 @@ const Banner = () => {
 
     const fetchBanner = async () => {
         try {
-            const response = await axios.get(`http://localhost:3000/api/banners`);
+            const response = await axios.get(`${ip}/banners`);
             const sortedBrand = (response.data || []).sort((a, b) => a.id - b.id);
             setBanner(sortedBrand);
         } catch (error) {

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Button, Modal } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import {ip} from "../../../api/Api";
 
 import Swal from "sweetalert2";
 
@@ -21,7 +22,7 @@ const Brand = () => {
         e.preventDefault();
         const token = localStorage.getItem("token");
         try {
-             await axios.post(`http://localhost:3000/api/brand`, { name }, {
+             await axios.post(`${ip}/brand`, { name }, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -71,7 +72,7 @@ const Brand = () => {
 
         try {
             const token = localStorage.getItem("token");
-            await axios.delete(`http://localhost:3000/api/brand/${id}/soft-delete`, {
+            await axios.delete(`${ip}/brand/${id}/soft-delete`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -101,7 +102,7 @@ const Brand = () => {
 
     const openEditModal = async (id) => {
         try {
-            const response = await axios.get(`http://localhost:3000/api/brand/${id}`);
+            const response = await axios.get(`${ip}/brand/${id}`);
             const brand = response.data;
             setEditbrandId(brand.id);
             setEditbrandName(brand.name);
@@ -124,7 +125,7 @@ const Brand = () => {
     const handleEditBrand = async () => {
         try {
             const token = localStorage.getItem("token");
-             await axios.put(`http://localhost:3000/api/brand/${editbrandId}`, { name: editbrandName }, {
+             await axios.put(`${ip}/brand/${editbrandId}`, { name: editbrandName }, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -162,7 +163,7 @@ const Brand = () => {
 
     const fetchBrands = async () => {
         try {
-            const response = await axios.get(`http://localhost:3000/api/brand`);
+            const response = await axios.get(`${ip}/brand`);
             const sortedBrand = (response.data || []).sort((a, b) => a.id - b.id);
             setBrands(sortedBrand);
         } catch (error) {

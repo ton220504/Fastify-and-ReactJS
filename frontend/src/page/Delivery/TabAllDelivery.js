@@ -77,7 +77,7 @@ const TabAllDelivery = (props) => {
     const Canceled = async (id) => {
 
         try {
-            const response = await axios.put(`http://localhost:3000/api/orders/${id}/status`, {
+            const response = await axios.put(`${ip}/orders/${id}/status`, {
                 status: "CANCELED"
             });
 
@@ -154,7 +154,7 @@ const TabAllDelivery = (props) => {
                                             {product ? (
                                                 <>
                                                     <img
-                                                        src={`http://127.0.0.1:3000/uploads/${item.image}`}
+                                                        src={`${ip}/uploads/${item.image}`}
                                                         alt={`Ảnh sản phẩm ${item.product_id}`}
                                                         className="rounded"
                                                         style={{ width: '70px', height: '70px', marginRight: '10px' }}

@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
+import {ip} from "../../../api/Api";
 
 const UpdateProduct = () => {
     const { id } = useParams();
@@ -27,7 +28,7 @@ const UpdateProduct = () => {
     useEffect(() => {
         const fetchcbrand = async () => {
             try {
-                const response = await axios.get("http://localhost:3000/api/brand");
+                const response = await axios.get(`${ip}/brand`);
                 //console.log(response.data); // Kiểm tra dữ liệu trả về
                 if (Array.isArray(response.data)) {
                     setBrands(response.data);
@@ -44,7 +45,7 @@ const UpdateProduct = () => {
     useEffect(() => {
         const fetchcategory = async () => {
             try {
-                const response = await axios.get("http://localhost:3000/api/category");
+                const response = await axios.get(`${ip}/category`);
                 //console.log(response.data); // Kiểm tra dữ liệu trả về
                 if (Array.isArray(response.data)) {
                     setCategory(response.data);
@@ -60,7 +61,7 @@ const UpdateProduct = () => {
     useEffect(() => {
         const fetchProduct = async () => {
             try {
-                const response = await axios.get(`http://localhost:3000/api/products/${id}`);
+                const response = await axios.get(`${ip}/products/${id}`);
                 let productData = response.data;
 
                 // Kiểm tra category có hợp lệ không, nếu không gán giá trị mặc định
@@ -70,10 +71,10 @@ const UpdateProduct = () => {
                 const updatedProduct = {
                     ...productData,
                     imageUrl: productData.image
-                        ? `http://127.0.0.1:3000/uploads/${productData.image}`
+                        ? `${ip}/uploads/${productData.image}`
                         : "/images/default-placeholder.jpg",
                     imagesurl: productData.images.map((img) => ({
-                        imageUrl: `http://127.0.0.1:3000/uploads/${img.url}`
+                        imageUrl: `${ip}/uploads/${img.url}`
                     }))
                 };
                 setProduct(updatedProduct);
@@ -98,7 +99,7 @@ const UpdateProduct = () => {
                 const formData = new FormData();
                 formData.append("imageFile", image);
 
-                const uploadRes = await axios.post("http://localhost:3000/api/upload", formData);
+                const uploadRes = await axios.post(`${ip}/upload`, formData);
                 imageFilename = uploadRes.data.filename;
             }
 
@@ -118,7 +119,7 @@ const UpdateProduct = () => {
 
             const token = localStorage.getItem("token");
 
-            await axios.put(`http://localhost:3000/api/products/${id}`, productData, {
+            await axios.put(`${ip}/products/${id}`, productData, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`

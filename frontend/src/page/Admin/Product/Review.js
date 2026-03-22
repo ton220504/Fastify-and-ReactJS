@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
 import axios from "axios";
-
+import { ip } from "../../../api/Api";
 import Swal from "sweetalert2";
 
 const Review = () => {
@@ -28,7 +28,7 @@ const Review = () => {
 
         try {
             const token = localStorage.getItem("token");
-            await axios.delete(`http://localhost:3000/api/reviews/${id}`, {
+            await axios.delete(`${ip}/reviews/${id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -53,7 +53,7 @@ const Review = () => {
     };
     const fetchReview = async () => {
         try {
-            const response = await axios.get(`http://localhost:3000/api/reviews`);
+            const response = await axios.get(`${ip}/reviews`);
             const sortedCategories = (response.data || []);
             setReviews(sortedCategories);
         } catch (error) {
@@ -67,7 +67,7 @@ const Review = () => {
     useEffect(() => {
         const fetchProductName = async () => {
             try {
-                const response = await axios.get("http://127.0.0.1:3000/api/productsname")
+                const response = await axios.get(`${ip}/productsname`)
                 setProduct(response.data);
             } catch (error) {
                 console.log(error);

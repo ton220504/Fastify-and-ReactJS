@@ -3,6 +3,7 @@ import { Button, Form, Spinner } from "react-bootstrap";
 import { useState } from "react";
 import axios from "axios";
 import Swal from 'sweetalert2';
+import { ip } from '../../../api/Api';
 const CreateUser = () => {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
@@ -52,7 +53,7 @@ const CreateUser = () => {
 
         // Gửi dữ liệu lên server, role mặc định là "user"
         axios
-            .post("http://localhost:3000/api/users", {
+            .post(`${ip}/users`, {
                 username: name,   // Tên người dùng
                 email: email,     // Email người dùng
                 password: password, // Mật khẩu người dùng

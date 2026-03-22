@@ -7,6 +7,7 @@ import numeral from "numeral";
 import { Card } from "react-bootstrap";
 import "../../assets/css/header.css";
 import ComeBack from "../ComeBack";
+import {ip} from "../../api/Api";
 
 const SearchResults = () => {
     const [searchParams] = useSearchParams();
@@ -23,7 +24,7 @@ const SearchResults = () => {
 
         try {
             const response = await axios.get(
-                `http://127.0.0.1:3000/api/products/search`,
+                `${ip}/products/search`,
                 {
                     params: {
                         searchTerm: query,
@@ -45,7 +46,7 @@ const SearchResults = () => {
             const updatedResults = products.map((product) => ({
                 ...product,
                 imageUrl: product.image
-                    ? `http://127.0.0.1:3000/uploads/${product.image}`
+                    ? `${ip}/uploads/${product.image}`
                     : "/images/default-placeholder.jpg"
             }));
 

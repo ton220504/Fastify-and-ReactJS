@@ -18,6 +18,7 @@ import {
 } from 'recharts';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import {ip} from "../../api/Api";
 
 
 const RevenueChart = () => {
@@ -40,7 +41,7 @@ const RevenueChart = () => {
   // Lấy thông tin sản phẩm chi tiết
   const fetchProductName = async (productId) => {
     try {
-      const response = await axios.get(`http://localhost:3000/api/products/${productId}`);
+      const response = await axios.get(`${ip}/products/${productId}`);
       return response.data.name;  // trả về tên sản phẩm
     } catch (error) {
       console.error("Lỗi khi lấy thông tin sản phẩm:", error);
@@ -61,7 +62,7 @@ const RevenueChart = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:3000/api/orders");
+        const response = await axios.get(`${ip}/orders`);
         const orders = response.data;
         const monthlyRevenue = Array.from({ length: 12 }, (_, i) => ({
           name: `Tháng ${i + 1}`,
@@ -168,15 +169,15 @@ const RevenueChart = () => {
           reviewRes,
           commentRes
         ] = await Promise.all([
-          axios.get('http://127.0.0.1:3000/api/count/user'),
-          axios.get('http://127.0.0.1:3000/api/count/product'),
-          axios.get('http://127.0.0.1:3000/api/count/brand'),
-          axios.get('http://127.0.0.1:3000/api/count/category'),
-          axios.get('http://127.0.0.1:3000/api/count/topic'),
-          axios.get('http://127.0.0.1:3000/api/count/post'),
-          axios.get('http://127.0.0.1:3000/api/count/banner'),
-          axios.get('http://127.0.0.1:3000/api/count/review'),
-          axios.get('http://127.0.0.1:3000/api/count/postcomment')
+          axios.get(`${ip}/count/user`),
+          axios.get(`${ip}/count/product`),
+          axios.get(`${ip}/count/brand`),
+          axios.get(`${ip}/count/category`),
+          axios.get(`${ip}/count/topic`),
+          axios.get(`${ip}/count/post`),
+          axios.get(`${ip}/count/banner`),
+          axios.get(`${ip}/count/review`),
+          axios.get(`${ip}/count/postcomment`)
         ]);
 
         setUser(userRes.data.total_users);

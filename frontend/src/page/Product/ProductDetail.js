@@ -7,6 +7,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 import { Card } from "react-bootstrap";
+import { ip } from "../../api/Api";
 
 
 
@@ -39,7 +40,7 @@ const ProductDetail = () => {
     ///lấy đánh giá sản phẩm
     const fetchReviews = useCallback(async () => {
         try {
-            const response = await axios.get(`http://localhost:3000/api/reviews/product/${id}`);
+            const response = await axios.get(`${ip}/reviews/product/${id}`);
             const dataReviews = response.data;
             setReviews(dataReviews);
             //console.log(dataReviews);
@@ -51,7 +52,7 @@ const ProductDetail = () => {
     useEffect(() => {
         const fetchProduct = async () => {
             try {
-                const response = await axios.get(`http://localhost:3000/api/products/${id}`);
+                const response = await axios.get(`${ip}/products/${id}`);
                 const productData = response.data;
 
                 if (productData) {
@@ -89,7 +90,7 @@ const ProductDetail = () => {
 
         const updatedProducts = product => {
             const imageUrl = product.image
-                ? `http://127.0.0.1:3000/uploads/${product.image}`
+                ? `${ip}/uploads/${product.image}`
                 : "/images/default-placeholder.jpg"; // ảnh mặc định nếu không có
 
             return { ...product, imageUrl };
@@ -106,7 +107,7 @@ const ProductDetail = () => {
         if (!product) return;
         if (product.images && product.images.length > 0 && !imageInitialized.current) {
             const mappedVariations = product.images.map((img, index) => ({
-                imageUrl: `http://127.0.0.1:3000/uploads/${img.url}`,
+                imageUrl: `${ip}/uploads/${img.url}`,
                 color: img.color,
                 price: img.price,
                 index
@@ -127,7 +128,7 @@ const ProductDetail = () => {
             setSelectedIndex(null);
             setProduct(prev => {
                 const fallbackImage = prev?.image
-                    ? `http://127.0.0.1:3000/uploads/${prev.image}`
+                    ? `${ip}/uploads/${prev.image}`
                     : "/images/default-placeholder.jpg";
 
                 return {
@@ -144,7 +145,7 @@ const ProductDetail = () => {
 
         try {
             const response = await axios.get(
-                `http://127.0.0.1:3000/api/products/search`,
+                `${ip}/products/search`,
                 {
                     params: {
                         searchTerm: `${mainProductName}`,
@@ -159,7 +160,7 @@ const ProductDetail = () => {
             const updatedResults = products.map((product) => ({
                 ...product,
                 imageUrl: product.image
-                    ? `http://127.0.0.1:3000/uploads/${product.image}`
+                    ? `${ip}/uploads/${product.image}`
                     : "/images/default-placeholder.jpg"
             }));
 
@@ -181,7 +182,7 @@ const ProductDetail = () => {
         }
 
         try {
-            const response = await axios.get(`http://127.0.0.1:3000/api/users/${user.id}`);
+            const response = await axios.get(`${ip}/users/${user.id}`);
             if (response.data) {
                 const roles = [response.data.role];
                 const userData = { ...response.data, roles };
@@ -255,10 +256,10 @@ const ProductDetail = () => {
 
         try {
             // ✅ Thêm sản phẩm hiện tại vào giỏ hàng
-            await axios.post("http://127.0.0.1:3000/api/carts", payload);
+            await axios.post(`${ip}/carts`, payload);
 
             // ✅ Lấy toàn bộ sản phẩm trong giỏ hàng
-            const cartRes = await axios.get(`http://127.0.0.1:3000/api/carts/user/${user.id}`, {
+            const cartRes = await axios.get(`${ip}/carts/user/${user.id}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
@@ -289,7 +290,7 @@ const ProductDetail = () => {
                     selectedItems: cartItems.map(item => ({
                         id: item.product_id,
                         name: item?.product_name || 'Không rõ',
-                        imageUrl: `http://127.0.0.1:3000/uploads/${item.image}`,
+                        imageUrl: `${ip}/uploads/${item.image}`,
                         price: item.price,
                         quantity: item.quantity,
                         color: item.color,
@@ -380,7 +381,7 @@ const ProductDetail = () => {
             };
             console.log(payload);
             const response = await axios.post(
-                "http://127.0.0.1:3000/api/carts",
+                `${ip}/carts`,
                 payload // <-- body mới cần truyền
             );
 

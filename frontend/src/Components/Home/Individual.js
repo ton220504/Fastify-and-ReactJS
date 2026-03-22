@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { useCallback, useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
 import { useDispatch } from 'react-redux';
+import {ip} from "../../api/Api";
 
 const Individual = () => {
     const [user, setUser] = useState({});
@@ -25,7 +26,7 @@ const Individual = () => {
 
             if (!userObj?.id) return;
 
-            const response = await axios.get(`http://127.0.0.1:3000/api/users/${userObj.id}`, {
+            const response = await axios.get(`${ip}/users/${userObj.id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 }
@@ -66,7 +67,7 @@ const Individual = () => {
 
 
             await axios.put(
-                `http://localhost:3000/api/users/${editUser.id}`,
+                `${ip}/users/${editUser.id}`,
                 requestBody,
                 {
                     headers: {
@@ -120,7 +121,7 @@ const Individual = () => {
             return;
         }
         try {
-             await axios.put(`http://localhost:3000/api/users/${user.id}/password`, { oldPassword, newPassword }, {
+             await axios.put(`${ip}/users/${user.id}/password`, { oldPassword, newPassword }, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     'Content-Type': 'application/json'
@@ -166,7 +167,7 @@ const Individual = () => {
             return;
         }
         try {
-             await axios.put(`http://localhost:3000/api/users/${user.id}/createpassword`, { createPassword }, {
+             await axios.put(`${ip}/users/${user.id}/createpassword`, { createPassword }, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     'Content-Type': 'application/json'

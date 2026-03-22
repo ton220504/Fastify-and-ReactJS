@@ -3,12 +3,13 @@ import { Button } from "react-bootstrap";
 import axios from "axios";
 import Axios from "axios";
 import Swal from "sweetalert2";
+import { ip } from "../../../api/Api";
 const BannerTrashCan = () => {
     const [banner, setBanner] = useState([]);
     const [RestoreBannersId, setRestoreBannersId] = useState(null);
     const fetchBanner = async () => {
         try {
-            const response = await axios.get(`http://localhost:3000/api/bannersIsDelete`);
+            const response = await axios.get(`${ip}/bannersIsDelete`);
             const sortedBrand = (response.data || []).sort((a, b) => a.id - b.id);
             setBanner(sortedBrand);
         } catch (error) {
@@ -36,7 +37,7 @@ const BannerTrashCan = () => {
 
         try {
             const token = localStorage.getItem("token");
-            await axios.delete(`http://localhost:3000/api/banners/${id}`, {
+            await axios.delete(`${ip}/banners/${id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -74,7 +75,7 @@ const BannerTrashCan = () => {
             if (result.isConfirmed) {
                 const token = localStorage.getItem("token");
                 Axios.put(
-                    `http://localhost:3000/api/banners/${id}/restore`,
+                    `${ip}/banners/${id}/restore`,
                     {}, // <- body trống vì không gửi gì
                     {
                         headers: {
@@ -131,7 +132,7 @@ const BannerTrashCan = () => {
                                             <td><img
                                                 height="60px"
                                                 width="100px"
-                                                src={`http://127.0.0.1:3000/uploads/${brand.image}`}
+                                                src={`${ip}/uploads/${brand.image}`}
                                                 alt={brand.name}
                                             /></td>
                                             <td>

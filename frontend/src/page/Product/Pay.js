@@ -301,7 +301,7 @@ const Pay = () => {
             // ✅ Không tạo đơn tại đây — chỉ lưu
             localStorage.setItem("orderInfo", JSON.stringify(orderInfo));
 
-            const response = await axios.post('http://127.0.0.1:3000/payment', {
+            const response = await axios.post(`${ip}/payment`, {
                 total: totalMoney
             });
 

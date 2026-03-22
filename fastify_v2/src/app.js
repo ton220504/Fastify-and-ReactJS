@@ -23,7 +23,7 @@ if (!fs.existsSync(uploadsDir)) {
 }
 fastify.register(fastifyStatic, {
     root: path.join(global.appRoot, 'uploads'), // 📂 Trỏ tới thư mục chứa ảnh
-    prefix: '/uploads/', // 🏷️ Định nghĩa URL prefix
+    prefix: '/api/uploads/', // 🏷️ Định nghĩa URL prefix
     setHeaders: (res, path, stat) => {
         res.setHeader('Access-Control-Allow-Origin', '*');
     }
@@ -80,7 +80,7 @@ fastify.register(require('@fastify/swagger'), {
             version: '0.1.0'
         },
         servers: [
-            { url: 'http://localhost:3000', description: 'Development server' }
+            { url: 'http://localhost:3001', description: 'Development server' }
         ],
         schemes: ['http'], // Chỉ định rõ HTTP
         consumes: ['application/json'],
@@ -199,7 +199,7 @@ const usersService = require('./services/users.service');
 const sendOtpEmail = require('./utils/sendOtpEmail');
 
 //login google
-fastify.post('/auth/google', async (request, reply) => {
+fastify.post('/api/auth/google', async (request, reply) => {
     const { token } = request.body;
     try {
         const ticket = await client.verifyIdToken({
@@ -248,7 +248,7 @@ fastify.post('/auth/google', async (request, reply) => {
     }
 });
 /// đổi mật khẩu
-fastify.post('/forgot-password', async (request, reply) => {
+fastify.post('/api/forgot-password', async (request, reply) => {
     const { email } = request.body;
     try {
         const user = await usersService.findUserByEmail(fastify.mysql, email);
@@ -271,7 +271,7 @@ fastify.post('/forgot-password', async (request, reply) => {
         return reply.code(500).send({ message: "Có lỗi xảy ra." });
     }
 });
-fastify.post('/verify-otp', async (request, reply) => {
+fastify.post('/api/verify-otp', async (request, reply) => {
     const { email, otp } = request.body;
     try {
         const isValid = await usersService.verifyOtp(fastify.mysql, email, otp);
@@ -288,7 +288,7 @@ fastify.post('/verify-otp', async (request, reply) => {
 });
 const bcrypt = require('bcrypt');
 
-fastify.post('/reset-password', async (request, reply) => {
+fastify.post('/api/reset-password', async (request, reply) => {
     const { email, newPassword } = request.body;
     try {
         const hashedPassword = await bcrypt.hash(newPassword, 10);
@@ -308,7 +308,7 @@ const express = require("express");
 const app = express();
 const axios = require("axios");
 
-fastify.post("/payment", async (req, res) => {
+fastify.post("/api/payment", async (req, res) => {
     //https://developers.momo.vn/#/docs/en/aiov2/?id=payment-method
     //parameters
     const total = req.body.total;

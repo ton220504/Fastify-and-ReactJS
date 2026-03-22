@@ -2,9 +2,11 @@ import React, { useEffect, useState } from "react";
 import { Button, Modal } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import axios from "axios";
-
 import Swal from "sweetalert2";
 import { Editor } from '@tinymce/tinymce-react';
+import {ip} from "../../../api/Api";
+
+
 const Post = () => {
     const [posts, setPosts] = useState([]);
     const [title, setTitle] = useState("");
@@ -74,7 +76,7 @@ const Post = () => {
                 const formData = new FormData();
                 formData.append("file", imageFile); // key: "file" theo backend
 
-                const uploadRes = await axios.post("http://localhost:3000/api/upload", formData);
+                const uploadRes = await axios.post(`${ip}/upload`, formData);
                 imageName = uploadRes.data.filename;
             }
 
@@ -91,7 +93,7 @@ const Post = () => {
             };
 
             // 3. Gửi POST request
-            await axios.post("http://localhost:3000/api/posts", postData, {
+            await axios.post(`${ip}/posts`, postData, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     "Content-Type": "application/json"
@@ -147,7 +149,7 @@ const Post = () => {
 
         try {
             const token = localStorage.getItem("token");
-            await axios.delete(`http://localhost:3000/api/posts/${id}/soft-delete`, {
+            await axios.delete(`${ip}/posts/${id}/soft-delete`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -174,7 +176,7 @@ const Post = () => {
     };
     const openEditModal = async (id) => {
         try {
-            const response = await axios.get(`http://localhost:3000/api/posts/${id}`);
+            const response = await axios.get(`${ip}/posts/${id}`);
             const to = response.data;
 
             setEditPostId(to.id);
@@ -184,7 +186,7 @@ const Post = () => {
             setEditPostSlug(to.slug);
             setEditPostTopicId(to.topic_id); // từ API trả về
 
-            const imageUrl = to.image ? `http://localhost:3000/uploads/${to.image}` : "/images/default-placeholder.jpg";
+            const imageUrl = to.image ? `${ip}/uploads/${to.image}` : "/images/default-placeholder.jpg";
             setEditImagePreview(imageUrl);
             setEditImageFilename(to.image || ""); // <-- Lưu lại tên ảnh gốc
             setEditPostImage(null); // Clear file input
@@ -227,7 +229,7 @@ const Post = () => {
                 const formData = new FormData();
                 formData.append("imageFile", editPostImage);
 
-                const uploadRes = await axios.post("http://localhost:3000/api/upload", formData);
+                const uploadRes = await axios.post(`${ip}/upload`, formData);
                 imageFilename = uploadRes.data.filename; // <-- cập nhật với tên file mới
             }
 
@@ -242,7 +244,7 @@ const Post = () => {
                 status: 1
             };
 
-            await axios.put(`http://localhost:3000/api/posts/${editPostId}`, updatedPost, {
+            await axios.put(`${ip}/posts/${editPostId}`, updatedPost, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`
@@ -273,7 +275,7 @@ const Post = () => {
 
     const fetchTopic = async () => {
         try {
-            const response = await axios.get("http://127.0.0.1:3000/api/topics")
+            const response = await axios.get(`${ip}/topics`)
             const top = response.data;
             setTopic(top);
         } catch (error) {
@@ -289,7 +291,7 @@ const Post = () => {
 
     const fetchPost = async () => {
         try {
-            const response = await axios.get(`http://localhost:3000/api/posts`);
+            const response = await axios.get(`${ip}/posts`);
             const post = (response.data || []).sort((a, b) => a.id - b.id);
             setPosts(post);
         } catch (error) {

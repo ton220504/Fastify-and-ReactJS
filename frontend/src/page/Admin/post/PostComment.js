@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
 import axios from "axios";
-
 import Swal from "sweetalert2";
+import {ip} from "../../../api/Api";
 
 const PostComment = () => {
     const [postcomments, setPostcomment] = useState([]);
@@ -13,7 +13,7 @@ const PostComment = () => {
     useEffect(() => {
         const fetchPosts = async () => {
             try {
-                const res = await axios.get(`http://localhost:3000/api/posts`);
+                const res = await axios.get(`${ip}/posts`);
                 setPosts(res.data);
             } catch (err) {
                 console.error("Lỗi khi lấy danh sách bài viết:", err);
@@ -55,7 +55,7 @@ const PostComment = () => {
 
         try {
             const token = localStorage.getItem("token");
-            await axios.delete(`http://localhost:3000/api/postcomment/${id}`, {
+            await axios.delete(`${ip}/postcomment/${id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -80,7 +80,7 @@ const PostComment = () => {
     };
     const fetchPostComment = async () => {
         try {
-            const response = await axios.get(`http://localhost:3000/api/postcomments`);
+            const response = await axios.get(`${ip}/postcomments`);
             const posts = (response.data || []);
             setPostcomment(posts);
         } catch (error) {

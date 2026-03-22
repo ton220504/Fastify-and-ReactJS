@@ -72,7 +72,7 @@ const Login = () => {
 
     const handleGoogleResponse = useCallback(async (response) => {
         try {
-            const res = await axios.post("http://localhost:3000/auth/google", {
+            const res = await axios.post(`${ip}/auth/google`, {
                 token: response.credential,
             });
 
@@ -138,7 +138,7 @@ const Login = () => {
         try {
             Swal.showLoading(); // Show loading
 
-            await axios.post(`http://localhost:3000/forgot-password`, {
+            await axios.post(`${ip}/forgot-password`, {
                 email: forgotEmail,
             });
             

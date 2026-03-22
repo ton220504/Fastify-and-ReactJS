@@ -2,6 +2,7 @@ import axios from 'axios';
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import ComeBack from '../ComeBack';
+import { ip } from '../../api/Api';
 
 const PostDetail = () => {
     const { id } = useParams(); // Lấy id từ URL
@@ -13,13 +14,13 @@ const PostDetail = () => {
 
     const fetchPosts = useCallback(async () => {
         try {
-            const response = await axios.get(`http://localhost:3000/api/posts`);
+            const response = await axios.get(`${ip}/posts`);
             console.log('Fetched posts:', response.data);
             const po = response.data;
             const updatedPost = po.map((pos) => {
                 //console.log("Image name:", pos.image);
                 const imageUrl = pos.image
-                    ? `http://127.0.0.1:3000/uploads/${pos.image}`
+                    ? `${ip}/uploads/${pos.image}`
                     : "/images/default-placeholder.jpg"; // ảnh mặc định nếu không có
 
                 return { ...pos, imageUrl };
@@ -33,12 +34,12 @@ const PostDetail = () => {
 
     const fetchPostDetail = useCallback(async () => {
         try {
-            const response = await axios.get(`http://localhost:3000/api/posts/${id}`);
+            const response = await axios.get(`${ip}/posts/${id}`);
             console.log('Fetched post detail:', response.data);
             const po = response.data;
 
             const imageUrl = po.image
-                ? `http://127.0.0.1:3000/uploads/${po.image}`
+                ? `${ip}/uploads/${po.image}`
                 : "/images/default-placeholder.jpg"; // ảnh mặc định nếu không có
 
             setCurrentPost({ ...po, imageUrl });
@@ -50,7 +51,7 @@ const PostDetail = () => {
 
     const fetchTopic = useCallback(async () => {
         try {
-            const response = await axios.get("http://127.0.0.1:3000/api/topics")
+            const response = await axios.get(`${ip}/topics`)
             const top = response.data;
             setTopic(top);
         } catch (error) {
@@ -60,7 +61,7 @@ const PostDetail = () => {
 
     const fetchPostComment = useCallback(async () => {
         try {
-            const response = await axios.get(`http://127.0.0.1:3000/api/postsComment/post/${id}`)
+            const response = await axios.get(`${ip}/postsComment/post/${id}`)
             const com = response.data;
             setComments(com);
         } catch (error) {
@@ -82,7 +83,7 @@ const PostDetail = () => {
 
         try {
             await axios.post(
-                "http://127.0.0.1:3000/api/posts/comment",
+                `${ip}/posts/comment`,
                 {
                     user_id: user.id,              // ✅ Gửi số
                     content: newComment.content,
@@ -102,10 +103,10 @@ const PostDetail = () => {
             fetchPosts();
         } else {
             try {
-                const res = await axios.get(`http://127.0.0.1:3000/api/posts/topicId/${selectedId}`);
+                const res = await axios.get(`${ip}/posts/topicId/${selectedId}`);
                 const filteredPosts = res.data.map((pos) => {
                     const imageUrl = pos.image
-                        ? `http://127.0.0.1:3000/uploads/${pos.image}`
+                        ? `${ip}/uploads/${pos.image}`
                         : "/images/default-placeholder.jpg";
                     return { ...pos, imageUrl };
                 });

@@ -151,9 +151,9 @@ const AllProduct = () => {
             let url = `${ip}/products?page=${pageNumber}&limit=${perPage}`;
     
             if (brandFilter) {
-                url = `http://localhost:3000/api/products/brand/${encodeURIComponent(brandFilter)}?page=${pageNumber}&limit=${perPage}`;
+                url = `${ip}/products/brand/${encodeURIComponent(brandFilter)}?page=${pageNumber}&limit=${perPage}`;
             } else if (categoryFilter) {
-                url = `http://localhost:3000/api/products/category/${encodeURIComponent(categoryFilter)}?page=${pageNumber}&limit=${perPage}`;
+                url = `${ip}/products/category/${encodeURIComponent(categoryFilter)}?page=${pageNumber}&limit=${perPage}`;
             }
     
             const response = await axios.get(url);
@@ -219,7 +219,7 @@ const AllProduct = () => {
             data.map(async (product) => {
                 try {
                     const response = await axios.get(
-                        `http://127.0.0.1:3000/uploads/${product.image}`,
+                        `${ip}/uploads/${product.image}`,
                         { responseType: "blob" }
                     );
                     const imageUrl = URL.createObjectURL(response.data);

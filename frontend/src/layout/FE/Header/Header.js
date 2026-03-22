@@ -51,7 +51,7 @@ const Header = () => {
                 const updatedData = searchData.map((product) => ({
                     ...product,
                     imageUrl: product.image
-                        ? `http://127.0.0.1:3000/uploads/${product.image}`
+                        ? `${ip}/uploads/${product.image}`
                         : "/images/default-placeholder.jpg"
                 }));
     

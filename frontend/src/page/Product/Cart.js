@@ -116,7 +116,7 @@ const Cart = () => {
         }
 
         try {
-            const response = await axios.get(`http://127.0.0.1:3000/api/users/${user.id}`);
+            const response = await axios.get(`${ip}/users/${user.id}`);
             if (response.data) {
                 const roles = [response.data.role];
                 const userData = { ...response.data, roles };
@@ -163,7 +163,7 @@ const Cart = () => {
                 cartItemId: item.id,
                 id: item?.product?.id ?? 0,
                 name: item?.product?.name ?? "Không có tên",
-                imageUrl: `http://127.0.0.1:3000/uploads/${item.image}`,
+                imageUrl: `${ip}/uploads/${item.image}`,
                 price: item?.product?.price ? parseFloat(item.product.price) : 0,
                 quantity: item?.quantity ?? 1,
                 stock: item?.product.stockQuantity,
@@ -212,7 +212,7 @@ const Cart = () => {
         // console.log("Tổng tiền:", totalAmount);
 
         // Điều hướng đến trang thanh toán và truyền dữ liệu
-        navigate('/thanh-toan', { state: { selectedItems, totalAmount, userItems } });
+        navigate('/api/thanh-toan', { state: { selectedItems, totalAmount, userItems } });
     };
     //Cộng
     const handleIncrement = async (cartItemId) => {
@@ -225,7 +225,7 @@ const Cart = () => {
         if (!updatedItem) return;
 
         try {
-            await axios.put('http://127.0.0.1:3000/api/carts/quantity', {
+            await axios.put(`${ip}/carts/quantity`, {
                 cart_item_id: cartItemId,
                 quantity: updatedItem.quantity
             });
@@ -244,7 +244,7 @@ const Cart = () => {
         setCartItems(updatedCartItems);
 
         try {
-            await axios.put('http://127.0.0.1:3000/api/carts/quantity', {
+            await axios.put(`${ip}/carts/quantity`, {
                 cart_item_id: cartItemId,
                 quantity: currentItem.quantity - 1
             });
@@ -257,7 +257,7 @@ const Cart = () => {
     }, [checkUserLogin]);
     const handleRemove = async (cartItemId) => {
         try {
-            await axios.delete(`http://localhost:3000/api/cartsItem/${cartItemId}`);
+            await axios.delete(`${ip}/cartsItem/${cartItemId}`);
             setCartItems(prevItems => prevItems.filter(item => item.id !== cartItemId));
             console.log("Sản phẩm đã được xóa khỏi giỏ hàng!");
         } catch (error) {

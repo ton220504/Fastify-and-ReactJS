@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
 import axios from "axios";
-
+import { ip } from "../../../api/Api";
 import Swal from "sweetalert2";
 const TopicTrashCan = () => {
     const [topics, setTopics] = useState([]);
     const [RestoreId, setRestoreId] = useState(null);
     const fetchTopic = async () => {
         try {
-            const response = await axios.get(`http://localhost:3000/api/topicsIsDelete`);
+            const response = await axios.get(`${ip}/topicsIsDelete`);
             const sortedCategories = (response.data || []).sort((a, b) => a.id - b.id);
             setTopics(sortedCategories);
         } catch (error) {
@@ -36,7 +36,7 @@ const TopicTrashCan = () => {
 
         try {
             const token = localStorage.getItem("token");
-            await axios.delete(`http://localhost:3000/api/topics/${id}`, {
+            await axios.delete(`${ip}/topics/${id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -74,7 +74,7 @@ const TopicTrashCan = () => {
             if (result.isConfirmed) {
                 const token = localStorage.getItem("token");
                 axios.put(
-                    `http://localhost:3000/api/topics/${id}/restore`,
+                    `${ip}/topics/${id}/restore`,
                     {}, // <- body trống vì không gửi gì
                     {
                         headers: {

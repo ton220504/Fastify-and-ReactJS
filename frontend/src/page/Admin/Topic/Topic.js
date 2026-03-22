@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Button, Modal } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import axios from "axios";
-
+import { ip } from "../../../api/Api";
 import Swal from "sweetalert2";
 
 const Topic = () => {
@@ -42,7 +42,7 @@ const Topic = () => {
     
         try {
              await axios.post(
-                `http://localhost:3000/api/topics`,
+                `${ip}/topics`,
                 {
                     name,
                     slug,
@@ -108,7 +108,7 @@ const Topic = () => {
 
         try {
             const token = localStorage.getItem("token");
-            await axios.delete(`http://localhost:3000/api/topics/${id}/soft-delete`, {
+            await axios.delete(`${ip}/topics/${id}/soft-delete`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -134,7 +134,7 @@ const Topic = () => {
 
     const openEditModal = async (id) => {
         try {
-            const response = await axios.get(`http://localhost:3000/api/topics/${id}`);
+            const response = await axios.get(`${ip}/topics/${id}`);
             const to = response.data;
             setEditTopicId(to.id);
             setEditTopicName(to.name);
@@ -164,7 +164,7 @@ const Topic = () => {
         try {
             const token = localStorage.getItem("token");
             await axios.put(
-                `http://localhost:3000/api/topics/${editTopicId}`, // Sửa "topic" thành "topics" nếu đúng RESTful
+                `${ip}/topics/${editTopicId}`, // Sửa "topic" thành "topics" nếu đúng RESTful
                 {
                     name: editTopicName,
                     slug: editTopicSlug,
@@ -206,7 +206,7 @@ const Topic = () => {
 
     const fetchTopic = async () => {
         try {
-            const response = await axios.get(`http://localhost:3000/api/topics`);
+            const response = await axios.get(`${ip}/topics`);
             const sortedCategories = (response.data || []).sort((a, b) => a.id - b.id);
             setTopics(sortedCategories);
         } catch (error) {

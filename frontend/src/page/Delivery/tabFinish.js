@@ -5,6 +5,7 @@ import { CiDeliveryTruck } from "react-icons/ci";
 import Swal from "sweetalert2";
 import "../../scss/Delivery.scss";
 import { Link } from "react-router-dom";
+import { ip } from '../../api/Api';
 
 const TabFinish = (props) => {
     const { show, handleShow, handleClose } = props;
@@ -19,9 +20,9 @@ const TabFinish = (props) => {
         if (!product[product_id]) { // Chỉ fetch nếu sản phẩm chưa có
 
             try {
-                const response = await axios.get(`http://localhost:3000/api/products/${product_id}`);
+                const response = await axios.get(`${ip}/products/${product_id}`);
                 const productData = response.data;
-                productData.image = `http://127.0.0.1:3000/uploads/${productData.image}`;
+                productData.image = `${ip}/uploads/${productData.image}`;
                 setProduct(prevProducts => ({
                     ...prevProducts,
                     [product_id]: response.data
@@ -44,7 +45,7 @@ const TabFinish = (props) => {
                     return;
                 }
 
-                const response = await axios.get(`http://localhost:3000/api/orders/user/${user.id}`, {
+                const response = await axios.get(`${ip}/orders/user/${user.id}`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -86,7 +87,7 @@ const TabFinish = (props) => {
             }
 
             await axios.post(
-                "http://localhost:3000/api/reviews",
+                `${ip}/reviews`,
                 {
                     user_id: user.id,
                     content: reviewContent,
@@ -155,7 +156,7 @@ const TabFinish = (props) => {
                                             {pro ? (
                                                 <>
                                                     <img
-                                                        src={`http://127.0.0.1:3000/uploads/${item.image}`}
+                                                        src={`${ip}/uploads/${item.image}`}
                                                         alt={`Ảnh sản phẩm ${item.product_id}`}
                                                         className="rounded"
                                                         style={{ width: '70px', height: '70px', marginRight: '10px' }}
@@ -212,7 +213,7 @@ const TabFinish = (props) => {
                     {selectedProduct ? (
                         <div className="d-flex align-items-center my-3">
                             <img
-                                src={`http://127.0.0.1:3000/uploads/${selectedProduct.image}`}
+                                src={`${ip}/uploads/${selectedProduct.image}`}
                                 alt={selectedProduct.name}
                                 className="rounded"
                                 style={{ width: '70px', height: '70px', marginRight: '10px' }}

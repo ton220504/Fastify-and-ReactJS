@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { ip } from '../../api/Api';
 
 const Post = () => {
     const [posts, setPosts] = useState([]);
@@ -11,7 +12,7 @@ const Post = () => {
         const updatedPost = po.map((pos) => {
             //console.log("Image name:", pos.image);
             const imageUrl = pos.image
-                ? `http://127.0.0.1:3000/uploads/${pos.image}`
+                ? `${ip}/uploads/${pos.image}`
                 : "/images/default-placeholder.jpg"; // ảnh mặc định nếu không có
 
             return { ...pos, imageUrl };
@@ -23,7 +24,7 @@ const Post = () => {
     useEffect(() => {
         const fetchPosts = async () => {
             try {
-                const response = await axios.get(`http://localhost:3000/api/posts`);
+                const response = await axios.get(`${ip}/posts`);
                 const po = response.data || [];
                 fetchImagesPost(po);
             } catch (error) {
