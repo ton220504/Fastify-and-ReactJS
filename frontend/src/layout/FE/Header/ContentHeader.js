@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { Dropdown } from "react-bootstrap";
-import { FaUser, FaShoppingCart, FaHeart } from "react-icons/fa";
+import { Dropdown, Offcanvas } from "react-bootstrap";
+import { FaUser, FaShoppingCart, FaHeart, FaBars } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../../../assets/css/header.css";
 import { ip } from "../../../api/Api";
+
 const ContentHeader = () => {
     const [menu] = useState([
         { id: 1, name: "iPhone 15" },
@@ -13,18 +14,28 @@ const ContentHeader = () => {
         { id: 4, name: "Galaxy S23" },
         { id: 5, name: "Realme C25s" }
     ]);
-    const [user, setUser] = useState(null); // Trạng thái lưu người dùng
+    const [user, setUser] = useState(null);
     const [categories, setCategories] = useState([]);
 
-    const navigate = useNavigate(); // Hook để điều hướng trang
+    const navigate = useNavigate();
     const [show, setShow] = useState(false);
     const [showUser, setShowUser] = useState(false);
     const handleMouseEnter = () => setShow(true);
     const handleMouseLeave = () => setShow(false);
     const handleMouseEnterUser = () => setShowUser(true);
     const handleMouseLeaveUser = () => setShowUser(false);
-    const [cartItemCount, setCartItemCount] = useState(0); // Đếm sản phẩm giỏ hàng
+    const [cartItemCount, setCartItemCount] = useState(0);
     const [WishListItemCount, setWishListItemCount] = useState(0);
+
+    // Mobile menu state
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+    const [showMobileMenu, setShowMobileMenu] = useState(false);
+
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth <= 768);
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
 
     const getUserData = useCallback(async (token) => {
         const userString = localStorage.getItem("user");
@@ -39,11 +50,8 @@ const ContentHeader = () => {
         try {
             const response = await axios.get(`${ip}/users/${user.id}`);
             if (response.data) {
-                // Nếu roles là 1 string như "user" hoặc "admin"
-                const roles = [response.data.role]; // Chuyển thành mảng
-
+                const roles = [response.data.role];
                 setUser({ ...response.data, roles });
-                //console.log("User roles:", roles);
             } else {
                 console.error("Dữ liệu user không hợp lệ:", response.data);
                 setUser(null);
@@ -111,7 +119,6 @@ const ContentHeader = () => {
         const fetchcategory = async () => {
             try {
                 const response = await axios.get(`${ip}/category`);
-                //console.log(response.data); // Kiểm tra dữ liệu trả về
                 if (Array.isArray(response.data)) {
                     setCategories(response.data);
                 } else {
@@ -123,16 +130,16 @@ const ContentHeader = () => {
         };
         fetchcategory();
     }, []);
-    // Hàm kiểm tra token khi component được render
+
     useEffect(() => {
         const token = localStorage.getItem("token");
         if (token) {
             const fetchData = async () => {
-                await getUserData(token);         // Đảm bảo get user xong
-                await fetchCartCount();           // Rồi mới gọi đếm cart
-                await fecthCountWishlist();       // Rồi gọi wishlist
+                await getUserData(token);
+                await fetchCartCount();
+                await fecthCountWishlist();
             };
-            fetchData(); // Gọi hàm async wrapper
+            fetchData();
             const interval = setInterval(() => {
                 fetchCartCount();
                 fecthCountWishlist();
@@ -143,15 +150,167 @@ const ContentHeader = () => {
         }
     }, [getUserData, fetchCartCount, fecthCountWishlist]);
 
-    // Hàm đăng xuất
     const logout = () => {
-        localStorage.removeItem("token"); // Xóa token khỏi localStorage
+        localStorage.removeItem("token");
         localStorage.removeItem("user");
-        setUser(null); // Xóa thông tin người dùng
-        navigate("/"); // Điều hướng về trang chủ sau khi đăng xuất
-        window.location.reload(); // Tải lại trang
+        setUser(null);
+        navigate("/");
+        window.location.reload();
     };
 
+    // ===== MOBILE LAYOUT =====
+    if (isMobile) {
+        return (
+            <>
+                <div className="content-header">
+                    <div className="container">
+                        <div className="row align-items-center" style={{ minHeight: "45px" }}>
+                            {/* Left: Hot products (scrollable) */}
+                            <div className="col hot-product-mobile">
+                                <b>HOT: </b>
+                                {menu.map((item) => (
+                                    <span className="hot-item-mobile" key={item.id}>
+                                        {item.name}
+                                        <img
+                                            className="icon-hot"
+                                            src="https://bizweb.dktcdn.net/100/497/960/themes/923878/assets/hot_icon.png?1719291840576"
+                                            alt="Hot"
+                                            style={{ width: 18, height: 12, marginLeft: 2 }}
+                                        />
+                                    </span>
+                                ))}
+                            </div>
+
+                            {/* Right side: User, Cart, Wishlist, Hamburger */}
+                            <div className="col-auto d-flex align-items-center gap-3">
+                                {/* User */}
+                                <div className="text-white position-relative" id="user-icon">
+                                    {user ? (
+                                        <Dropdown>
+                                            <Dropdown.Toggle
+                                                className="text-white p-0"
+                                                variant="toggle"
+                                                style={{ backgroundColor: "transparent", border: "none", boxShadow: "none" }}
+                                            >
+                                                <FaUser style={{ width: "18px", height: "18px" }} />
+                                            </Dropdown.Toggle>
+                                            <Dropdown.Menu className="custom-dropdown-menu">
+                                                <Dropdown.Item>
+                                                    <span className="text-danger">{user?.username}</span>
+                                                </Dropdown.Item>
+                                                <Dropdown.Divider />
+                                                <Dropdown.Item>
+                                                    <Link className="text-black" to="/thong-tin">Thông tin đơn hàng</Link>
+                                                </Dropdown.Item>
+                                                <Dropdown.Divider />
+                                                {user?.role?.includes("admin") && (
+                                                    <>
+                                                        <Dropdown.Item>
+                                                            <Link className="text-black fw-bold" to="/admin">Dashboard</Link>
+                                                        </Dropdown.Item>
+                                                        <Dropdown.Divider />
+                                                    </>
+                                                )}
+                                                <Dropdown.Item onClick={logout}>Đăng xuất</Dropdown.Item>
+                                            </Dropdown.Menu>
+                                        </Dropdown>
+                                    ) : (
+                                        <Dropdown>
+                                            <Dropdown.Toggle className="text-white p-0" variant="toggle" style={{ backgroundColor: "transparent", border: "none", boxShadow: "none" }}>
+                                                <FaUser style={{ width: "18px", height: "18px" }} />
+                                            </Dropdown.Toggle>
+                                            <Dropdown.Menu>
+                                                <Dropdown.Item><Link className="text-black" to="/login">Đăng nhập</Link></Dropdown.Item>
+                                                <Dropdown.Divider />
+                                                <Dropdown.Item><Link className="text-black" to="/dangki">Đăng ký</Link></Dropdown.Item>
+                                            </Dropdown.Menu>
+                                        </Dropdown>
+                                    )}
+                                </div>
+
+                                {/* Cart */}
+                                <div className="text-white position-relative" id="cart-icon" style={{ marginTop: 0 }}>
+                                    <Link to="/gio-hang">
+                                        <FaShoppingCart style={{ width: "18px", height: "18px", color: "white" }} />
+                                        {cartItemCount > 0 && (
+                                            <span className="badge bg-danger text-white"
+                                                style={{ position: "absolute", top: "-7px", right: "-10px", borderRadius: "50%", width: "18px", height: "18px", display: "flex", justifyContent: "center", alignItems: "center", fontSize: "10px" }}>
+                                                {cartItemCount}
+                                            </span>
+                                        )}
+                                    </Link>
+                                </div>
+
+                                {/* Wishlist */}
+                                <div className="text-white position-relative" id="wishlish-icon" style={{ marginTop: 0 }}>
+                                    <Link to="/yeu-thich">
+                                        <FaHeart style={{ width: "18px", height: "18px", color: "white" }} />
+                                        {WishListItemCount > 0 && (
+                                            <span className="badge bg-danger text-white"
+                                                style={{ position: "absolute", top: "-7px", right: "-10px", borderRadius: "50%", width: "18px", height: "18px", display: "flex", justifyContent: "center", alignItems: "center", fontSize: "10px" }}>
+                                                {WishListItemCount}
+                                            </span>
+                                        )}
+                                    </Link>
+                                </div>
+
+                                {/* Hamburger Menu Button */}
+                                <button
+                                    className="btn-hamburger"
+                                    onClick={() => setShowMobileMenu(true)}
+                                    aria-label="Menu"
+                                >
+                                    <FaBars style={{ width: "20px", height: "20px", color: "white" }} />
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Offcanvas Mobile Menu */}
+                <Offcanvas
+                    show={showMobileMenu}
+                    onHide={() => setShowMobileMenu(false)}
+                    placement="end"
+                    className="mobile-menu-offcanvas"
+                >
+                    <Offcanvas.Header closeButton>
+                        <Offcanvas.Title style={{ color: "#503eb6", fontWeight: "bold" }}>
+                            Danh mục sản phẩm
+                        </Offcanvas.Title>
+                    </Offcanvas.Header>
+                    <Offcanvas.Body>
+                        <ul className="mobile-category-list">
+                            <li>
+                                <Link to="/tat-ca-san-pham" onClick={() => setShowMobileMenu(false)}>
+                                    📱 Tất cả sản phẩm
+                                </Link>
+                            </li>
+                            {categories.length > 0 ? (
+                                categories.map((bra) => (
+                                    <li key={bra.name}>
+                                        <Link to={`/san-pham-theo-loai/${bra.name}`} onClick={() => setShowMobileMenu(false)}>
+                                            {bra.name}
+                                        </Link>
+                                    </li>
+                                ))
+                            ) : (
+                                <li className="text-muted">Không có danh mục nào</li>
+                            )}
+                        </ul>
+
+                        <hr />
+                        <div className="mobile-menu-info">
+                            <p>📞 Hỗ trợ 24/24: <strong>19001005</strong></p>
+                            <p>🏪 8 hệ thống cửa hàng</p>
+                        </div>
+                    </Offcanvas.Body>
+                </Offcanvas>
+            </>
+        );
+    }
+
+    // ===== DESKTOP LAYOUT =====
     return (
         <div className="content-header">
             <div className="container">
@@ -161,7 +320,7 @@ const ContentHeader = () => {
                             onMouseEnter={handleMouseEnter}
                             onMouseLeave={handleMouseLeave}
                             show={show}
-                            onToggle={(isOpen) => setShow(isOpen)} // Thêm để kiểm soát
+                            onToggle={(isOpen) => setShow(isOpen)}
                         >
                             <Dropdown.Toggle className="dropdown-toggle" variant="warning" id="dropdown-basic-category">
                                 Danh mục sản phẩm

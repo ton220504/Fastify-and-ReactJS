@@ -161,7 +161,7 @@
 /* Badge chính hãng */
 .official-badge {
     display: inline-block;
-    position: absolute;
+    //position: absolute;
     background-color: red;
     color: white;
     padding: 3px 8px;
@@ -170,7 +170,7 @@
     border-radius: 16px;
     //margin-bottom: 10px;
     width: 120px;
-    top: 180px;
+    //top: 150px;
     animation: blinkTextiPhone 0.5s infinite;
 }
 
@@ -193,8 +193,8 @@
 .text_price {
     color: red;
     font-size: 18px;
-    font-weight:bold;
-    
+    font-weight: bold;
+
 }
 
 /* Định dạng mô tả thêm */
@@ -207,12 +207,12 @@
 .item-cart {
     transition: opacity 0.3s ease;
     /* Hiệu ứng mờ mượt */
-    
+
 }
 
 /* Khi hover vào sản phẩm, mờ đi */
 .item-cart:hover {
     opacity: 0.5;
-    
-    
+
+
 }

@@ -85,7 +85,7 @@ function App() {
 
         </Route>
         <Route path="thanh-toan" element={<Pay />} />
-        
+
         <Route path="loginadmin" element={<LoginAdmin />} />
         <Route path="noconnect" element={<NoConnect />} />
         <Route path="/reset-password" element={<ResetPassword />} />

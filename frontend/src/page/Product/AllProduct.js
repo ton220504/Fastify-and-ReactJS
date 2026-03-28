@@ -4,544 +4,355 @@ import "../../scss/AllProduct.scss";
 import ComeBack from "../../Components/ComeBack";
 import numeral from "numeral";
 import axios from "axios";
-import { Card } from "react-bootstrap";
+import { Card, Offcanvas, Button } from "react-bootstrap";
 import "../../../src/assets/css/pagination.css";
 import Swal from "sweetalert2";
-import {  ToastContainer } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-import { FaInstagram } from "react-icons/fa";
+import { FaInstagram, FaFilter } from "react-icons/fa";
 import { Grid, List } from 'lucide-react';
 import { ip } from "../../api/Api";
+
 const AllProduct = () => {
     const [favoriteProducts, setFavoriteProducts] = useState([]);
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
-    const perPage = 10;
+    const perPage = 12; // Tăng lên 12 để chia hết cho 2, 3, 4, 6
     const navigate = useNavigate();
-    const [viewMode, setViewMode] = useState('grid'); // grid hoặc list
-    const [sortOption, setSortOption] = useState('default'); // Tùy chọn sắp xếp mặc định
-    // State cho các bộ lọc
+    const [viewMode, setViewMode] = useState('grid');
+    const [sortOption, setSortOption] = useState('default');
     const [brandFilter, setBrandFilter] = useState('');
     const [categoryFilter, setCategoryFilter] = useState('');
     const [priceRange, setPriceRange] = useState({ min: '', max: '' });
     const [tempPriceRange, setTempPriceRange] = useState({ min: '', max: '' });
-
-    // State cho danh sách danh mục và thương hiệu được lấy từ API
     const [categories, setCategories] = useState([]);
     const [brands, setBrands] = useState([]);
+
+    // Responsive state
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+    const [showFilter, setShowFilter] = useState(false);
+
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth <= 768);
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
+
     const formatCurrency = (value) => {
         return numeral(value).format('0,0') + ' ₫';
     };
+
     const [banner] = useState([
         { id: 1, img: "https://bizweb.dktcdn.net/100/497/960/themes/923878/assets/img_3banner_1.jpg?1719291840576", icon: <FaInstagram /> },
         { id: 2, img: "https://bizweb.dktcdn.net/100/497/960/themes/923878/assets/img_3banner_2.jpg?1719291840576", icon: <FaInstagram /> },
         { id: 3, img: "https://bizweb.dktcdn.net/100/497/960/themes/923878/assets/img_3banner_3.jpg?1719291840576", icon: <FaInstagram /> },
     ]);
 
-    // Hàm gọi API để lấy danh sách danh mục
     const fetchCategories = async () => {
         try {
-            setLoading(true);
             const response = await axios.get(`${ip}/category`);
-            if (response.data) {
-                setCategories(response.data);
-            }
+            if (response.data) setCategories(response.data);
         } catch (error) {
-            console.error("Lỗi khi lấy danh sách danh mục:", error);
-            setCategories([]);
-        } finally {
-            setLoading(false);
+            console.error(error);
         }
     };
-    // Hàm gọi API để lấy danh sách thương hiệu
+
     const fetchBrands = async () => {
         try {
-            setLoading(true);
             const response = await axios.get(`${ip}/brand`);
-            if (response.data) {
-                setBrands(response.data);
-            }
+            if (response.data) setBrands(response.data);
         } catch (error) {
-            console.error("Lỗi khi lấy danh sách thương hiệu:", error);
-            setBrands([]);
-        } finally {
-            setLoading(false);
+            console.error(error);
         }
     };
-    // Gọi API để lấy danh sách danh mục và thương hiệu khi component được mount
+
     useEffect(() => {
         fetchCategories();
         fetchBrands();
     }, []);
-    // Hàm thêm vào yêu thích
+
     const handleAddToWishlist = async (productId) => {
         try {
-            setLoading(true);
-
             const token = localStorage.getItem("token");
             const user = JSON.parse(localStorage.getItem("user"));
-
             if (!user || !user.id || !token) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Bạn cần đăng nhập để thêm sản phẩm yêu thích!',
-                    confirmButtonText: 'Đăng nhập ngay'
-                }).then(() => {
-                    navigate('/login');
-                });
+                Swal.fire({ icon: 'error', title: 'Bạn cần đăng nhập!', confirmButtonText: 'Đăng nhập' }).then(() => navigate('/login'));
                 return;
             }
-
-            const response = await axios.post(
-                `${ip}/wishlist`,
-                {
-                    user_id: user.id,
-                    product_id: productId
-                }
-            );
-
-            const message = response.data?.message;
-
-            if (message === "Product already in wishlist") {
-                Swal.fire({
-                    toast: true,
-                    icon: 'warning',
-                    position: "top-end",
-                    title: 'Sản phẩm đã có trong danh sách yêu thích',
-                    confirmButtonText: 'OK',
-                    timer: 2000,
-                    timerProgressBar: true
-                });
+            const response = await axios.post(`${ip}/wishlist`, { user_id: user.id, product_id: productId });
+            if (response.data?.message === "Product already in wishlist") {
+                Swal.fire({ toast: true, icon: 'warning', position: "top-end", title: 'Đã có trong yêu thích', timer: 2000 });
             } else {
-                Swal.fire({
-                    toast: true,
-                    position: "top-end",
-                    icon: 'success',
-                    title: 'Thêm sản phẩm yêu thích thành công',
-                    confirmButtonText: 'OK',
-                    timer: 2000,
-                    timerProgressBar: true
-                });
-
-                setFavoriteProducts(prev =>
-                    prev.includes(productId) ? prev : [...prev, productId]
-                );
+                Swal.fire({ toast: true, position: "top-end", icon: 'success', title: 'Đã thêm vào yêu thích', timer: 2000 });
+                setFavoriteProducts(prev => prev.includes(productId) ? prev : [...prev, productId]);
             }
-
         } catch (error) {
-            console.error("Lỗi khi thêm vào wishlist:", error);
-            Swal.fire({
-                toast: true,
-                icon: 'error',
-                position: "top-end",
-                title: 'Có lỗi xảy ra khi thêm sản phẩm!',
-                confirmButtonText: 'OK'
-            });
-        } finally {
-            setLoading(false);
+            console.error(error);
         }
     };
-    // Hàm gọi API lấy sản phẩm với các bộ lọc
+
     const getFilteredProducts = useCallback(async (pageNumber = 1) => {
         try {
             setLoading(true);
-    
             let url = `${ip}/products?page=${pageNumber}&limit=${perPage}`;
-    
-            if (brandFilter) {
-                url = `${ip}/products/brand/${encodeURIComponent(brandFilter)}?page=${pageNumber}&limit=${perPage}`;
-            } else if (categoryFilter) {
-                url = `${ip}/products/category/${encodeURIComponent(categoryFilter)}?page=${pageNumber}&limit=${perPage}`;
-            }
-    
+            if (brandFilter) url = `${ip}/products/brand/${encodeURIComponent(brandFilter)}?page=${pageNumber}&limit=${perPage}`;
+            else if (categoryFilter) url = `${ip}/products/category/${encodeURIComponent(categoryFilter)}?page=${pageNumber}&limit=${perPage}`;
+
             const response = await axios.get(url);
-    
             if (response.data) {
                 let productData = response.data.data || [];
                 const pagination = response.data.meta?.pagination || {};
-                //console.log(productData);
-                // Lọc theo giá nếu có
+
                 if (priceRange.min !== '' || priceRange.max !== '') {
                     const min = priceRange.min === '' ? 0 : parseInt(priceRange.min);
                     const max = priceRange.max === '' ? Infinity : parseInt(priceRange.max);
-    
-                    productData = productData.filter(product =>
-                        product.price >= min && product.price <= max
-                    );
+                    productData = productData.filter(p => p.price >= min && p.price <= max);
                 }
-    
-                // Sắp xếp sản phẩm nếu chọn
-                if (sortOption === 'price-asc') {
-                    productData.sort((a, b) => a.price - b.price);
-                } else if (sortOption === 'price-desc') {
-                    productData.sort((a, b) => b.price - a.price);
-                } else if (sortOption === 'newest') {
-                    productData.sort((a, b) => new Date(b.releaseDate) - new Date(a.releaseDate));
-                }
-    
-                // Cập nhật phân trang và sản phẩm
+
+                if (sortOption === 'price-asc') productData.sort((a, b) => a.price - b.price);
+                else if (sortOption === 'price-desc') productData.sort((a, b) => b.price - a.price);
+                else if (sortOption === 'newest') productData.sort((a, b) => new Date(b.releaseDate) - new Date(a.releaseDate));
+
                 setCurrentPage(pagination.page || 1);
                 setTotalPages(pagination.pageCount || 1);
-                if (productData.length === 0) {
-                    setProducts([]); // đảm bảo set rỗng nếu không có data
-                    return;
-                }
-                // Gọi hàm xử lý ảnh và cập nhật state
-                fetchImagesAndUpdateProducts(productData);
+
+                const updated = productData.map(p => ({
+                    ...p,
+                    imageUrl: p.image ? `${ip}/uploads/${p.image}` : "/images/default-placeholder.jpg"
+                }));
+                setProducts(updated);
             }
         } catch (error) {
-            console.error("Lỗi khi lấy sản phẩm:", error);
+            console.error(error);
             setProducts([]);
         } finally {
             setLoading(false);
         }
     }, [brandFilter, categoryFilter, priceRange, sortOption, perPage]);
-    
-    
-    // Gọi API khi component mount hoặc khi các bộ lọc thay đổi
+
     useEffect(() => {
         getFilteredProducts(1);
     }, [getFilteredProducts]);
-    
-    // Điều hướng trang
+
     const goToPage = (page) => {
-        if (page >= 1 && page <= totalPages) {
-            getFilteredProducts(page);
-        }
+        if (page >= 1 && page <= totalPages) getFilteredProducts(page);
     };
-    
-    // Hàm fetch ảnh cho từng sản phẩm
-    const fetchImagesAndUpdateProducts = async (data) => {
-        if (!data || data.length === 0) return;
-        const updatedProducts = await Promise.all(
-            data.map(async (product) => {
-                try {
-                    const response = await axios.get(
-                        `${ip}/uploads/${product.image}`,
-                        { responseType: "blob" }
-                    );
-                    const imageUrl = URL.createObjectURL(response.data);
-                    return { ...product, imageUrl };
-                } catch {
-                    return { ...product, imageUrl: "/images/default-placeholder.jpg" };
-                }
-            })
-        );
-        setProducts(updatedProducts);
-    };
-    
+
     const handleBrandChange = (brand) => {
         setBrandFilter(brand === brandFilter ? '' : brand);
         setCategoryFilter('');
         setCurrentPage(1);
-
+        if (isMobile) setShowFilter(false);
     };
-    
+
     const handleCategoryChange = (category) => {
         setCategoryFilter(category === categoryFilter ? '' : category);
         setBrandFilter('');
         setCurrentPage(1);
+        if (isMobile) setShowFilter(false);
+    };
 
-    };
-    
-    const handleSortChange = (e) => {
-        setSortOption(e.target.value);
-    };
-    
-    const handleViewModeChange = (mode) => {
-        setViewMode(mode);
-    };
-    
-    
-    
-    // Xử lý áp dụng bộ lọc giá
     const applyPriceFilter = () => {
-        setPriceRange({
-            min: tempPriceRange.min,
-            max: tempPriceRange.max
-        });
-        // Nếu bạn có hàm fetch sản phẩm theo giá thì gọi ở đây
-        // fetchProducts({ min: tempPriceRange.min, max: tempPriceRange.max });
+        setPriceRange({ min: tempPriceRange.min, max: tempPriceRange.max });
+        if (isMobile) setShowFilter(false);
     };
 
-    // Component hiển thị sản phẩm theo kiểu grid
+    const FilterSidebar = () => (
+        <div className="filter-section">
+            <div className="filter-block">
+                <h4>Danh mục</h4>
+                <ul className="filter-list">
+                    {categories.map(c => (
+                        <li key={c.id}>
+                            <div className="form-check">
+                                <input type="radio" className="form-check-input" name="category" id={`cat-${c.id}`} checked={categoryFilter === c.name} onChange={() => handleCategoryChange(c.name)} />
+                                <label className="form-check-label" htmlFor={`cat-${c.id}`}>{c.name}</label>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+            <div className="filter-block">
+                <h4>Thương hiệu</h4>
+                <ul className="filter-list">
+                    {brands.map(b => (
+                        <li key={b.id}>
+                            <div className="form-check">
+                                <input type="radio" className="form-check-input" name="brand" id={`brd-${b.id}`} checked={brandFilter === b.name} onChange={() => handleBrandChange(b.name)} />
+                                <label className="form-check-label" htmlFor={`brd-${b.id}`}>{b.name}</label>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+            <div className="filter-block border-0">
+                <h4>Khoảng giá</h4>
+                <div className="price-filter">
+                    <input type="number" className="form-control form-control-sm mb-2" placeholder="Từ" value={tempPriceRange.min} onChange={(e) => setTempPriceRange({ ...tempPriceRange, min: e.target.value })} />
+                    <input type="number" className="form-control form-control-sm mb-2" placeholder="Đến" value={tempPriceRange.max} onChange={(e) => setTempPriceRange({ ...tempPriceRange, max: e.target.value })} />
+                    <Button variant="primary" size="sm" className="w-100" onClick={applyPriceFilter}>Áp dụng</Button>
+                </div>
+            </div>
+        </div>
+    );
+
     const renderGridProducts = () => (
-        <div className="content-deal row p-2">
+        <div className="row g-3 px-2">
             {products.length > 0 ? (
-                products.slice(0, 10).map((item) => (
-                    <Card className="box col-2 m-2 item-cart" key={item.id}>
-                        <div className="discount-badge">-9%</div>
-                        <div className="favorite-icon" onClick={() => handleAddToWishlist(item.id)}>
-                            <i className={favoriteProducts.includes(item.id) ? "fas fa-heart text-red-500" : "far fa-heart"}></i>
-                        </div>
-                        <Link to={`/chi-tiet-san-pham/${item.id}`}>
-                            <Card.Img
-                                className="product-image"
-                                src={item.imageUrl}
-                                alt={item.name}
-                            />
-                        </Link>
-                        <div className="official-badge mt-4">Chính Hãng 100%</div>
-                        <div>
-                            <p className="text_name">{item.name}</p>
-                        </div>
-                        <div className="list-group-flush">
-                            <hr />
-                            <p className="text_price">Giá: {formatCurrency(item.price)}</p>
-                            <hr />
-                            <p className="text_plus">Tặng sạc cáp nhanh 25w trị giá 250k</p>
-                        </div>
-                    </Card>
+                products.map((item) => (
+                    <div className={isMobile ? "col-6" : "col-xl-2 col-lg-3 col-md-4"} key={item.id}>
+                        <Card className="h-100 border-0 shadow-sm position-relative overflow-hidden product-card-grid">
+                            <div className="discount-badge">-9%</div>
+                            <div className="favorite-icon" onClick={() => handleAddToWishlist(item.id)}>
+                                <i className={favoriteProducts.includes(item.id) ? "fas fa-heart text-danger" : "far fa-heart"}></i>
+                            </div>
+                            <Link to={`/chi-tiet-san-pham/${item.id}`} className="p-3 d-block text-center">
+                                <Card.Img src={item.imageUrl} alt={item.name} style={{ height: isMobile ? "120px" : "160px", objectFit: "contain" }} />
+                            </Link>
+                            <Card.Body className="d-flex flex-column p-2">
+                                <div className="official-badge mb-1">Chính Hãng 100%</div>
+                                <p className="text_name mb-2" style={{ fontSize: "14px", height: "40px", overflow: "hidden", textOverflow: "ellipsis", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>{item.name}</p>
+                                <div className="mt-auto">
+                                    <hr className="my-1" />
+                                    <p className="text_price m-0 fw-bold" style={{ color: "#D10024", fontSize: "15px" }}>{formatCurrency(item.price)}</p>
+                                    <hr className="my-1" />
+                                    <p className="text_plus mb-0" style={{ fontSize: "10px", color: "#28a745" }}>Tặng sạc cáp nhanh 25w</p>
+                                </div>
+                            </Card.Body>
+                        </Card>
+                    </div>
                 ))
             ) : (
-                <div className="NoProduct">Không có sản phẩm nào để hiển thị</div>
+                <div className="text-center py-5 w-100 text-muted">Không có sản phẩm nào</div>
             )}
         </div>
     );
-    // Component hiển thị sản phẩm theo kiểu list
+
     const renderListProducts = () => (
-        <div className="list-products">
-            {products.length > 0 ? (
-                products.slice(0, 10).map((item) => (
-                    <div className="list-product-item row" key={item.id}>
-                        <div className="col-3">
+        <div className="list-products px-2">
+            {products.map((item) => (
+                <div className="list-product-item border-0 shadow-sm mb-3 position-relative" key={item.id}>
+                    <div className="row align-items-center g-0">
+                        <div className="col-4 col-md-3 p-3">
                             <Link to={`/chi-tiet-san-pham/${item.id}`}>
-                                <img
-                                    className="list-product-image"
-                                    src={item.imageUrl}
-                                    alt={item.name}
-                                />
+                                <img src={item.imageUrl} className="img-fluid" alt={item.name} style={{ maxHeight: "150px", objectFit: "contain" }} />
                             </Link>
                         </div>
-                        <div className="col-9 list-product-details">
-                            <h4 className="list-product-name">{item.name}</h4>
-                            <div className="list-product-brand">Thương hiệu: {item.brand || "Không có"}</div>
-                            <div className="list-product-price">Giá: {formatCurrency(item.price)}</div>
-                            <div className="list-product-description">
-                                <p className="text_plus">Tặng sạc cáp nhanh 25w trị giá 250k</p>
-                            </div>
-                            <div className="list-product-actions">
-                                <button
-                                    className={`btn-add-to-wishlist ${favoriteProducts.includes(item.id) ? 'active' : ''}`}
-                                    onClick={() => handleAddToWishlist(item.id)}>
-                                    <i className={favoriteProducts.includes(item.id) ? "fas fa-heart" : "far fa-heart"}></i>
-                                    {favoriteProducts.includes(item.id) ? ' Đã yêu thích' : ' Thêm vào yêu thích'}
+                        <div className="col-8 col-md-9 p-3">
+                            <h5 className="mb-2 fw-bold text-dark" style={{ fontSize: isMobile ? "15px" : "18px" }}>{item.name}</h5>
+                            <div className="text-muted small mb-1">Thương hiệu: {item.brand || "Khác"}</div>
+                            <div className="fw-bold mb-2" style={{ color: "#e53935", fontSize: "18px" }}>{formatCurrency(item.price)}</div>
+                            <div className="d-none d-md-block text-success small mb-3">Tặng sạc cáp nhanh 25w trị giá 250k</div>
+                            <div className="d-flex align-items-center gap-3">
+                                <button className={`btn-add-to-wishlist border-0 bg-light rounded-pill px-3 py-1 small ${favoriteProducts.includes(item.id) ? 'text-danger fw-bold' : ''}`} onClick={() => handleAddToWishlist(item.id)}>
+                                    <i className={favoriteProducts.includes(item.id) ? "fas fa-heart me-1" : "far fa-heart me-1"}></i>{isMobile ? "" : "Thêm vào yêu thích"}
                                 </button>
                             </div>
                         </div>
                     </div>
-                ))
-            ) : (
-                <div className="NoProduct ps-2">Không có sản phẩm nào để hiển thị</div>
-            )}
+                </div>
+            ))}
         </div>
     );
-    if (loading) {
+
+    if (loading && currentPage === 1 && products.length === 0) {
         return (
-            <div style={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                height: '100vh'
-            }}>
-                <img style={{ width: "100px", height: "100px" }} src="./img/loading-gif-png-5.gif" alt="Loading" />
+            <div className="d-flex justify-content-center align-items-center vh-100">
+                <img style={{ width: "80px" }} src="./img/loading-gif-png-5.gif" alt="Loading" />
             </div>
         );
     }
 
     return (
-        <>
+        <div className="pb-5" style={{ backgroundColor: "#f5f5f7" }}>
             <ComeBack />
             <div className="AllProduct mt-3">
                 <ToastContainer />
-                <div className="bannerAll">
-                    <div className="contentAll containerAll">
+
+                {/* 3 Banners - Scrollable on mobile */}
+                <div className="bannerAll container-fluid px-0 px-md-3">
+                    <div className={isMobile ? "modern-scroll-wrapper" : "row g-3 w-100 mx-0"}>
                         {banner.map((item) => (
-                            <div className="col-4 " key={item.id}>
-                                <div>
-                                    <img src={item.img} className="image" alt="Banner" />
-                                </div>
+                            <div className={isMobile ? "modern-scroll-item" : "col-4"} key={item.id} style={isMobile ? { width: "85%", flexShrink: 0 } : {}}>
+                                <img src={item.img} className="img-fluid rounded-3 shadow-sm" alt="Banner" style={{ width: "100%", height: "auto" }} />
                             </div>
                         ))}
                     </div>
                 </div>
 
-                {/* Phần lọc và hiển thị sản phẩm */}
                 <div className="container mt-4">
-                    <div className="row">
-                        {/* Phần sidebar bộ lọc */}
-                        <div className="col-md-2">
-                            <div className="filter-section">
-                                {/* Lọc theo danh mục */}
-                                <div className="filter-block">
-                                    <h4>Danh mục</h4>
-                                    <ul className="filter-list">
-                                        {categories.length > 0 ? (
-                                            categories.map(category => (
-                                                <li key={category.id}>
-                                                    <div className="form-check">
-                                                        <input
-                                                            type="radio"
-                                                            className="form-check-input"
-                                                            name="category"
-                                                            id={`category-${category.id}`}
-                                                            checked={categoryFilter === category.name}
-                                                            onChange={() => handleCategoryChange(category.name)}
-                                                        />
-                                                        <label className="form-check-label" htmlFor={`category-${category.id}`}>
-                                                            {category.name}
-                                                        </label>
-                                                    </div>
-                                                </li>
-                                            ))
-                                        ) : (
-                                            <li>Đang tải danh mục...</li>
-                                        )}
-                                    </ul>
-                                </div>
-                                {/* Lọc theo thương hiệu */}
-                                <div className="filter-block">
-                                    <h4>Thương hiệu</h4>
-                                    <ul className="filter-list">
-                                        {brands.length > 0 ? (
-                                            brands.map(brand => (
-                                                <li key={brand.id}>
-                                                    <div className="form-check">
-                                                        <input
-                                                            type="radio"
-                                                            className="form-check-input"
-                                                            name="brand"
-                                                            id={`brand-${brand.id}`}
-                                                            checked={brandFilter === brand.name}
-                                                            onChange={() => handleBrandChange(brand.name)}
-                                                        />
-                                                        <label className="form-check-label" htmlFor={`brand-${brand.id}`}>
-                                                            {brand.name}
-                                                        </label>
-                                                    </div>
-                                                </li>
-                                            ))
-                                        ) : (
-                                            <li>Đang tải thương hiệu...</li>
-                                        )}
-                                    </ul>
-                                </div>
-                                {/* Lọc theo giá */}
-                                <div className="filter-block">
-                                    <h4>Giá</h4>
-                                    <div className="price-filter">
-                                        <div className="form-group mb-2">
-                                            <input
-                                                type="number"
-                                                className="form-control"
-                                                placeholder="Giá thấp nhất"
-                                                value={tempPriceRange.min}
-                                                onChange={(e) => setTempPriceRange({ ...tempPriceRange, min: e.target.value })} />
-                                        </div>
-                                        <div className="form-group mb-2">
-                                            <input
-                                                type="number"
-                                                className="form-control"
-                                                placeholder="Giá cao nhất"
-                                                value={tempPriceRange.max}
-                                                onChange={(e) => setTempPriceRange({ ...tempPriceRange, max: e.target.value })} />
-                                        </div>
-                                        <button
-                                            className="btn btn-primary btn-sm"
-                                            onClick={applyPriceFilter}>
-                                            Áp dụng
-                                        </button>
+                    <div className="row g-4">
+                        {/* Sidebar - Hidden on mobile */}
+                        {!isMobile && (
+                            <div className="col-lg-2">
+                                <FilterSidebar />
+                            </div>
+                        )}
+
+                        <div className={isMobile ? "col-12" : "col-lg-10"}>
+                            {/* Toolbar */}
+                            <div className="product-toolbar shadow-sm border-0 d-flex flex-wrap align-items-center justify-content-between mb-4 p-2 rounded-3 bg-white">
+                                <div className="d-flex align-items-center gap-2">
+                                    {isMobile && (
+                                        <Button variant="outline-dark" size="sm" onClick={() => setShowFilter(true)} className="d-flex align-items-center gap-1">
+                                            <FaFilter size={14} /> Lọc
+                                        </Button>
+                                    )}
+                                    <div className="d-flex align-items-center">
+                                        <span className="me-2 small text-muted d-none d-sm-inline">Sắp xếp:</span>
+                                        <select className="form-select form-select-sm border-0 bg-light" style={{ minWidth: isMobile ? "120px" : "180px" }} value={sortOption} onChange={(e) => setSortOption(e.target.value)}>
+                                            <option value="default">Mặc định</option>
+                                            <option value="price-asc">Giá: Thấp đến Cao</option>
+                                            <option value="price-desc">Giá: Cao đến Thấp</option>
+                                            <option value="newest">Mới nhất</option>
+                                        </select>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
 
-                        {/* Phần hiển thị sản phẩm */}
-                        <div className="col-md-10">
-                            {/* Thanh công cụ trên cùng */}
-                            <div className="product-toolbar mb-3">
-                                <div className="view-options d-flex align-items-center">
-                                    <span className="me-2">Sắp xếp:</span>
-                                    <select
-                                        className="form-select form-select-sm"
-                                        value={sortOption}
-                                        onChange={handleSortChange}>
-                                        <option value="default">Mặc định</option>
-                                        <option value="price-asc">Giá: Thấp đến Cao</option>
-                                        <option value="price-desc">Giá: Cao đến Thấp</option>
-                                        <option value="newest">Mới nhất</option>
-                                        <option value="bestseller">Bán chạy</option>
-                                    </select>
-                                </div>
-                                {/* Hiển thị sản phẩm theo grid vs list */}
-                                <div className="view-mode">
-                                    <button
-                                        className={`btn btn-sm ${viewMode === 'grid' ? 'btn-primary' : 'btn-outline-primary'}`}
-                                        onClick={() => handleViewModeChange('grid')}
-                                        title="Chế độ xem lưới">
-                                        <Grid size={22} />
+                                <div className="d-flex align-items-center gap-2">
+                                    <button className={`btn btn-sm rounded-2 ${viewMode === 'grid' ? 'btn-primary' : 'btn-light border text-muted'}`} onClick={() => setViewMode('grid')}>
+                                        <Grid size={18} />
                                     </button>
-                                    <button
-                                        className={`btn btn-sm ms-2 ${viewMode === 'list' ? 'btn-primary' : 'btn-outline-primary'}`}
-                                        onClick={() => handleViewModeChange('list')}
-                                        title="Chế độ xem danh sách">
-                                        <List size={22} />
+                                    <button className={`btn btn-sm rounded-2 ${viewMode === 'list' ? 'btn-primary' : 'btn-light border text-muted'}`} onClick={() => setViewMode('list')}>
+                                        <List size={18} />
                                     </button>
                                 </div>
                             </div>
-                            {/* Hiển thị sản phẩm theo chế độ xem đã chọn */}
-                            <div className="my-deal-phone">
+
+                            {/* Product List */}
+                            <div className="min-vh-50">
                                 {viewMode === 'grid' ? renderGridProducts() : renderListProducts()}
+                                {loading && <div className="text-center mt-3"><img style={{ width: "40px" }} src="./img/loading-gif-png-5.gif" alt="Loading" /></div>}
                             </div>
-                            {/* Thanh phân trang */}
-                            <div className="pageNumber">
-                                <button
-                                    id="firstPage"
-                                    onClick={() => goToPage(1)}
-                                    disabled={currentPage === 1}
-                                    className={currentPage === 1 ? "disabled-button" : ""}>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-chevron-double-left" viewBox="0 0 16 16">
-                                        <path fillRule="evenodd" d="M8.354 1.646a.5.5 0 0 1 0 .708L2.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0" />
-                                        <path fillRule="evenodd" d="M12.354 1.646a.5.5 0 0 1 0 .708L6.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0" />
-                                    </svg>
-                                </button>
-                                <button
-                                    id="first"
-                                    onClick={() => goToPage(currentPage - 1)}
-                                    disabled={currentPage === 1}
-                                    className={currentPage === 1 ? "disabled-button" : ""}>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-chevron-left" viewBox="0 0 16 16">
-                                        <path fillRule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0" />
-                                    </svg>
-                                </button>
-                                <span id="page">Trang {currentPage} / {totalPages}</span>
-                                <button
-                                    id="firstPage"
-                                    onClick={() => goToPage(currentPage + 1)}
-                                    disabled={currentPage === totalPages}
-                                    className={currentPage === totalPages ? "disabled-button" : ""}>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-chevron-right" viewBox="0 0 16 16">
-                                        <path fillRule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708" />
-                                    </svg>
-                                </button>
-                                <button
-                                    id="first"
-                                    onClick={() => goToPage(totalPages)}
-                                    disabled={currentPage === totalPages}
-                                    className={currentPage === totalPages ? "disabled-button" : ""}>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-chevron-double-right" viewBox="0 0 16 16">
-                                        <path fillRule="evenodd" d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708" />
-                                        <path fillRule="evenodd" d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708" />
-                                    </svg>
-                                </button>
-                            </div>
+
+                            {/* Pagination */}
+                            {totalPages > 1 && (
+                                <div className="pageNumber mt-5">
+                                    <button onClick={() => goToPage(1)} disabled={currentPage === 1} id="firstPage">«</button>
+                                    <button onClick={() => goToPage(currentPage - 1)} disabled={currentPage === 1} id="first">‹</button>
+                                    <span id="page" className="border-0 bg-transparent text-dark mx-2"> {currentPage} / {totalPages} </span>
+                                    <button onClick={() => goToPage(currentPage + 1)} disabled={currentPage === totalPages} id="firstPage">›</button>
+                                    <button onClick={() => goToPage(totalPages)} disabled={currentPage === totalPages} id="first">»</button>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
+
+                {/* Mobile Filter Offcanvas */}
+                <Offcanvas show={showFilter} onHide={() => setShowFilter(false)} placement="start" style={{ width: "280px" }}>
+                    <Offcanvas.Header closeButton>
+                        <Offcanvas.Title className="fw-bold">Bộ lọc</Offcanvas.Title>
+                    </Offcanvas.Header>
+                    <Offcanvas.Body className="p-0">
+                        <FilterSidebar />
+                    </Offcanvas.Body>
+                </Offcanvas>
             </div>
-        </>
+            <ToastContainer />
+        </div>
     );
 };
 

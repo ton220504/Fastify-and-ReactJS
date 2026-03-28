@@ -171,22 +171,22 @@ fastify.register(require('./routes/statistics/statistics'));
 //     // Server is now listening on ${address}
 // })
 fastify.get("/", async () => {
-  return { status: "API running" }
+    return { status: "API running" }
 })
 
 fastify.listen(
-  {
-    port: process.env.PORT || 3000,
-    host: "0.0.0.0"
-  },
-  function (err, address) {
-    if (err) {
-      fastify.log.error(err)
-      process.exit(1)
-    }
+    {
+        port: process.env.PORT || 3001,
+        host: "0.0.0.0"
+    },
+    function (err, address) {
+        if (err) {
+            fastify.log.error(err)
+            process.exit(1)
+        }
 
-    console.log(`Server running at ${address}`)
-  }
+        console.log(`Server running at ${address}`)
+    }
 )
 
 

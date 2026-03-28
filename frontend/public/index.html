@@ -225,6 +225,59 @@
         transform: translateY(0);
       }
     }
+
+    /* RESPONSIVE - Mobile */
+    @media only screen and (max-width: 767px) {
+      .back-to-top {
+        width: 40px;
+        height: 40px;
+        bottom: 80px;
+        right: 12px;
+      }
+
+      .zalo-button {
+        width: 45px;
+        height: 45px;
+        bottom: 15px;
+        right: 12px;
+      }
+
+      .zalo-button img {
+        width: 28px;
+        height: 28px;
+      }
+
+      .contact-button {
+        bottom: 80px;
+        right: 12px;
+      }
+
+      .button-icon {
+        width: 45px;
+        height: 45px;
+        line-height: 45px;
+        font-size: 14px;
+      }
+
+      .contact-menu {
+        width: 180px;
+        right: 0;
+        bottom: 50px;
+      }
+
+      .contact-menu ul li {
+        padding: 8px;
+      }
+
+      .contact-menu ul li a {
+        font-size: 12px;
+      }
+
+      /* Chatbot widget */
+      df-messenger {
+        --df-messenger-chat-window-height: 350px;
+      }
+    }
   </style>
 
   <title>Bean Mobile</title>

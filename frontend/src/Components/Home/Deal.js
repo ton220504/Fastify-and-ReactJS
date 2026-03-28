@@ -2,37 +2,37 @@
 import { useEffect, useState } from "react";
 import { Card } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";  // Import axios
+import axios from "axios";
 import HotDeals from "./HotDeals";
 import numeral from 'numeral';
-import '../../assets/css/Deal.css'; // Đảm bảo rằng đường dẫn đến file CSS là chính xác
+import '../../assets/css/Deal.css';
 import Swal from "sweetalert2";
-import {  ToastContainer } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { ip } from '../../api/Api';
 
-
-
-
 const Deal = () => {
-    // State để lưu danh sách sản phẩm
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [favoriteProducts, setFavoriteProducts] = useState([]); // Lưu trữ danh sách sản phẩm yêu thích
+    const [favoriteProducts, setFavoriteProducts] = useState([]);
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth <= 768);
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
 
     const formatCurrency = (value) => {
         return numeral(value).format('0,0') + ' ₫';
     };
 
-    // Hàm thêm vào yêu thích
     const handleAddToWishlist = async (productId) => {
         try {
-            setLoading(true);
-    
             const token = localStorage.getItem("token");
             const user = JSON.parse(localStorage.getItem("user"));
-    
+
             if (!user || !user.id || !token) {
                 Swal.fire({
                     icon: 'error',
@@ -43,25 +43,20 @@ const Deal = () => {
                 });
                 return;
             }
-    
-            const response = await axios.post(
-                `${ip}/wishlist`,
-                {
-                    user_id: user.id,
-                    product_id: productId
-                }
-            );
-    
-            const message = response.data?.message;
-    
-            if (message === "Product already in wishlist") {
+
+            const response = await axios.post(`${ip}/wishlist`, {
+                user_id: user.id,
+                product_id: productId
+            });
+
+            if (response.data?.message === "Product already in wishlist") {
                 Swal.fire({
                     toast: true,
                     icon: 'warning',
                     position: "top-end",
                     title: 'Sản phẩm đã có trong danh sách yêu thích',
-                    confirmButtonText: 'OK',
                     timer: 2000,
+                    showConfirmButton: false,
                     timerProgressBar: true
                 });
             } else {
@@ -70,75 +65,40 @@ const Deal = () => {
                     position: "top-end",
                     icon: 'success',
                     title: 'Thêm sản phẩm yêu thích thành công',
-                    confirmButtonText: 'OK',
                     timer: 2000,
+                    showConfirmButton: false,
                     timerProgressBar: true
                 });
-    
-                setFavoriteProducts(prev =>
-                    prev.includes(productId) ? prev : [...prev, productId]
-                );
+                setFavoriteProducts(prev => prev.includes(productId) ? prev : [...prev, productId]);
             }
-    
         } catch (error) {
-            console.error("Lỗi khi thêm vào wishlist:", error);
-            Swal.fire({
-                toast: true,
-                icon: 'error',
-                position: "top-end",
-                title: 'Có lỗi xảy ra khi thêm sản phẩm!',
-                confirmButtonText: 'OK'
-            });
-        } finally {
-            setLoading(false);
+            console.error(error);
         }
     };
 
-
-    // Gọi API khi component được mount
     useEffect(() => {
         const fetchProducts = async () => {
             try {
                 const response = await axios.get(`${ip}/products/newest`);
                 const fetchProductsDeal = response.data;
-                setProducts(fetchProductsDeal);
-                fetchImagesAndUpdateProducts(fetchProductsDeal);
+                const updatedProducts = fetchProductsDeal.map((product) => ({
+                    ...product,
+                    imageUrl: product.image ? `${ip}/uploads/${product.image}` : "/images/default-placeholder.jpg"
+                }));
+                setProducts(updatedProducts);
                 setLoading(false);
             } catch (error) {
-                console.log("Lỗi: ", error);
+                console.log(error);
                 setLoading(true);
             }
         };
-
         fetchProducts();
+    }, []);
 
-    }, []);  // Chỉ gọi 1 lần khi component được render
-    // Hàm fetch ảnh cho từng sản phẩm
-    const fetchImagesAndUpdateProducts = async (data) => {
-        if (!data || data.length === 0) return;
-    
-        const updatedProducts = data.map((product) => {
-            const imageUrl = product.image
-                ? `${ip}/uploads/${product.image}`
-                : "/images/default-placeholder.jpg"; // ảnh mặc định nếu không có
-    
-            return { ...product, imageUrl };
-        });
-    
-        setProducts(updatedProducts);
-    };
-
-    // Nếu đang loading, hiển thị loading text
     if (loading) {
         return (
-            <div style={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                height: '100vh' // chiều cao 100% của viewport,
-
-            }}>
-                <img style={{ width: "100px", height: "100px" }} src="./img/loading-gif-png-5.gif" alt="img" />
+            <div className="d-flex justify-content-center align-items-center" style={{ height: '300px' }}>
+                <img style={{ width: "80px" }} src="./img/loading-gif-png-5.gif" alt="loading" />
             </div>
         );
     }
@@ -146,85 +106,50 @@ const Deal = () => {
     return (
         <div className="my-deal container p-3 mt-3">
             <ToastContainer />
-            <section className="content container" >
-                <div className="box-deal"
-                    // style={{
-                    //     display: 'flex',
-                    //     overflowX: 'auto',  // Bật thanh cuộn ngang
-                    //     whiteSpace: 'nowrap',  // Ngăn các sản phẩm xuống hàng
-                    //     scrollBehavior: 'smooth',  // Hiệu ứng cuộn mượt
-                    //     gap: '10px',  // Khoảng cách giữa các sản phẩm
-                    //     paddingBottom: '10px'  // Tránh che mất phần dưới
-                    // }}
-                >
-                    <div className="set-time col-4">
-                        <div className="icon">
-                            <img src="https://bizweb.dktcdn.net/100/497/960/themes/923878/assets/flash-yl.png?1719291840576"
-                                style={{ width: "15px" }}
-                                alt="img"
-                            />
+            <section className="content container">
+                {/* Header: Flash deal times - Horizontal scroll on mobile */}
+                <div className={isMobile ? "modern-scroll-wrapper" : "box-deal row"}>
+                    <div className={isMobile ? "modern-scroll-item p-3 rounded" : "set-time col-4"} style={isMobile ? { backgroundColor: "#503eb6", color: "white", width: "100%", maxWidth: "300px" } : {}}>
+                        <div className="d-flex align-items-center gap-2">
+                            <img src="https://bizweb.dktcdn.net/100/497/960/themes/923878/assets/flash-yl.png?1719291840576" style={{ width: "20px" }} alt="img" />
+                            <h5 className="m-0" style={{ fontSize: "16px", fontWeight: "bold" }}>GIỜ VÀNG DEAL SỐC</h5>
                         </div>
-                        {/* <div className="content">
-                            <h4>GIỜ VÀNG DEAL SỐC</h4>
-                            <span className="text-white">Kết thúc trong:<HotDeals/></span>
-                            
-                        </div> */}
-                        <div className="content">
-                            <h4 className="title-time-deal">GIỜ VÀNG DEAL SỐC</h4>
-                            <div className="timer-container">
-                                <span className="end">Kết thúc trong:</span>
-                                <HotDeals /> {/* Đây là component đếm ngược */}
-                            </div>
+                        <div className="mt-2 d-flex align-items-center gap-1" style={{ fontSize: "12px" }}>
+                            <span>Kết thúc trong:</span>
+                            <HotDeals />
                         </div>
+                    </div>
 
-
-                    </div>
-                    <div className="is-going-on col-4">
-                        <Link>
-                            <span>12:00 - 20:00</span><br />
-                            <span>Đang diễn ra</span>
-                        </Link>
-                    </div>
-                    <div className="coming-soon col-4">
-                        <Link>
-                            <span>20:00 - 24:00</span><br />
-                            <span>Sắp diễn ra</span>
-                        </Link>
-                    </div>
                 </div>
 
-                <div className="content-deal row p-2">
-                    {/* Lặp qua danh sách sản phẩm và hiển thị */}
+                {/* Products: Horizontal scroll on mobile */}
+                <div className={isMobile ? "modern-scroll-wrapper mt-3" : "content-deal row p-2"}>
                     {products.length > 0 ? (
-                        products.slice(0, 5).map((item) => (
-                            <Card className="box col-2 m-2 item-cart-deal" key={item.id}>
-                                <div className="discount-badge">-9%</div> {/* Phần giảm giá */}
+                        products.slice(0, 10).map((item) => (
+                            <Card className={isMobile ? "modern-scroll-item box item-cart-deal" : "box col-2 m-2 item-cart-deal"}
+                                style={isMobile ? { width: "220px", marginBottom: "0" } : {}}
+                                key={item.id}>
+                                <div className="discount-badge">-9%</div>
                                 <div className="favorite-icon" onClick={() => handleAddToWishlist(item.id)}>
-                                    {/* Đổi icon dựa trên trạng thái yêu thích */}
-                                    <i className={favoriteProducts.includes(item.id) ? "fas fa-heart text-red-500" : "far fa-heart"}></i>
+                                    <i className={favoriteProducts.includes(item.id) ? "fas fa-heart text-danger" : "far fa-heart"}></i>
                                 </div>
                                 <Link to={`/chi-tiet-san-pham/${item.id}`}>
-                                    <Card.Img
-                                        className="product-image"
-                                        src={item.imageUrl}
-                                        alt={item.name}
-                                    />
+                                    <Card.Img className="product-image" src={item.imageUrl} alt={item.name} />
                                 </Link>
-                                <div className="official-badge">Chính Hãng 100%</div> {/* Chính hãng */}
+                                <div className="official-badge">Chính Hãng 100%</div>
                                 <div>
-                                    <p className="text_name">{item.name}</p>
+                                    <p className="text_name" style={{ height: "40px", overflow: "hidden", textOverflow: "ellipsis", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>{item.name}</p>
                                 </div>
-                                <div className="list-group-flush">
+                                <div className="list-group-flush mt-auto">
                                     <hr />
-
-                                    <p className="text_price">Giá: {formatCurrency(item.price)}</p>
+                                    <p className="text_price" style={{ color: "#D10024", fontWeight: "bold" }}>{formatCurrency(item.price)}</p>
                                     <hr />
-                                    <p className="text_plus">Tặng sạc cáp nhanh 25w trị giá 250k</p>
+                                    <p className="text_plus" style={{ fontSize: "11px", color: "#28a745" }}>Tặng sạc cáp nhanh 25w trị giá 250k</p>
                                 </div>
                             </Card>
                         ))
                     ) : (
-                        <div>Không có sản phẩm nào để hiển thị</div>
+                        <div className="text-center w-100">Không có sản phẩm nào</div>
                     )}
                 </div>
             </section>
@@ -233,5 +158,3 @@ const Deal = () => {
 };
 
 export default Deal;
-
-

@@ -1,8 +1,15 @@
-import { useState } from "react";
-import { Link, } from "react-router-dom";
-import Deal from "./Deal";
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 const Popular = () => {
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth <= 768);
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
+
     const [phone] = useState([
         {
             id: 1, name: "Iphone", img: "https://bizweb.dktcdn.net/100/497/960/themes/923878/assets/danhmuc_1.jpg?1719291840576",
@@ -31,28 +38,20 @@ const Popular = () => {
     ]);
 
     return (
-        <>
-            <div className="popular-categories container text-center">
-                <Link to=""><h4>Thương hiệu phổ biến</h4></Link>
-                <div className="row mt-3">
-
-                    {phone.map((item, index) => {
-                        return (
-
-                            <div className="col-2 content p-2" key={index}>
-                                <div className="img">
-                                    <img src={item.img} alt={item.name} />
-                                </div>
-                                <span>{item.name}</span>
-                            </div>
-                        );
-
-                    })}
-                </div>
+        <div className="popular-categories container text-center">
+            <Link to=""><h4 className="my-3">Thương hiệu phổ biến</h4></Link>
+            <div className={isMobile ? "modern-scroll-wrapper" : "row mt-3"}>
+                {phone.map((item, index) => (
+                    <div className={isMobile ? "modern-scroll-item modern-scroll-item-small text-center" : "col-2 content p-2"} key={index}>
+                        <div className="img" style={{ borderRadius: "5%", overflow: "hidden", border: "1px solid #f3ebebff", marginBottom: "8px" }}>
+                            <img src={item.img} alt={item.name} style={{ width: "100%", height: "auto" }} />
+                        </div>
+                        <span style={{ fontSize: "14px", fontWeight: "500" }}>{item.name}</span>
+                    </div>
+                ))}
             </div>
-            <Deal
-                phone={phone} />
-        </>
+        </div>
     );
 }
+
 export default Popular;

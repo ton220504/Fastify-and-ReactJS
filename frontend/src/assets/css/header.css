@@ -733,3 +733,260 @@ a.dropdown-toggle::after {
   transform: none !important;
   z-index: 9999;
 }
+
+/* ============================================================
+   MOBILE RESPONSIVE STYLES
+============================================================ */
+
+/* --- Hamburger button --- */
+.btn-hamburger {
+  background: transparent;
+  border: none;
+  padding: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-hamburger:hover {
+  opacity: 0.8;
+}
+
+/* --- Mobile Offcanvas Menu --- */
+.mobile-menu-offcanvas {
+  max-width: 280px;
+}
+
+.mobile-category-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.mobile-category-list li {
+  border-bottom: 1px solid #eee;
+}
+
+.mobile-category-list li a {
+  display: block;
+  padding: 12px 10px;
+  color: #333;
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.mobile-category-list li a:hover {
+  background-color: #f0ecff;
+  color: #503eb6;
+  padding-left: 15px;
+}
+
+.mobile-menu-info {
+  padding: 10px 0;
+  color: #555;
+  font-size: 14px;
+}
+
+.mobile-menu-info p {
+  margin-bottom: 8px;
+}
+
+/* --- Hot products mobile (horizontal scroll) --- */
+.hot-product-mobile {
+  display: flex;
+  align-items: center;
+  overflow-x: auto;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding: 5px 0;
+  gap: 2px;
+}
+
+.hot-product-mobile::-webkit-scrollbar {
+  display: none;
+}
+
+.hot-product-mobile b {
+  font-size: 12px;
+  color: #fff;
+  margin-right: 5px;
+  flex-shrink: 0;
+}
+
+.hot-item-mobile {
+  position: relative;
+  display: inline-block;
+  color: #fff;
+  font-size: 12px;
+  margin-right: 10px;
+  animation: blinkText 1s infinite;
+  flex-shrink: 0;
+}
+
+/* --- Side banners horizontal scroll --- */
+.side-banners-scroll {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  cursor: grab;
+  user-select: none;
+  padding: 5px 0;
+}
+
+.side-banners-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.side-banners-scroll:active {
+  cursor: grabbing;
+}
+
+.side-banner-img {
+  flex-shrink: 0;
+  width: 70%;
+  min-width: 220px;
+  height: auto;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+/* --- Policy horizontal scroll --- */
+.policy-scroll-wrapper {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  cursor: grab;
+  user-select: none;
+  padding: 5px 0;
+}
+
+.policy-scroll-wrapper::-webkit-scrollbar {
+  display: none;
+}
+
+.policy-scroll-wrapper:active {
+  cursor: grabbing;
+}
+
+.policy-scroll-item {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  background: white;
+  border: 2px solid #eee;
+  border-radius: 8px;
+  padding: 10px 14px;
+  min-width: 200px;
+  gap: 8px;
+  transition: border-color 0.2s;
+}
+
+.policy-scroll-item:hover {
+  border-color: #503eb6;
+}
+
+.policy-scroll-item .content-policy {
+  color: #503eb6;
+}
+
+/* --- Mobile header adjustments --- */
+@media only screen and (max-width: 768px) {
+  .Top-header {
+    height: auto;
+    padding: 8px 5px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .Top-header .img-header {
+    max-width: 130px;
+    width: 100%;
+  }
+
+  .Top-header .input-group {
+    margin-bottom: 0 !important;
+  }
+
+  .content-header {
+    position: sticky;
+    top: 55px;
+    z-index: 99;
+    padding: 5px 0;
+  }
+
+  .search-results-container {
+    width: 100% !important;
+  }
+
+  .no-results-message {
+    width: 100% !important;
+  }
+
+  .suggestions-container {
+    width: 100% !important;
+  }
+}
+
+/* --- Common Modern Scroll Utility --- */
+.modern-scroll-wrapper {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  scrollbar-width: none !important;
+  gap: 15px;
+  padding: 10px 5px !important;
+  scroll-snap-type: x mandatory;
+}
+
+.modern-scroll-wrapper::-webkit-scrollbar {
+  display: none !important;
+}
+
+.modern-scroll-item {
+  flex: 0 0 auto !important;
+  scroll-snap-align: start;
+}
+
+@media only screen and (max-width: 768px) {
+  .modern-scroll-item {
+    width: 250px; /* Default width for cards on mobile scroll */
+  }
+  
+  .modern-scroll-item-small {
+    width: 150px !important;
+  }
+}
+
+/* --- Global Official Badge Animation --- */
+.official-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  animation: blinkOfficial 0.8s infinite alternate !important;
+  box-shadow: 0 0 5px rgba(255, 0, 0, 0.2);
+}
+
+@keyframes blinkOfficial {
+  0% {
+    background-color: #ffeb3b !important; /* Yellow */
+    color: #d32f2f !important; /* Dark Red */
+  }
+  100% {
+    background-color: #d32f2f !important; /* Red */
+    color: #ffffff !important; /* White */
+    box-shadow: 0 0 10px rgba(211, 47, 47, 0.4);
+  }
+}
