@@ -91,8 +91,7 @@ const Footer = () => {
 
             </div >
             <div className="bottoo-footer text-center" style={{ height: "50px" }}>
-                <p>Design bởi Trần Văn Toàn</p>
-                
+                <p>Copyright © 2026 BeanMobile. All rights reserved.</p>
             </div>
         </>
 
